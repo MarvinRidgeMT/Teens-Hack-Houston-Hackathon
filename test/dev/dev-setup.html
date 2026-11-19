@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pickup dev setup</title>
+  <style>
+    body { font: 14px/1.5 system-ui, sans-serif; max-width: 640px; margin: 24px auto; padding: 0 16px; color: #1b1f23; background: #fff; }
+    .warn { background: #fff4e5; border-left: 4px solid #f5a623; padding: 8px 12px; }
+    fieldset { border: 1px solid #ccd; margin: 16px 0; }
+    label { display: block; margin: 4px 0; }
+    button { font: inherit; padding: 6px 12px; margin: 4px 8px 4px 0; cursor: pointer; }
+    pre { background: #f4f5f7; padding: 8px; white-space: pre-wrap; min-height: 3em; }
+    code { background: #f4f5f7; padding: 0 3px; }
+  </style>
+</head>
+<body>
+  <h1>Pickup dev setup</h1>
+  <p class="warn"><strong>DEV ONLY, NOT ABHINAV'S SETUP PAGE.</strong> Lives in <code>test/dev/</code>, which the release zip leaves out.
+    It registers the dev stub content script (<code>test/dev/stub-content.js</code>), not Sidd's.
+    Click "Unregister stub" once Sidd's real content script is in.</p>
+
+  <fieldset>
+    <legend>Settings written to <code>chrome.storage.local.settings</code></legend>
+    <p>Participant <code>anish-dev</code>. Work sites: <code>docs.google.com</code>, <code>wikipedia.org</code>. Distraction: <code>youtube.com</code>.</p>
+    <label><input type="checkbox" id="debug" checked> Debug (10 s threshold, 30 s nudge, events tagged <code>debug: true</code>)</label>
+    <label><input type="checkbox" id="forceCard"> Force card (every return is <code>pickup</code>; needs debug)</label>
+  </fieldset>
+
+  <button id="apply" type="button">Apply: grant sites, save settings, register + inject stub</button>
+  <button id="unregister" type="button">Unregister stub</button>
+  <a href="inspect.html">Open the storage inspector</a>
+
+  <fieldset>
+    <legend>Start a task (stand-in for Abhinav's popup)</legend>
+    <label>Work tab <select id="tab"></select> <button id="refresh" type="button">Refresh list</button></label>
+    <label>Task name <input id="name" value="Climate Essay"></label>
+    <button id="start" type="button">Start task</button>
+  </fieldset>
+
+  <h2>Result</h2>
+  <pre id="out" aria-live="polite"></pre>
+
+  <script src="dev-setup.js"></script>
+</body>
+</html>

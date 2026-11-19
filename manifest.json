@@ -1,0 +1,44 @@
+{
+  "manifest_version": 3,
+  "name": "Pickup",
+  "version": "0.1.0",
+  "description": "Undo the interruption, not the mistake. Saves your place when you leave your work and hands it back when you return.",
+  "minimum_chrome_version": "121",
+  "permissions": [
+    "tabs",
+    "tabGroups",
+    "idle",
+    "alarms",
+    "notifications",
+    "storage",
+    "scripting"
+  ],
+  "optional_host_permissions": ["http://*/*", "https://*/*"],
+  "background": {
+    "service_worker": "src/sw/background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Pickup",
+    "default_popup": "src/pages/popup.html",
+    "default_icon": {
+      "16": "assets/icon16.png",
+      "32": "assets/icon32.png",
+      "48": "assets/icon48.png",
+      "128": "assets/icon128.png"
+    }
+  },
+  "options_page": "src/pages/setup.html",
+  "icons": {
+    "16": "assets/icon16.png",
+    "32": "assets/icon32.png",
+    "48": "assets/icon48.png",
+    "128": "assets/icon128.png"
+  },
+  "commands": {
+    "park-task": {
+      "suggested_key": { "default": "Alt+P" },
+      "description": "Park this task with an optional next step"
+    }
+  }
+}

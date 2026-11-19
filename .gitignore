@@ -1,0 +1,9 @@
+.DS_Store
+node_modules/
+*.zip
+.env
+.env.*
+# Chrome profiles and real-Chrome run output (the driver writes these to a temp dir; never commit them)
+*profile*/
+pickup-real-chrome/
+results*.json
