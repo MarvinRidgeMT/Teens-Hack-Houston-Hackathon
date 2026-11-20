@@ -53,7 +53,7 @@
     },
     "toggle-voice": {
       "suggested_key": { "default": "Alt+V" },
-      "description": "Talk to Pickup"
+      "description": "Open the Pickup panel"
     }
   }
 }

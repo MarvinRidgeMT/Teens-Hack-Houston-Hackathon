@@ -2,12 +2,14 @@
 // Owner: Anish (Engine). Never generic, never blocks a site.
 
 import * as store from '../shared/store.js';
-import { NUDGE_ALARM_PREFIX, DEBUG_NUDGE_DELAY_MIN } from '../shared/constants.js';
+import { NUDGE_ALARM_PREFIX, DEBUG_NUDGE_DELAY_MIN, BREAK_ALARM_PREFIX } from '../shared/constants.js';
 import { log } from './util.js';
 
 export async function scheduleNudge(openBreak, crumb, settings) {
   if (!openBreak || !openBreak.departed || !crumb || !crumb.nextStep) return;
   // Wrapped up for the day: leaving now is not something to nudge about.
+  // A planned break (break timer) gets its own "Break's over" notification instead.
+  if (openBreak.plannedMin) { log('no nudge: break timer running'); return; }
   const wu = await store.getWrapUp();
   if (wu && !wu.shown && openBreak.leftAt >= wu.at) { log('no nudge: wrapped up for the day'); return; }
   const delay = settings.debug ? DEBUG_NUDGE_DELAY_MIN : Math.max(0.5, Number(settings.nudgeDelayMin) || 5);
@@ -15,8 +17,12 @@ export async function scheduleNudge(openBreak, crumb, settings) {
   log('nudge scheduled in', delay, 'min');
 }
 
+// Every place a break ends or is replaced calls this, so it also clears that break's
+// break-timer alarm.
 export async function cancelNudge(eventId) {
-  if (eventId) await chrome.alarms.clear(NUDGE_ALARM_PREFIX + eventId);
+  if (!eventId) return;
+  await chrome.alarms.clear(NUDGE_ALARM_PREFIX + eventId);
+  await chrome.alarms.clear(BREAK_ALARM_PREFIX + eventId);
 }
 
 export async function onAlarm(alarm) {

@@ -9,7 +9,7 @@ import * as store from '../shared/store.js';
 import { MSG } from '../shared/messages.js';
 import {
   CONDITIONS, DEBUG_THRESHOLD_MS, HIGHLIGHT_MAX, LATER_GROUP_TITLE, awayBucket, DEFAULT_TASK_TYPE,
-  NEXT_STEP_CLEARS_ON_RETURN, RETURN_VIA, RETURN_VIA_TTL_MS, NEXT_STEP_SOURCE,
+  NEXT_STEP_CLEARS_ON_RETURN, RETURN_VIA, RETURN_VIA_TTL_MS, NEXT_STEP_SOURCE, BREAK_ALARM_PREFIX,
 } from '../shared/constants.js';
 import { isWorkUrl, isDistractionUrl } from '../shared/sites.js';
 import { ensureThreadForTab, tabInThread, threadForTab } from './threads.js';
@@ -144,6 +144,7 @@ export async function closeBreakOnReturn(tab, settings, { via = RETURN_VIA.tab }
   await store.setOpenBreak(null);
   await cancelNudge(ob.eventId);
   try { await chrome.notifications.clear(ob.eventId); } catch { /* none */ }
+  try { await chrome.notifications.clear(BREAK_ALARM_PREFIX + ob.eventId); } catch { /* none */ }
 
   if (awayMs < thresholdMs(settings)) {
     log('short absence discarded', Math.round(awayMs / 1000), 's');
@@ -257,6 +258,19 @@ export async function resume(threadId) {
 // ---- Resume from anywhere (Alt+R / popup resumeTask) ----
 // Target: the open break's thread (parked or away), else the breadcrumb left most
 // recently, else the thread of the last work tab. Returns a thread id or null.
+// A tab of this task, never another task's: the active one, else the one it was
+// left on, else any open tab of it. Null when none is open.
+const ofTask = (t, thread, crumb, settings) => t && tabInThread(t, thread, crumb) && !isDistractionUrl(tabUrl(t), settings);
+export async function taskTab(thread, crumb, settings) {
+  const here = await focusedActiveTab();
+  if (ofTask(here, thread, crumb, settings)) return here;
+  if (crumb && crumb.tabId != null) {
+    try { const t = await chrome.tabs.get(crumb.tabId); if (ofTask(t, thread, crumb, settings)) return t; } catch { /* closed */ }
+  }
+  const all = await chrome.tabs.query({});
+  return all.find((t) => ofTask(t, thread, crumb, settings)) || null;
+}
+
 export async function pickResumeTarget() {
   const ob = await store.getOpenBreak();
   if (ob) return ob.threadId;

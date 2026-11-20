@@ -1,4 +1,7 @@
-// "Talk to Pickup" side panel. Owner: Anish.
+// Pickup panel: the voice half (pickup.js is the Ask box, break timer, task list
+// and Today strip). Owner: Anish.
+// - runCommand() is the one path for typed and spoken asks: parse() -> voiceCommand
+//   -> the engine's fixed-template reply. Typed asks resume with returnVia 'panel'.
 // - Push-to-talk always works: hold the button or Space, click once, or Alt+V.
 // - "Listen for 'Hey Pickup'" is opt-in (default off) and runs only while this panel is open.
 // - Speech is recognised on this device only (recognizer.js enforces processLocally = true).
@@ -19,7 +22,7 @@ const WAKE_AT_START = /^\s*(?:hey,?\s+)?pick\s?-?up\b/i;
 
 const $ = (id) => document.getElementById(id);
 const S = {
-  ready: false, device: 'missing', mic: 'unknown', voiceEnabled: false, wakeOn: false,
+  ready: false, device: 'missing', mic: 'unknown', voiceEnabled: false, wakeOn: false, readAloud: true,
   mode: 'off',            // 'off' | 'talk' | 'wake'
   rec: null, speaking: false, busy: false,
   talk: { finals: [], interim: '', pressing: false, downAt: 0, oneShot: false, timer: null },
@@ -35,7 +38,8 @@ function render() {
   else if (S.mode === 'wake') {
     state = 'listening';
     text = S.wake.awaitUntil > Date.now() ? 'Listening (on this device): say your command' : 'Listening for "Hey Pickup" (on this device)';
-  } else if (!S.ready) text = 'Off (set up voice first)';
+  } else if (!S.ready) text = 'Voice off';
+  else text = 'Voice ready';
   $('status').textContent = text;
   $('status').dataset.state = state;
   const mic = $('mic');
@@ -44,12 +48,17 @@ function render() {
   $('micLabel').textContent = S.mode === 'talk' ? (S.talk.oneShot ? 'Listening... click to stop' : 'Listening... let go to send') : 'Hold to talk';
   $('wake').disabled = !S.ready;
   $('wake').checked = S.wakeOn;
+  $('readAloud').disabled = !S.ready;
+  $('readAloud').checked = S.ready && S.readAloud;
+  document.querySelector('.hints').dataset.voice = S.ready ? 'on' : 'off';
 }
 
+let firstRefresh = true;
 async function refresh() {
   const { settings = {} } = await chrome.storage.local.get('settings');
   S.voiceEnabled = !!settings.voiceEnabled;
   S.wakeOn = S.voiceEnabled && !!settings.wakeWord;
+  S.readAloud = settings.readAloud !== false;
   S.device = await onDeviceStatus();
   S.mic = await micState();
   S.ready = S.voiceEnabled && S.device === 'available' && S.mic === 'granted';
@@ -68,6 +77,7 @@ async function refresh() {
     $('btnSetup').textContent = why.length ? 'Set up voice' : 'Turn voice on';
     $('btnSetup').hidden = false;
   }
+  if (firstRefresh) { firstRefresh = false; $('voice').open = !S.ready && S.device !== 'missing' && S.device !== 'unavailable' && S.voiceEnabled; }
   if (!S.ready) stopEverything({ keepWakeSetting: true });
   else if (S.wakeOn && S.mode === 'off' && !S.speaking) startWake();
   else if (!S.wakeOn && S.mode === 'wake') stopWake();
@@ -93,6 +103,7 @@ async function pickVoice() {
 }
 
 async function speak(text) {
+  if (!S.ready || !S.readAloud) return; // replies are always shown; spoken only if voice and "Read aloud" are on
   const v = await pickVoice();
   if (!v) return;
   S.speaking = true;
@@ -133,24 +144,29 @@ function chime() {
   } catch { /* no audio */ }
 }
 
-// ---------- one utterance -> engine -> reply ----------
-async function handleUtterance(raw) {
+// ---------- one ask (typed or spoken) -> engine -> reply ----------
+// typed: true from the Ask box or a chip (returnVia 'panel'); false for speech ('voice').
+export async function runCommand(raw, { typed = false } = {}) {
   const said = tidyWords(raw);
-  $('heard').textContent = said || '(nothing heard)';
+  $('heard').textContent = said || (typed ? ' ' : '(nothing heard)');
   const w = splitWake(said);
   const command = w.wake && WAKE_AT_START.test(said) ? w.rest : said;
-  if (!command) { showReply("I didn't catch that."); return; }
-  if (S.busy) return; // one command at a time: a second one while answering is dropped
+  if (!command) { showReply(typed ? 'Type a question, like "where was I?"' : "I didn't catch that."); return null; }
+  if (S.busy) return null; // one command at a time: a second one while answering is dropped
   S.busy = true;
   try {
     const { intent, args } = parse(command);
-    if (intent === 'stop') await setWake(false);
-    const r = await sendEngine({ type: MSG.voiceCommand, intent, args });
+    if (intent === 'stop' && !typed) await setWake(false);
+    const msg = { type: MSG.voiceCommand, intent, args };
+    if (typed) msg.via = 'panel';
+    const r = await sendEngine(msg);
     const say = (r && r.say) || "Pickup didn't answer. Try again.";
     showReply(say);
     await speak(say);
+    return r;
   } finally { S.busy = false; }
 }
+const handleUtterance = (raw) => runCommand(raw, { typed: false });
 
 function showReply(text) { $('reply').textContent = text; }
 
@@ -320,6 +336,11 @@ function wire() {
   mic.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); if (S.mode === 'talk') cancelTalk(); else startTalk({ oneShot: true }); } });
 
   $('wake').addEventListener('change', (e) => setWake(e.target.checked));
+  $('readAloud').addEventListener('change', async (e) => {
+    S.readAloud = e.target.checked;
+    if (!S.readAloud) stopSpeaking();
+    await sendEngine({ type: MSG.setVoiceSettings, readAloud: S.readAloud });
+  });
   $('btnSetup').addEventListener('click', async () => {
     if (S.mic === 'granted' && S.device === 'available') {
       await sendEngine({ type: MSG.setVoiceSettings, voiceEnabled: true });

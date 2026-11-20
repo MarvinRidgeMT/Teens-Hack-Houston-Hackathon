@@ -28,7 +28,12 @@ export const MSG = Object.freeze({
   setTaskType: 'setTaskType',   // { threadId, taskType } -> { ok }
   resumeTask: 'resumeTask',     // { threadId? } -> { ok, threadId }  same as Alt+R (Feature 1)
   voiceCommand: 'voiceCommand', // { intent, args } -> { ok, say, data }   voice side panel
-  setVoiceSettings: 'setVoiceSettings', // { voiceEnabled?, wakeWord? } -> { ok, voiceEnabled, wakeWord }
+  setVoiceSettings: 'setVoiceSettings', // { voiceEnabled?, wakeWord?, readAloud? } -> { ok, voiceEnabled, wakeWord, readAloud }
+  // Pickup panel (Fri):
+  startBreak: 'startBreak',     // { minutes, nextStep?, tabId? } -> { ok, endsAt, threadId }
+  cancelBreak: 'cancelBreak',   // {} -> { ok }   clears the timer; the break stays open
+  listThreads: 'listThreads',   // {} -> [{ threadId, name, taskType, nextStep?, nextStepSource?, leftAt?, url, tabCount, isOpenBreak, isParked, isWrapped, awaySince?, endsAt?, sortAt }]
+  setNextStep: 'setNextStep',   // { threadId, nextStep } -> { ok }   typed in the panel's task list
 });
 
 // Types the service worker answers (content script + popup/pages -> SW).
@@ -37,6 +42,7 @@ export const TO_ENGINE = Object.freeze([
   MSG.getTabInfo, MSG.startTask, MSG.removeFromThread, MSG.keepInThread,
   MSG.setTaskType, MSG.park, MSG.wrapUp, MSG.resumeTask,
   MSG.voiceCommand, MSG.setVoiceSettings,
+  MSG.startBreak, MSG.cancelBreak, MSG.listThreads, MSG.setNextStep,
 ]);
 
 // Optional SW -> content types: a missing handler is fine (check-integration WARNs).

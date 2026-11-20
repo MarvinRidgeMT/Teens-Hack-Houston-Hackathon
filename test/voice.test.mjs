@@ -51,6 +51,33 @@ await step('parse: "my next step is ..." / "next step ..." is setNextStep with t
   assert.deepEqual(parse('Next step: check the citation'), { intent: 'setNextStep', args: { nextStep: 'check the citation' } });
   assert.deepEqual(parse('next step'), { intent: 'setNextStep', args: {} });
 });
+// Pickup panel: break timer and cancel-break intents
+const BREAKS = [
+  ['back in 10', 10], ['Back in 10 minutes.', 10], ['break for 15 minutes', 15], ['take a 10 minute break', 10],
+  ['take a 10-minute break', 10], ['set a break for 20 min', 20], ['give me 5 minutes', 5], ['back in ten', 10],
+  ['back in twenty five minutes', 25], ['back in twenty-five', 25], ['break for sixty minutes', 60],
+  ['back in half an hour', 30], ['break for an hour', 60], ['back in 2 hours', 120], ['back in one minute', 1],
+];
+await step(`parse: ${BREAKS.length} break-timer phrases give breakTimer with the minutes`, async () => {
+  for (const [text, minutes] of BREAKS) assert.deepEqual(parse(text), { intent: 'breakTimer', args: { minutes } }, `"${text}"`);
+});
+await step('parse: break timer vs park (both ways), out-of-range minutes, and a next step', async () => {
+  assert.equal(parse('park it').intent, 'park');
+  assert.equal(parse("I'm taking a break").intent, 'park');
+  assert.equal(parse('take a break').intent, 'park');
+  assert.equal(parse('take a 10 minute break').intent, 'breakTimer');
+  assert.deepEqual(parse('back in 500'), { intent: 'breakTimer', args: {} });
+  assert.deepEqual(parse('back in 0 minutes'), { intent: 'breakTimer', args: {} });
+  assert.deepEqual(parse('break for 10 minutes, next step reread the intro'), { intent: 'breakTimer', args: { minutes: 10, nextStep: 'reread the intro' } });
+});
+await step('parse: cancel the break / back early vs cancel / I am back', async () => {
+  assert.equal(parse('cancel the break').intent, 'cancelBreak');
+  assert.equal(parse('cancel my break').intent, 'cancelBreak');
+  assert.equal(parse("I'm back early").intent, 'cancelBreak');
+  assert.equal(parse('cancel').intent, 'stop');
+  assert.equal(parse("I'm back").intent, 'resume');
+});
+
 await step('splitWake: hey pickup / hey pick up / pick up, and the rest is the command', async () => {
   assert.deepEqual(splitWake('Hey Pickup, where was I?'), { wake: true, rest: 'where was I' });
   assert.deepEqual(splitWake('hey pick up take me back'), { wake: true, rest: 'take me back' });
@@ -116,7 +143,14 @@ await step('todayFacts: debug events and other days are left out; median of seco
     { returnedAt: at(12, 0), leftAt: at(11, 50), firstInteractionAt: at(12, 0) + 999000, debug: true },
     { returnedAt: new Date(2026, 10, 18, 12).getTime(), leftAt: 0, firstInteractionAt: new Date(2026, 10, 18, 12).getTime() + 5000 },
   ];
-  assert.deepEqual(todayFacts(evs, now), { breaks: 3, medianSec: 20 });
+  assert.deepEqual(todayFacts(evs, now), { breaks: 3, medianSec: 20, topHost: null });
+  const withHosts = [
+    { ...evs[0], distractionHost: 'youtube.com', awayMs: 600000 },
+    { ...evs[1], distractionHost: 'reddit.com', awayMs: 900000 },
+    { ...evs[2], distractionHost: 'youtube.com', awayMs: 600000 },
+    { ...evs[3], distractionHost: 'reddit.com', awayMs: 99999999 }, // debug: left out
+  ];
+  assert.deepEqual(todayFacts(withHosts, now).topHost, { host: 'youtube.com', awayMs: 1200000 });
   assert.equal(median([]), null);
   assert.equal(median([5, 1, 3]), 3);
 });
@@ -173,12 +207,15 @@ await step('voice: with nothing saved, where was I / how long / today say so', a
 
 await step('voice: setVoiceSettings defaults off, stores booleans, wake word needs voice on', async () => {
   let r = await sim.send({ type: 'setVoiceSettings' });
-  assert.deepEqual(r, { ok: true, voiceEnabled: false, wakeWord: false });
+  assert.deepEqual(r, { ok: true, voiceEnabled: false, wakeWord: false, readAloud: true });
   r = await sim.send({ type: 'setVoiceSettings', voiceEnabled: true, wakeWord: true, participant: 'hacked' });
-  assert.deepEqual(r, { ok: true, voiceEnabled: true, wakeWord: true });
+  assert.deepEqual(r, { ok: true, voiceEnabled: true, wakeWord: true, readAloud: true });
+  r = await sim.send({ type: 'setVoiceSettings', readAloud: false });
+  assert.equal(r.readAloud, false, 'read replies aloud can be turned off');
+  r = await sim.send({ type: 'setVoiceSettings', readAloud: true });
   assert.equal((await store.getSettings()).participant, 'anish', 'only voice keys are written');
   r = await sim.send({ type: 'setVoiceSettings', voiceEnabled: false });
-  assert.deepEqual(r, { ok: true, voiceEnabled: false, wakeWord: false });
+  assert.deepEqual(r, { ok: true, voiceEnabled: false, wakeWord: false, readAloud: true });
 });
 
 await step('voice: "park it, next step ..." parks the active task with a spoken next step', async () => {

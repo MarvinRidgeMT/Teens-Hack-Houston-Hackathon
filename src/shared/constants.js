@@ -39,6 +39,7 @@ export const DEFAULT_SETTINGS = Object.freeze({
   forceCard: false,        // testing only (needs debug): every return shows the card
   voiceEnabled: false,     // voice side panel may use the mic (push-to-talk)
   wakeWord: false,         // listen for "Hey Pickup" while the panel is open
+  readAloud: true,         // Pickup panel: speak replies (only while voice is on)
 });
 
 export const DEBUG_THRESHOLD_MS = 10000;
@@ -76,6 +77,7 @@ export const BADGE = Object.freeze({
   parked: { text: 'P', color: '#0D9488' },  // teal
   away: { text: '•', color: '#D97706' },    // amber
   wrapped: { text: '☾', color: '#4F46E5' }, // indigo; use 'Z' if the glyph renders badly
+  timer: { color: '#0D9488' },              // teal; text is the minutes left, e.g. '9m'
   flash: { '✓': '#15803D', default: '#4B5563' },
   flashTitle: { '✓': 'saved', '!': 'nothing saved (see the service worker console)', '?': 'no task to go back to yet' },
 });
@@ -95,6 +97,14 @@ export const DEFAULT_TASK_TYPE = 'writing';
 
 export const LATER_GROUP_TITLE = 'Later';
 export const NUDGE_ALARM_PREFIX = 'nudge:';
+
+// Break timer (Pickup panel): "Back in 10". One alarm and at most one notification
+// per break, both named breakend:<eventId>; it replaces the drift nudge for that break.
+export const BREAK_ALARM_PREFIX = 'breakend:';
+export const BREAK_TICK_ALARM = 'breaktick';  // redraws the badge countdown while a timer runs
+export const BREAK_MIN = 1;
+export const BREAK_MAX = 120;
+export const DEBUG_BREAK_MS_PER_MIN = 10000;  // debug: a "10 min" break ends in 100 s (for filming)
 
 export function awayBucket(awayMs) {
   const min = awayMs / 60000;

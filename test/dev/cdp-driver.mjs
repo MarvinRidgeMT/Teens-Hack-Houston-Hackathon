@@ -15,7 +15,7 @@ export const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 //  - placeholder popup/setup pages until Abhinav's src/pages/ lands
 export function buildTestCopy(repo, dest) {
   fs.rmSync(dest, { recursive: true, force: true });
-  fs.cpSync(repo, dest, { recursive: true, filter: (src) => !/[\\/](\.git|node_modules)([\\/]|$)/.test(src) });
+  fs.cpSync(repo, dest, { recursive: true, filter: (src) => !/^(\.git|node_modules|\.claude|docs-shots|site)([\\/]|$)/.test(path.relative(repo, src)) });
   const mfPath = path.join(dest, 'manifest.json');
   const mf = JSON.parse(fs.readFileSync(mfPath, 'utf8'));
   mf.host_permissions = ['*://docs.google.com/*', '*://wikipedia.org/*', '*://*.wikipedia.org/*'];

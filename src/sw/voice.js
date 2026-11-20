@@ -9,10 +9,9 @@
 import * as store from '../shared/store.js';
 import * as events from './events.js';
 import * as wrapup from './wrapup.js';
-import { tabInThread } from './threads.js';
-import { isDistractionUrl } from '../shared/sites.js';
+import * as breaks from './breaks.js';
 import { RETURN_VIA, NEXT_STEP_SOURCE } from '../shared/constants.js';
-import { log, tabUrl } from './util.js';
+import { log } from './util.js';
 
 const LATER_TIDY_WINDOW_MS = 30 * 60000; // "tidy" only right after a logged return
 
@@ -67,6 +66,12 @@ export function buildReply(intent, state = {}) {
     }
     case 'stop':
       return 'Okay.';
+    case 'breakTimer':
+      if (state.reason === 'minutes') return 'Say how many minutes, from 1 to 120.';
+      if (!state.ok) return NO_TASK;
+      return `Break started. Back to ${task} at ${state.endsAtText}.`;
+    case 'cancelBreak':
+      return "There's no break timer running.";
     default:
       return HELP;
   }
@@ -85,11 +90,15 @@ export function todayFacts(allEvents, now = Date.now()) {
   const todays = allEvents.filter((e) => !e.debug && e.returnedAt >= start.getTime() && e.returnedAt <= now);
   const backMs = todays.filter((e) => e.firstInteractionAt).map((e) => e.firstInteractionAt - e.returnedAt);
   const med = median(backMs);
-  return { breaks: todays.length, medianSec: med == null ? null : Math.round(med / 1000) };
+  // Most time away by distraction site (for the panel's Today strip). Facts only.
+  const byHost = new Map();
+  for (const e of todays) if (e.distractionHost) byHost.set(e.distractionHost, (byHost.get(e.distractionHost) || 0) + (e.awayMs || e.returnedAt - e.leftAt));
+  const [host, awayMs] = [...byHost].sort((a, b) => b[1] - a[1])[0] || [];
+  return { breaks: todays.length, medianSec: med == null ? null : Math.round(med / 1000), topHost: host ? { host, awayMs } : null };
 }
 
 // ---------- which task is "the" task ----------
-// The open break's task; else the task left most recently; else none.
+// The open break's task; else the task left most recently; else the last work tab's task; else none.
 async function currentTask() {
   const ob = await store.getOpenBreak();
   const crumbs = await store.getBreadcrumbs();
@@ -98,6 +107,7 @@ async function currentTask() {
     const latest = Object.values(crumbs).sort((a, b) => (b.leftAt || 0) - (a.leftAt || 0))[0];
     threadId = latest && latest.threadId;
   }
+  if (!threadId) threadId = await events.pickResumeTarget(); // same order as Alt+R: then the last work tab's task
   const thread = threadId ? await store.getThread(threadId) : null;
   return { ob, thread, crumb: threadId ? crumbs[threadId] || null : null };
 }
@@ -109,16 +119,6 @@ async function activeTab() {
   } catch { return null; }
 }
 
-const ofTask = (t, thread, crumb, settings) => t && tabInThread(t, thread, crumb) && !isDistractionUrl(tabUrl(t), settings);
-async function taskTab(thread, crumb, settings) {
-  const here = await activeTab();
-  if (ofTask(here, thread, crumb, settings)) return here;
-  if (crumb && crumb.tabId != null) {
-    try { const t = await chrome.tabs.get(crumb.tabId); if (ofTask(t, thread, crumb, settings)) return t; } catch { /* closed */ }
-  }
-  const all = await chrome.tabs.query({});
-  return all.find((t) => ofTask(t, thread, crumb, settings)) || null;
-}
 
 const words = (args) => String((args && args.nextStep) || '').trim().slice(0, 200);
 
@@ -130,6 +130,8 @@ export async function handleVoiceCommand(msg, settings) {
   const task = thread ? { name: thread.name } : null;
   const state = { task };
   const data = { intent };
+  // Typed in the Pickup panel's Ask box -> 'panel'; spoken -> 'voice'.
+  const via = msg && msg.via === RETURN_VIA.panel ? RETURN_VIA.panel : RETURN_VIA.voice;
 
   switch (intent) {
     case 'whereWasI':
@@ -140,7 +142,7 @@ export async function handleVoiceCommand(msg, settings) {
       if (thread) {
         // Same path as Alt+R: resume(), so return detection and the coin flip still happen.
         // The voice marker is set only when a left break of this task is open.
-        const r = await events.resumeTask(thread.id, { via: RETURN_VIA.voice });
+        const r = await events.resumeTask(thread.id, { via });
         state.ok = !!(r && r.ok);
         state.already = !!(r && r.already);
         data.tabId = r && r.tabId;
@@ -175,7 +177,7 @@ export async function handleVoiceCommand(msg, settings) {
         // else any tab of it (you may be saying it from YouTube). Never another
         // page, or tomorrow's Start here would point at the wrong task.
         const w = words(args);
-        const tab = await taskTab(thread, crumb, settings);
+        const tab = await events.taskTab(thread, crumb, settings);
         const r = tab ? await wrapup.wrapUp(tab, w, settings, { nextStepSource: w ? NEXT_STEP_SOURCE.spoken : undefined }) : null;
         state.ok = !!(r && r.ok);
         state.words = state.ok ? w : '';
@@ -200,7 +202,31 @@ export async function handleVoiceCommand(msg, settings) {
       break;
 
     case 'today':
-      Object.assign(state, todayFacts(await store.getEvents()));
+      data.today = todayFacts(await store.getEvents());
+      Object.assign(state, data.today);
+      break;
+
+    case 'breakTimer': {
+      if (!args.minutes) { state.reason = 'minutes'; break; }
+      const r = await breaks.startBreak({ minutes: args.minutes, nextStep: words(args) }, settings,
+        { nextStepSource: via === RETURN_VIA.panel ? NEXT_STEP_SOURCE.typed : NEXT_STEP_SOURCE.spoken });
+      state.ok = !!(r && r.ok);
+      if (state.ok) {
+        state.task = { name: ((await store.getThread(r.threadId)) || {}).name || 'your task' };
+        state.endsAtText = breaks.clockTime(r.endsAt);
+        data.endsAt = r.endsAt;
+      }
+      break;
+    }
+
+    case 'cancelBreak':
+      // "Cancel the break" / "I'm back early": a return, only while a timer runs.
+      if (ob && ob.plannedMin && thread) {
+        const r = await events.resumeTask(thread.id, { via });
+        state.ok = !!(r && r.ok);
+        state.already = !!(r && r.already);
+        data.intent = 'resume';
+      }
       break;
 
     case 'stop':
@@ -217,9 +243,9 @@ export async function handleVoiceCommand(msg, settings) {
 // ---------- setVoiceSettings ----------
 export async function setVoiceSettings(msg) {
   const patch = {};
-  for (const k of ['voiceEnabled', 'wakeWord']) if (typeof msg[k] === 'boolean') patch[k] = msg[k];
+  for (const k of ['voiceEnabled', 'wakeWord', 'readAloud']) if (typeof msg[k] === 'boolean') patch[k] = msg[k];
   if (patch.voiceEnabled === false) patch.wakeWord = false; // wake word needs voice on
   if (Object.keys(patch).length) await store.setSettings(patch);
   const s = await store.getSettings();
-  return { ok: true, voiceEnabled: !!s.voiceEnabled, wakeWord: !!s.wakeWord };
+  return { ok: true, voiceEnabled: !!s.voiceEnabled, wakeWord: !!s.wakeWord, readAloud: s.readAloud !== false };
 }

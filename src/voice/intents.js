@@ -3,7 +3,8 @@
 // Rule-based only (keywords and regex): nothing here is a model.
 
 export const INTENTS = Object.freeze([
-  'whereWasI', 'resume', 'park', 'setNextStep', 'wrapUp', 'tidy', 'awayTime', 'today', 'stop', 'unknown',
+  'whereWasI', 'resume', 'park', 'setNextStep', 'wrapUp', 'tidy', 'awayTime', 'today', 'stop',
+  'breakTimer', 'cancelBreak', 'unknown',
 ]);
 
 // Wake phrase: "hey pickup", "hey pick up", or plain "pick up" / "pickup".
@@ -33,10 +34,48 @@ export function tidyWords(s) {
 
 const NEXT_STEP = /\bnext\s+step\b(?:\s+is\b)?[\s,.:;-]*(.*)$/i;
 
+// ---------- break timer ("back in 10") ----------
+export const BREAK_MIN = 1;
+export const BREAK_MAX = 120;
+const ONES = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
+  'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+const TENS = { twenty: 20, thirty: 30, forty: 40, fifty: 50, sixty: 60 };
+// Number words one..sixty -> digits; "half an hour" = 30, "an hour" = 60, "N hours" = N*60.
+export function numbersToDigits(text) {
+  let s = ` ${String(text || '').toLowerCase()} `;
+  s = s.replace(/\b(?:half\s+an\s+hour|a\s+half\s+hour)\b/g, '30 minutes');
+  s = s.replace(/\b(?:an|one)\s+hour\b/g, '60 minutes');
+  s = s.replace(/\b(twenty|thirty|forty|fifty)[\s-]+(one|two|three|four|five|six|seven|eight|nine)\b/g,
+    (_, t, o) => String(TENS[t] + ONES.indexOf(o)));
+  s = s.replace(/\b(twenty|thirty|forty|fifty|sixty)\b/g, (_, t) => String(TENS[t]));
+  s = s.replace(new RegExp(`\\b(${ONES.slice(1).join('|')})\\b`, 'g'), (_, w) => String(ONES.indexOf(w)));
+  s = s.replace(/\b(\d+)\s*hours?\b/g, (_, n) => `${Number(n) * 60} minutes`);
+  return s.trim();
+}
+const MIN = String.raw`(?:m|mins?|minutes?)\b`;
+const BREAK_RES = [
+  new RegExp(String.raw`\bback\s+in\s+(\d+)\b`),
+  new RegExp(String.raw`\bbreak\s+for\s+(\d+)\b`),
+  new RegExp(String.raw`\b(\d+)[\s-]*${MIN}[\s-]+break\b`),
+  new RegExp(String.raw`\bgive\s+me\s+(\d+)\s*(?:more\s+)?${MIN}`),
+  new RegExp(String.raw`\b(?:set|start)\s+(?:a\s+)?(?:break\s+)?timer\s+for\s+(\d+)\b`),
+];
+// -> minutes (number), NaN for a break phrase with an unusable number, or null.
+export function breakMinutes(text) {
+  const s = numbersToDigits(text);
+  for (const re of BREAK_RES) {
+    const m = s.match(re);
+    if (m) return Number(m[1]);
+  }
+  return null;
+}
+
 // Order matters: "park it, next step ..." is park, "I'm done for today" is wrapUp, not today.
 const RULES = [
   // Only at the start, so "next step is cancel the meeting" stays a next step.
+  ['cancelBreak', /\bcancel\s+(?:the\s+|my\s+)?break\b|\b(?:i'?m|i\s+am)\s+back\s+early\b/i],
   ['stop', /^\s*(?:stop\s+listening|never\s*mind|cancel)\b|^\s*stop\s*[.!]?\s*$/i],
+  ['breakTimer', { test: (s) => breakMinutes(s) !== null }],
   ['park', /\bpark\b|\b(?:i'?m|i\s+am)\s+taking\s+a\s+break\b|\btake\s+a\s+break\b/i],
   ['setNextStep', /^\s*(?:(?:my|the)\s+)?next\s+step\b/i],
   ['wrapUp', /\bwrap(?:\s+it)?\s+up\b|\bwrapping\s+up\b|\b(?:i'?m|i\s+am)\s+done\s+for\s+(?:today|the\s+day|now)\b/i],
@@ -55,7 +94,11 @@ export function parse(text) {
   for (const [intent, re] of RULES) {
     if (!re.test(s)) continue;
     const args = {};
-    if (intent === 'park' || intent === 'setNextStep' || intent === 'wrapUp') {
+    if (intent === 'breakTimer') {
+      const n = breakMinutes(s.replace(NEXT_STEP, ''));
+      if (Number.isInteger(n) && n >= BREAK_MIN && n <= BREAK_MAX) args.minutes = n;
+    }
+    if (intent === 'park' || intent === 'setNextStep' || intent === 'wrapUp' || intent === 'breakTimer') {
       const m = s.match(NEXT_STEP);
       const words = m ? tidyWords(m[1]) : '';
       if (words) args.nextStep = words;

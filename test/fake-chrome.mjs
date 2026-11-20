@@ -153,8 +153,12 @@ export function makeChrome({ now }) {
     idle: { onStateChanged: evt(), setDetectionInterval() {} },
     alarms: {
       onAlarm: evt(),
-      async create(name, o) { alarms.set(name, { name, at: now() + o.delayInMinutes * 60000 }); },
+      async create(name, o) {
+        const at = o.when != null ? o.when : now() + (o.delayInMinutes != null ? o.delayInMinutes : o.periodInMinutes) * 60000;
+        alarms.set(name, { name, at, periodInMinutes: o.periodInMinutes });
+      },
       async clear(name) { return alarms.delete(name); },
+      async get(name) { return clone(alarms.get(name)); },
     },
     notifications: {
       onClicked: evt(),

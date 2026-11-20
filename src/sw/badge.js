@@ -20,6 +20,11 @@ export async function badgeState() {
   if (ob) {
     const thread = await store.getThread(ob.threadId);
     const name = thread ? thread.name : 'your task';
+    const left = ob.endsAt ? ob.endsAt - Date.now() : 0;
+    if (left > 0) {
+      const at = new Date(ob.endsAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+      return { text: `${Math.ceil(left / 60000)}m`, color: BADGE.timer.color, title: `Pickup: back to ${name} at ${at}` };
+    }
     return ob.departed
       ? { text: BADGE.away.text, color: BADGE.away.color, title: `Pickup: ${name} is waiting` }
       : { text: BADGE.parked.text, color: BADGE.parked.color, title: `Pickup: ${name} parked: leave when you're ready` };

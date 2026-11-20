@@ -4,7 +4,7 @@
 
 import * as store from '../shared/store.js';
 import { MSG, CARD_ACTIONS, TO_ENGINE } from '../shared/messages.js';
-import { HIGHLIGHT_MAX, RETURN_VIA, START_HERE_PREFIX } from '../shared/constants.js';
+import { HIGHLIGHT_MAX, RETURN_VIA, START_HERE_PREFIX, BREAK_ALARM_PREFIX } from '../shared/constants.js';
 import { isDistractionUrl } from '../shared/sites.js';
 import * as signals from './signals.js';
 import * as threads from './threads.js';
@@ -14,6 +14,7 @@ import * as badge from './badge.js';
 import * as menus from './menus.js';
 import * as wrapup from './wrapup.js';
 import * as voice from './voice.js';
+import * as breaks from './breaks.js';
 import { getTab, tabUrl, log } from './util.js';
 
 // Every handler: one at a time, and only after thread group ids were checked for
@@ -142,8 +143,10 @@ chrome.tabGroups.onRemoved.addListener(safe('groupRemoved', threads.onGroupRemov
 
 // ---------- nudge ----------
 chrome.alarms.onAlarm.addListener(safe('alarm', nudge.onAlarm));
+chrome.alarms.onAlarm.addListener(safe('breakAlarm', breaks.onAlarm));
 chrome.notifications.onClicked.addListener(safe('notificationClick', async (id) => {
   await chrome.notifications.clear(id);
+  if (id.startsWith(BREAK_ALARM_PREFIX)) { await breaks.onNotificationClicked(id); return; }
   if (id.startsWith(START_HERE_PREFIX)) {
     const threadId = id.slice(START_HERE_PREFIX.length);
     const ob = await store.getOpenBreak();
@@ -211,7 +214,16 @@ async function route(msg, sender) {
     case MSG.park:
       return signals.requestPark(await getTab(msg.tabId));
     case MSG.resumeTask:
-      return events.resumeTask(msg.threadId);
+      // Only the Pickup panel may name how it returned; everyone else is resumeKey.
+      return events.resumeTask(msg.threadId, msg.via === RETURN_VIA.panel ? { via: RETURN_VIA.panel } : {});
+    case MSG.startBreak:
+      return breaks.startBreak(msg, settings);
+    case MSG.cancelBreak:
+      return breaks.cancelBreak(settings);
+    case MSG.listThreads:
+      return breaks.listThreads();
+    case MSG.setNextStep:
+      return breaks.setNextStep(msg, settings);
     case MSG.wrapUp:
       return wrapup.wrapUp(await getTab(msg.tabId), msg.nextStep, settings);
     case MSG.voiceCommand:
