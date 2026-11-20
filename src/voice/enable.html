@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Enable Pickup voice</title>
+  <link rel="stylesheet" href="spike.css">
+</head>
+<body>
+  <h1>Enable Pickup voice</h1>
+  <p>Pickup listens only while its side panel is open and you turn listening on. Speech is recognised on this device; Pickup never sends your voice to a server.</p>
+  <p>This one-time step lets Chrome ask for the microphone (a side panel can't show that prompt) and downloads the on-device English speech model.</p>
+  <div class="row">
+    <button id="btnEnable" type="button">Enable voice</button>
+    <button id="btnInstall" type="button">Download speech model only</button>
+    <button id="btnClose" type="button">Close this tab</button>
+  </div>
+  <p id="status" class="status" aria-live="polite"></p>
+  <pre id="log" class="log" tabindex="0"></pre>
+  <script src="enable.js" type="module"></script>
+</body>
+</html>

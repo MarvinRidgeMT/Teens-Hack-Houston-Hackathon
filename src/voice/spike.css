@@ -1,0 +1,18 @@
+/* Phase 0 voice spike. Plain, readable, works in a narrow side panel. */
+:root { color-scheme: light dark; font: 14px/1.4 system-ui, sans-serif; }
+body { margin: 12px; }
+h1 { font-size: 18px; margin: 0 0 4px; }
+h2 { font-size: 14px; margin: 14px 0 6px; }
+.where { font-weight: 600; margin: 4px 0; }
+.note { font-size: 12px; opacity: 0.8; margin: 4px 0 8px; }
+.row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 4px 0; }
+button { font: inherit; padding: 4px 10px; }
+button:focus-visible, input:focus-visible, pre:focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
+.status { font-weight: 600; margin: 6px 0; }
+.caption { min-height: 1.4em; font-style: italic; margin: 4px 0; }
+.wake { min-height: 1.4em; font-weight: 700; margin: 4px 0; }
+.log {
+  white-space: pre-wrap; word-break: break-word;
+  font: 11px/1.35 ui-monospace, Menlo, monospace;
+  border: 1px solid GrayText; padding: 6px; max-height: 50vh; overflow: auto;
+}
