@@ -4,7 +4,7 @@
 
 import * as store from '../shared/store.js';
 import { MSG, CARD_ACTIONS, TO_ENGINE } from '../shared/messages.js';
-import { HIGHLIGHT_MAX } from '../shared/constants.js';
+import { HIGHLIGHT_MAX, RETURN_VIA } from '../shared/constants.js';
 import { isDistractionUrl } from '../shared/sites.js';
 import * as signals from './signals.js';
 import * as threads from './threads.js';
@@ -77,7 +77,7 @@ chrome.tabs.onUpdated.addListener(safe('onUpdated', async (tabId, info, tab) => 
     const ob = await store.getOpenBreak();
     if (ob && ob.departed) {
       const settings = await store.getSettings();
-      if (isDistractionUrl(info.url, settings)) await store.addBreakTab(ob.eventId, tabId);
+      if (isDistractionUrl(info.url, settings)) await store.addBreakTab(ob.eventId, tabId, info.url);
     }
     await threads.onTabUrlChanged(tab);
     await signals.handleNavigated(tab);
@@ -97,7 +97,10 @@ chrome.alarms.onAlarm.addListener(safe('alarm', nudge.onAlarm));
 chrome.notifications.onClicked.addListener(safe('notificationClick', async (id) => {
   await chrome.notifications.clear(id);
   const ob = await store.getOpenBreak();
-  if (ob && ob.eventId === id) await events.resume(ob.threadId); // activation then closes the break
+  if (ob && ob.eventId === id) {
+    if (ob.departed) await store.setReturnVia(RETURN_VIA.notification);
+    await events.resume(ob.threadId); // activation then closes the break
+  }
 }));
 
 // ---------- messages ----------

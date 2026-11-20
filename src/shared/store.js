@@ -3,6 +3,7 @@
 // state from here first and nothing important lives in a global variable.
 
 import { KEYS, SESSION_KEYS, DEFAULT_SETTINGS } from './constants.js';
+import { hostOf } from './sites.js';
 
 const local = () => chrome.storage.local;
 const session = () => chrome.storage.session;
@@ -106,10 +107,27 @@ export const getTabState = async (tabId) => (await getMap(SESSION_KEYS.tabState)
 export const setTabState = (tabId, v) => patchMap(SESSION_KEYS.tabState, tabId, v);
 
 export const getBreakTabs = async (eventId) => (await getMap(SESSION_KEYS.breakTabs))[eventId] || [];
-export async function addBreakTab(eventId, tabId) {
+export const getBreakHosts = async (eventId) => (await getMap(SESSION_KEYS.breakHosts))[eventId] || [];
+// `url` is the distraction page the tab showed when it was seen; only its hostname is kept.
+export async function addBreakTab(eventId, tabId, url) {
   const list = await getBreakTabs(eventId);
   if (!list.includes(tabId)) list.push(tabId);
   await patchMap(SESSION_KEYS.breakTabs, eventId, list);
+  const host = url ? hostOf(url) : '';
+  if (host) {
+    const hosts = await getBreakHosts(eventId);
+    if (!hosts.includes(host)) { hosts.push(host); await patchMap(SESSION_KEYS.breakHosts, eventId, hosts); }
+  }
+}
+
+// returnVia marker: set right before Pickup activates the task tab itself, read
+// (and cleared) by the return that closes the break.
+export const setReturnVia = (via) => setSession(SESSION_KEYS.returnVia, { via, at: Date.now() });
+export async function takeReturnVia(ttlMs) {
+  const m = await getSession(SESSION_KEYS.returnVia, null);
+  if (!m) return null;
+  await setSession(SESSION_KEYS.returnVia, null);
+  return Date.now() - m.at <= ttlMs ? m.via : null;
 }
 
 export const getLastFocused = () => getSession(SESSION_KEYS.lastFocused, null);

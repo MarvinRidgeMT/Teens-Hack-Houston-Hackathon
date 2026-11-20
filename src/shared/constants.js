@@ -20,8 +20,11 @@ export const SESSION_KEYS = Object.freeze({
   lastFocused: 'lastFocused',               // { tabId, url, isWork, cameFrom, at } last tab seen in a focused window
   groupsLinked: 'groupsLinked',
   focusPopupSeen: 'focusPopupSeen',
-  pendingSwitch: 'pendingSwitch',           // { at, workTabId, windowId } a window switch onto a distraction, confirmed after FOCUS_BLIP_MS         // true while a focus loss was caused by Pickup's own popup             // true once thread groupIds were checked this browser session
+  pendingSwitch: 'pendingSwitch',           // { at, workTabId, windowId } a window switch onto a distraction, confirmed after FOCUS_BLIP_MS
   lastNudgeDay: 'lastNudgeDay',
+  breakHosts: 'breakHosts',                 // { [eventId]: host[] } distraction hostnames seen during a break, in order
+  returnVia: 'returnVia',                   // { via, at } set just before Pickup itself activates the task tab
+
 });
 
 export const DEFAULT_SETTINGS = Object.freeze({
@@ -50,6 +53,16 @@ export const SIGNALS = Object.freeze({
   idle: 'idle',     // idle 3+ min or screen locked
   park: 'park',     // Alt+P / popup Park
 });
+
+// How the user came back (event.returnVia). 'resumeKey' and 'notification' mean
+// Pickup did the navigating, so stats can keep those returns apart.
+export const RETURN_VIA = Object.freeze({
+  tab: 'tab',                   // a normal tab or window activation
+  resumeKey: 'resumeKey',       // Alt+R / popup resumeTask
+  notification: 'notification', // clicked the nudge or the Start-here notification
+  idle: 'idle',                 // back at the keyboard while Chrome was on the task
+});
+export const RETURN_VIA_TTL_MS = 10000; // a returnVia marker older than this is ignored
 
 export const CONDITIONS = Object.freeze({ pickup: 'pickup', control: 'control' });
 export const TASK_TYPES = Object.freeze(['writing', 'reading', 'problems']);

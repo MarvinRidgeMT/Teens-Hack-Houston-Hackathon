@@ -9,7 +9,7 @@ import * as store from '../shared/store.js';
 import { MSG } from '../shared/messages.js';
 import {
   CONDITIONS, DEBUG_THRESHOLD_MS, HIGHLIGHT_MAX, LATER_GROUP_TITLE, awayBucket, DEFAULT_TASK_TYPE,
-  NEXT_STEP_CLEARS_ON_RETURN,
+  NEXT_STEP_CLEARS_ON_RETURN, RETURN_VIA, RETURN_VIA_TTL_MS,
 } from '../shared/constants.js';
 import { isWorkUrl, isDistractionUrl } from '../shared/sites.js';
 import { ensureThreadForTab, tabInThread } from './threads.js';
@@ -119,12 +119,14 @@ export async function markDeparted(leftAt, settings) {
   log('left parked task');
 }
 
-// The user is back on a tab of the break's thread.
-export async function closeBreakOnReturn(tab, settings) {
+// The user is back on a tab of the break's thread. `via` is how the caller saw the
+// return ('tab' or 'idle'); a fresh marker from Pickup's own navigation wins.
+export async function closeBreakOnReturn(tab, settings, { via = RETURN_VIA.tab } = {}) {
   const ob = await store.getOpenBreak();
   if (!ob || !ob.departed) return null;
   const now = Date.now();
   const awayMs = now - ob.leftAt;
+  const returnVia = (await store.takeReturnVia(RETURN_VIA_TTL_MS)) || via;
   await store.setOpenBreak(null);
   await cancelNudge(ob.eventId);
   try { await chrome.notifications.clear(ob.eventId); } catch { /* none */ }
@@ -136,6 +138,7 @@ export async function closeBreakOnReturn(tab, settings) {
 
   const thread = await store.getThread(ob.threadId);
   const crumb = await store.getBreadcrumb(ob.threadId);
+  const distractionHosts = await store.getBreakHosts(ob.eventId);
   const forced = settings.debug && settings.forceCard;
   const condition = forced ? CONDITIONS.pickup : (Math.random() < 0.5 ? CONDITIONS.pickup : CONDITIONS.control);
 
@@ -153,6 +156,11 @@ export async function closeBreakOnReturn(tab, settings) {
     nextActionDoneAt: null,
     debug: !!settings.debug,
     cardShown: false, // additive: was a card actually drawn (pickup but no content script => false)
+    // Additive (Thu night, pending team OK at the 11:30 sync):
+    awayMs,                                        // exact returnedAt - leftAt
+    distractionHost: distractionHosts[0] || null,  // first distraction site seen in the break
+    distractionHosts,                              // every distraction host seen, in order, once each
+    returnVia,                                     // 'tab' | 'resumeKey' | 'notification' | 'idle'
   };
   await store.addEvent(ev);
 

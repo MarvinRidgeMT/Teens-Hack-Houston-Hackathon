@@ -27,6 +27,14 @@ Owner: Anish. Files: `manifest.json`, `src/shared/{constants,messages,store,site
 - Thread: `taskType, suggestedTabIds[], suggestedUrls[], excludedUrls[], auto?` (auto = quiet thread made for a work tab that isn't in a task; no tab group).
 - openBreak: `departed, windowId, parkedAt?, nudged?`. A parked break starts counting when you leave the tab.
 - Event: `cardShown`. It's false when the condition was pickup but the tab you came back to had no content script. Stats can ignore it.
+- Event (Thu night, pending the 11:30 sync):
+
+  | field | meaning |
+  |---|---|
+  | `awayMs` | exact `returnedAt - leftAt` in ms |
+  | `distractionHost` | hostname (no `www.`) of the first distraction tab seen in the break; `null` if none (focus/idle breaks) |
+  | `distractionHosts` | unique distraction hostnames seen in the break, in order; never paths or titles |
+  | `returnVia` | `tab` (a normal tab/window activation), `resumeKey` (Alt+R or `resumeTask`), `notification` (clicked the nudge or Start-here notification), `idle` (back at the keyboard while Chrome showed the task). Pickup sets a short session marker (10 s) just before it activates the tab itself; the return reads and clears it |
 
 ## Engine behaviour worth knowing (Phase 1 hardening)
 - **Frames:** `snapshot`, `showCard`, `restoreScroll` and `openOverlay` go to the top frame only (`frameId: 0`). `armTimer` goes to every frame, because Docs types into an iframe. Keep the `if (!TOP) return` guards anyway.

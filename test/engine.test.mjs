@@ -612,6 +612,85 @@ await step('Review 4: passing through a YouTube window onto another YouTube tab 
   assert.equal(await ob(), null);
 });
 
+// ---------------- Thursday night features ----------------
+// Back on the essay's Wikipedia tab in window 1 with nothing open.
+const settle = async () => {
+  sim.focusChrome(1); sim.activate(wikiA); await flush();
+  const b = await ob();
+  if (b) { advance(10); sim.activate(yt); await flush(); advance(10); sim.activate(wikiA); await flush(); }
+  assert.equal(await ob(), null, 'clean start');
+};
+
+// Feature 5: event fields
+await step('F5: a tab break logs awayMs, the distraction host and returnVia "tab"', async () => {
+  await settle();
+  sim.activate(yt); await flush();
+  advance(3 * 60000);
+  sim.activate(wikiA); await flush();
+  const ev = await lastEvent();
+  assert.equal(ev.signal, 'tab');
+  assert.equal(ev.awayMs, ev.returnedAt - ev.leftAt);
+  assert.equal(ev.distractionHost, 'youtube.com');
+  assert.deepEqual(ev.distractionHosts, ['youtube.com']);
+  assert.equal(ev.returnVia, 'tab');
+});
+
+await step('F5: a break that visits two distraction sites lists both hosts in order, once each', async () => {
+  await settle();
+  await setSettings({ distractionSites: ['youtube.com', 'reddit.com'] });
+  sim.activate(yt); await flush();
+  const rd = sim.openTab('https://www.reddit.com/r/all'); await flush();
+  sim.activate(yt); await flush();
+  advance(3 * 60000);
+  sim.activate(wikiA); await flush();
+  const ev = await lastEvent();
+  assert.equal(ev.distractionHost, 'youtube.com');
+  assert.deepEqual(ev.distractionHosts, ['youtube.com', 'reddit.com']);
+  sim.closeTab(rd); await flush();
+  await setSettings({ distractionSites: ['youtube.com'] });
+});
+
+await step('F5: a focus break has no distraction host and returnVia "tab"', async () => {
+  await settle();
+  sim.blurChrome(); await flush();
+  await sleep(1100); await flush();
+  advance(3 * 60000);
+  sim.focusChrome(1); await flush();
+  const ev = await lastEvent();
+  assert.equal(ev.signal, 'focus');
+  assert.equal(ev.awayMs, ev.returnedAt - ev.leftAt);
+  assert.equal(ev.distractionHost, null);
+  assert.deepEqual(ev.distractionHosts, []);
+  assert.equal(ev.returnVia, 'tab');
+});
+
+await step('F5: an idle break returned at the keyboard logs returnVia "idle"', async () => {
+  await settle();
+  sim.idle('idle'); await flush();
+  advance(60000);
+  sim.idle('active'); await flush();
+  const ev = await lastEvent();
+  assert.equal(ev.signal, 'idle');
+  assert.equal(ev.distractionHost, null);
+  assert.deepEqual(ev.distractionHosts, []);
+  assert.equal(ev.returnVia, 'idle');
+});
+
+await step('F5: a park break returned by clicking the nudge logs returnVia "notification"', async () => {
+  await settle();
+  await sim.send({ type: 'parkNote', nextStep: 'Check the 2023 rainfall table' }, wikiA); await flush();
+  sim.activate(yt); await flush();
+  const b = await ob();
+  advance(6 * 60000);
+  sim.fireAlarm('nudge:' + b.eventId); await flush();
+  chrome.notifications.onClicked.fire(b.eventId); await flush();
+  const ev = await lastEvent();
+  assert.equal(ev.id, b.eventId);
+  assert.equal(ev.signal, 'park');
+  assert.equal(ev.distractionHost, 'youtube.com');
+  assert.equal(ev.returnVia, 'notification');
+});
+
 const total = (await events()).length;
 (quiet || console.log)(`\n${passed} checks passed, ${total} events logged${process.exitCode ? ' — SOME FAILED' : ''}`);
 process.exit(process.exitCode || 0);

@@ -9,7 +9,7 @@
 
 import * as store from '../shared/store.js';
 import { MSG } from '../shared/messages.js';
-import { FOCUS_BLIP_MS, IDLE_DETECTION_SEC, SIGNALS } from '../shared/constants.js';
+import { FOCUS_BLIP_MS, IDLE_DETECTION_SEC, SIGNALS, RETURN_VIA } from '../shared/constants.js';
 import { isWorkUrl, isDistractionUrl } from '../shared/sites.js';
 import { threadForTab, tabInThread, isWorkTab, canHoldTask } from './threads.js';
 import { openBreakFor, closeBreakOnReturn, markDeparted, park } from './events.js';
@@ -41,12 +41,12 @@ export async function onTabFocused(tab, how) {
     // A distraction tab is never "back", even if Chrome put it in the task group.
     const inThread = tabInThread(tab, thread, crumb) && !isDistractionUrl(url, settings);
     if (ob.departed && inThread) {
-      if (await isWindowFocused(windowId)) await closeBreakOnReturn(tab, settings);
+      if (await isWindowFocused(windowId)) await closeBreakOnReturn(tab, settings, { via: how === 'idle-active' ? RETURN_VIA.idle : RETURN_VIA.tab });
     } else if (!ob.departed && !inThread) {
       await markDeparted(Date.now(), settings);
-      if (isDistractionUrl(url, settings)) await store.addBreakTab(ob.eventId, tab.id);
+      if (isDistractionUrl(url, settings)) await store.addBreakTab(ob.eventId, tab.id, url);
     } else if (ob.departed && isDistractionUrl(url, settings)) {
-      await store.addBreakTab(ob.eventId, tab.id);
+      await store.addBreakTab(ob.eventId, tab.id, url);
     }
   } else if (prev && prev.tabId !== tab.id && prev.isWork && isDistractionUrl(url, settings)) {
     const workTab = await getTab(prev.tabId);
@@ -58,7 +58,7 @@ export async function onTabFocused(tab, how) {
       result = { switchAt: at };
     } else if (workTab) {
       const opened = await openBreakFor(workTab, SIGNALS.tab, Date.now(), settings, { windowId });
-      if (opened) await store.addBreakTab(opened.eventId, tab.id);
+      if (opened) await store.addBreakTab(opened.eventId, tab.id, url);
     }
   }
 
@@ -102,7 +102,7 @@ export async function confirmWindowSwitch(at) {
   const workTab = await getTab(p.workTabId);
   if (!workTab) return;
   const opened = await openBreakFor(workTab, SIGNALS.tab, p.at, settings, { windowId: shown.windowId });
-  if (opened) await store.addBreakTab(opened.eventId, shown.id);
+  if (opened) await store.addBreakTab(opened.eventId, shown.id, tabUrl(shown));
 }
 
 // tabs.onActivated
@@ -125,7 +125,7 @@ export async function handleNavigated(tab) {
   const ob = await store.getOpenBreak();
 
   if (ob) {
-    if (ob.departed && isDistractionUrl(url, settings)) await store.addBreakTab(ob.eventId, tab.id);
+    if (ob.departed && isDistractionUrl(url, settings)) await store.addBreakTab(ob.eventId, tab.id, url);
     if (!ob.departed && ob.tabId === tab.id && !isWorkUrl(url, settings)) await markDeparted(Date.now(), settings);
     if (ob.departed) {
       const thread = await store.getThread(ob.threadId);
@@ -144,7 +144,7 @@ export async function handleNavigated(tab) {
     if (workTab) {
       // If the work tab itself navigated away, snapshot() falls back to its last saved state.
       const opened = await openBreakFor(workTab, SIGNALS.tab, Date.now(), settings, { windowId: tab.windowId });
-      if (opened) await store.addBreakTab(opened.eventId, tab.id);
+      if (opened) await store.addBreakTab(opened.eventId, tab.id, url);
     }
   }
   const isWork = await tabIsWork(tab, settings);

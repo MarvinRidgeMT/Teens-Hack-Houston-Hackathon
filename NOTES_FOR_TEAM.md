@@ -24,3 +24,15 @@ Engine hardening on Thu Nov 19. **No message names or event fields changed.** A 
 - **Decision 7:** the next step stays until the next Alt+P. Changing it is one constant, `NEXT_STEP_CLEARS_ON_RETURN` in `src/shared/constants.js`.
 - **Tidy skips each window's visible tab** (collapsing it would change what that window shows). Default: keep it that way.
 - **Parking task B while a break for task A is open** replaces A's break, so A's break is not logged. Default: keep it that way (rare). Say so if stats needs it counted.
+
+## New tonight (Thu Nov 19, evening): all optional
+
+Everything below is **additive**. Code that ignores it keeps working. **The new event fields only ship if all three of us agree at the 11:30 PM sync** (the plan says schema changes need all three); if we say no, I remove them before the Gate.
+
+### For Abhinav
+
+- **Four new event fields** (Feature 5). New columns for the CSV export. CSV import must accept older rows without them (treat missing as empty).
+  - `awayMs`: exact milliseconds away (`returnedAt - leftAt`).
+  - `distractionHost`: the first distraction site seen in the break, e.g. `youtube.com` (no `www.`). `null` for focus and idle breaks that never touched one.
+  - `distractionHosts`: every distraction host seen in the break, in order, once each. Hostnames only, never paths or titles.
+  - `returnVia`: how the user came back: `tab` (normal), `resumeKey` (Alt+R), `notification` (clicked the nudge or Start here) or `idle` (back at the keyboard). Pickup did the navigating for `resumeKey` and `notification`, so stats can keep those returns apart.

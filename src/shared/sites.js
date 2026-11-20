@@ -29,5 +29,10 @@ export function urlMatches(url, sites) {
   });
 }
 
+// Hostname without "www.", or '' for a URL that has none. Never a path or a title.
+export function hostOf(url) {
+  try { return new URL(url).hostname.toLowerCase().replace(/^www\./, ''); } catch { return ''; }
+}
+
 export const isWorkUrl = (url, settings) => urlMatches(url, settings.workSites);
 export const isDistractionUrl = (url, settings) => urlMatches(url, settings.distractionSites);
