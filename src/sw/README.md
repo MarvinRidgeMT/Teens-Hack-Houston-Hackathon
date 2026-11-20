@@ -18,9 +18,12 @@ Owner: Anish. Files: `manifest.json`, `src/shared/{constants,messages,store,site
 | `setTaskType` | `{ threadId, taskType }` | `{ ok }` |
 | `park` | `{ tabId }` | `{ ok }`: opens the overlay in the page, so call `window.close()` on the popup afterwards |
 | `wrapUp` | `{ tabId }` | not built yet (stretch) |
+| `voiceCommand` | `{ intent, args }` | `{ ok, say, data }`: sent by the voice side panel (`src/voice/panel.js`). `say` is the exact sentence to show and speak |
+| `setVoiceSettings` | `{ voiceEnabled?, wakeWord? }` | `{ ok, voiceEnabled, wakeWord }`; only these two booleans are written. Send `{}` to read them |
 
 ## Settings the engine reads (setup page writes them)
 `participant, workSites[], distractionSites[], awayThresholdMs (120000), nudgeDelayMin (5), debug, forceCard`.
+Voice (default off): `voiceEnabled, wakeWord`. Until the setup page has toggles, the voice panel writes them with `setVoiceSettings`.
 `forceCard` only works when `debug` is on. Debug sets a 10 s threshold and a 30 s nudge, and tags events `debug: true`.
 
 ## Additive fields (beyond the kickoff contract)
@@ -41,3 +44,12 @@ Owner: Anish. Files: `manifest.json`, `src/shared/{constants,messages,store,site
 `node test/engine.test.mjs` walks Gate steps 1–10 against a fake Chrome (`--verbose` shows the engine log).
 In real Chrome, the log is under chrome://extensions → Pickup → "service worker". Every line starts with `[Pickup]`.
 To check that nothing breaks when the worker stops, stop it mid-break from chrome://serviceworker-internals; all state is in storage.
+
+## Voice ("Hey Pickup")
+- Files: `src/voice/` (panel, intents, recognizer, enable tab, Phase 0 spike) and `src/sw/voice.js`.
+- Intents (`src/voice/intents.js`, rule-based): `whereWasI, resume, park, setNextStep, wrapUp, tidy, awayTime, today, stop, unknown`.
+- The engine builds every reply in `buildReply(intent, state)`: fixed templates, only recorded facts and the user's own words.
+- `resume` goes through `events.resume()`, so return detection and the coin flip are unchanged; the event gets `returnVia: 'voice'`.
+- A dictated next step is stored like a typed one, with `nextStepSource: 'spoken'` on the breadcrumb.
+- Speech recognition runs only with `processLocally = true` (on-device). `test/check-integration.mjs` FAILs any recogniser that skips it.
+- Alt+V (`toggle-voice`) opens the side panel (`chrome.sidePanel.open`, called first in the listener so the gesture counts) and starts push-to-talk via `chrome.storage.session.voiceShortcutAt`.

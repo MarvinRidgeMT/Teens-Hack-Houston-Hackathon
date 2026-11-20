@@ -5,7 +5,7 @@
 export const MSG = Object.freeze({
   // Service worker -> content script
   snapshot: 'snapshot',         // reply: { url, scrollY, highlight }
-  showCard: 'showCard',         // { eventId, threadName, awayMs, nextStep?, where: { scrollY, highlight }, tabCount }
+  showCard: 'showCard',         // { eventId, threadName, awayMs, nextStep?, nextStepSource?, where: { scrollY, highlight }, tabCount }
   armTimer: 'armTimer',         // { eventId } sent on every return, both conditions
   restoreScroll: 'restoreScroll', // { scrollY }
   openOverlay: 'openOverlay',   // { askTaskName: boolean }

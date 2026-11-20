@@ -179,6 +179,7 @@ export async function closeBreakOnReturn(tab, settings) {
       tabCount,
     };
     if (crumb && crumb.nextStep) card.nextStep = crumb.nextStep;
+    if (crumb && crumb.nextStep && crumb.nextStepSource) card.nextStepSource = crumb.nextStepSource; // 'spoken'
     await sendToTab(tab.id, card);
     await store.updateEvent(ev.id, { cardShown: true });
   }

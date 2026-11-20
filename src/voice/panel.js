@@ -96,7 +96,7 @@ async function speak(text) {
   const v = await pickVoice();
   if (!v) return;
   S.speaking = true;
-  if (S.rec && S.mode === 'wake') { try { S.rec.abort(); } catch { /* ended */ } } // don't hear ourselves
+  if (S.rec && S.mode === 'wake') { try { S.rec.abort(); } catch { /* ended */ } S.rec = null; } // don't hear ourselves
   render();
   await new Promise((resolve) => {
     const done = () => { clearTimeout(guard); resolve(); };
@@ -175,6 +175,7 @@ function startTalk({ oneShot }) {
   };
   rec.onend = () => {
     clearTimeout(S.talk.timer);
+    if (S.rec !== rec) return; // an older recogniser ending late
     S.rec = null;
     if (S.mode !== 'talk') return;
     S.mode = 'off';
@@ -258,6 +259,7 @@ function wakeSession() {
     if (FATAL.has(e.error)) { showReply(`Listening stopped: ${e.error}.`); S.mode = 'off'; refresh(); }
   };
   rec.onend = () => {
+    if (S.rec !== rec) return; // aborted for push-to-talk or speech: whoever replaced it owns S.rec
     S.rec = null;
     if (S.mode !== 'wake' || S.speaking) return;
     const lasted = performance.now() - S.wake.startedAt;

@@ -255,6 +255,22 @@ await step('voice: park on YouTube says it cannot park this page', async () => {
   sim.activate(doc); await flush();
 });
 
+await step('voice: a spoken next step reaches the card as nextStepSource spoken', async () => {
+  await voice('park', { nextStep: 'reread the intro' }); await flush();
+  advance(5000);
+  sim.activate(yt); await flush();
+  advance(3 * 60000);
+  const realRandom = Math.random; Math.random = () => 0.1; // pickup
+  sim.sent.length = 0;
+  sim.activate(doc); await flush();
+  Math.random = realRandom;
+  const card = sim.sentOfType('showCard').at(-1);
+  assert.equal(card.nextStep, 'reread the intro');
+  assert.equal(card.nextStepSource, 'spoken');
+  await sim.send({ type: 'parkNote', nextStep: 'typed one' }, doc); await flush();
+  assert.equal((await crumbs())[thread.id].nextStepSource, undefined, 'a typed step clears the spoken label');
+});
+
 await step('Alt+V (toggle-voice) opens the side panel in that window', async () => {
   sim.command('toggle-voice'); await flush();
   assert.deepEqual(chrome.sidePanel.opened.at(-1), { windowId: 1 });

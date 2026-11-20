@@ -24,3 +24,17 @@ Engine hardening on Thu Nov 19. **No message names or event fields changed.** A 
 - **Decision 7:** the next step stays until the next Alt+P. Changing it is one constant, `NEXT_STEP_CLEARS_ON_RETURN` in `src/shared/constants.js`.
 - **Tidy skips each window's visible tab** (collapsing it would change what that window shows). Default: keep it that way.
 - **Parking task B while a break for task A is open** replaces A's break, so A's break is not logged. Default: keep it that way (rare). Say so if stats needs it counted.
+
+## Voice (new, branch `voice`, not merged yet)
+
+"Hey Pickup, where was I?" in a side panel. Audio is recognised on the device only (`processLocally = true`); Pickup keeps no audio and no transcripts. Default off. Details: `src/sw/README.md` → Voice, results: `test/VOICE_SPIKE.md`.
+
+**Abhinav (popup, setup, stats)**
+1. Popup: add a "Talk to Pickup" button that calls `chrome.sidePanel.open({ windowId })` straight from the click (no `await` before it). Alt+V does the same.
+2. Setup page: two toggles, `voiceEnabled` and `wakeWord` (default off). Write them with `{ type: 'setVoiceSettings', voiceEnabled, wakeWord }`; the reply has the stored values.
+3. First-time voice setup is `src/voice/enable.html` (mic prompt + on-device model download). Link to it from the setup page. A side panel can't show the mic prompt itself.
+4. Stats and CSV: events can have `returnVia: 'voice'`; breadcrumbs can have `nextStepSource: 'spoken'`. Show both as columns.
+5. Video idea: a 15 s voice moment ("Hey Pickup, I'm back" → the essay comes back).
+
+**Sidd (content script)**
+1. Card: `showCard` can now carry `nextStepSource: 'spoken'`. When it does, label the next step "Your next step (you said this)". Otherwise nothing changes.
