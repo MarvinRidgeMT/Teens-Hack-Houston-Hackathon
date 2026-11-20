@@ -117,3 +117,21 @@ export async function launch({ profile, ext, restore = false }) {
 export function activateApp(bundleId) {
   execFileSync('osascript', ['-e', `tell application id "${bundleId}" to activate`]);
 }
+
+// Bring one process to the front by pid. Needed when another Chrome for Testing
+// (same bundle id, e.g. a second test run) is open: activating by bundle id could
+// pick that one. Falls back to the bundle id if System Events refuses.
+export function activatePid(pid, bundleId) {
+  try {
+    execFileSync('osascript', ['-e', `tell application "System Events" to set frontmost of (first process whose unix id is ${pid}) to true`]);
+  } catch { activateApp(bundleId); }
+}
+
+// Name and pid of the frontmost app.
+export function frontmost() {
+  try {
+    const out = execFileSync('osascript', ['-e', 'tell application "System Events" to set p to first application process whose frontmost is true', '-e', 'return (name of p) & "|" & (unix id of p)'], { encoding: 'utf8' }).trim();
+    const [name, pid] = out.split('|');
+    return { name, pid: Number(pid) };
+  } catch { return { name: '?', pid: 0 }; }
+}

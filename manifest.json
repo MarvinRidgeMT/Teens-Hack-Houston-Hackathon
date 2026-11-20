@@ -3,7 +3,7 @@
   "name": "Pickup",
   "version": "0.1.0",
   "description": "Undo the interruption, not the mistake. Saves your place when you leave your work and hands it back when you return.",
-  "minimum_chrome_version": "121",
+  "minimum_chrome_version": "123",
   "permissions": [
     "tabs",
     "tabGroups",

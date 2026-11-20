@@ -7,6 +7,9 @@ import { log } from './util.js';
 
 export async function scheduleNudge(openBreak, crumb, settings) {
   if (!openBreak || !openBreak.departed || !crumb || !crumb.nextStep) return;
+  // Wrapped up for the day: leaving now is not something to nudge about.
+  const wu = await store.getWrapUp();
+  if (wu && !wu.shown && openBreak.leftAt >= wu.at) { log('no nudge: wrapped up for the day'); return; }
   const delay = settings.debug ? DEBUG_NUDGE_DELAY_MIN : Math.max(0.5, Number(settings.nudgeDelayMin) || 5);
   await chrome.alarms.create(NUDGE_ALARM_PREFIX + openBreak.eventId, { delayInMinutes: delay });
   log('nudge scheduled in', delay, 'min');

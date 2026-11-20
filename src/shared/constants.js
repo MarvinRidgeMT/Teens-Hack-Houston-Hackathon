@@ -25,6 +25,7 @@ export const SESSION_KEYS = Object.freeze({
   lastNudgeDay: 'lastNudgeDay',
   breakHosts: 'breakHosts',                 // { [eventId]: host[] } distraction hostnames seen during a break, in order
   returnVia: 'returnVia',                   // { via, at } set just before Pickup itself activates the task tab
+  badgeFlashUntil: 'badgeFlashUntil',       // ms timestamp: a confirmation flash is showing until then
 
 });
 

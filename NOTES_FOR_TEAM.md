@@ -31,11 +31,15 @@ Everything below is **additive**. Code that ignores it keeps working. **The new 
 
 ### For Sidd
 
+**Must do: nothing.** Your current content script keeps working. **Worth 10 min:** the "(you picked this)" label. **Ignore if busy:** `startHere`.
+
 - **`showCard` has a new optional field `nextStepSource`** (Feature 3): `'typed'` or `'selected'`. When it's `'selected'`, label the line **"Your next step (you picked this)"** instead of "(you wrote this)". Missing means typed. The card must stay honest about where the line came from.
 
 - **Optional new message `startHere { threadName, nextStep?, nextStepSource?, wrappedAt }`** (Feature 2, stretch). Sent to the tab after the user clicks the morning "Start here" notification. If you have time: a card variant "Start here: <task> · Next: … · stopped yesterday at <time>" with one Resume button (Resume can just close it; the engine already resumed). Ignore it and nothing breaks; `check-integration` only WARNs.
 
 ### For Abhinav
+
+**Must do: nothing.** **Worth doing:** the four CSV columns (if we keep the fields), and "Back to task" / "Wrap up for today" popup buttons. **Ignore if busy:** the badge (automatic), `nextStepSource`.
 
 - **Four new event fields** (Feature 5). New columns for the CSV export. CSV import must accept older rows without them (treat missing as empty).
   - `awayMs`: exact milliseconds away (`returnedAt - leftAt`).

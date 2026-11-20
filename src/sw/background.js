@@ -52,9 +52,13 @@ chrome.storage.onChanged.addListener((changes, area) => {
 chrome.contextMenus.onClicked.addListener(safe('menuClick', menus.onMenuClicked));
 
 // ---------- signals ----------
-// User activity also checks for the next morning's "Start here" (Feature 2).
+// User activity also checks for the next morning's "Start here" (Feature 2). Its own
+// try, so a failure there never skips the signal handling that follows.
+async function startHere() {
+  try { await wrapup.checkStartHere(); } catch (e) { log('start here check failed', e); }
+}
 chrome.tabs.onActivated.addListener(safe('onActivated', async (info) => {
-  await wrapup.checkStartHere();
+  await startHere();
   await signals.handleActivated(info);
 }));
 
@@ -73,7 +77,7 @@ function scheduleSwitchCheck(at) {
 }
 chrome.windows.onFocusChanged.addListener(async (windowId) => {
   const r = await safe('onFocusChanged', async (id) => {
-    if (id !== chrome.windows.WINDOW_ID_NONE) await wrapup.checkStartHere();
+    if (id !== chrome.windows.WINDOW_ID_NONE) await startHere();
     return signals.handleFocusChanged(id);
   })(windowId);
   if (typeof r === 'number') scheduleFocusCheck(r);
@@ -81,7 +85,7 @@ chrome.windows.onFocusChanged.addListener(async (windowId) => {
 });
 
 chrome.idle.onStateChanged.addListener(safe('idle', async (state) => {
-  if (state === 'active') await wrapup.checkStartHere();
+  if (state === 'active') await startHere();
   await signals.handleIdle(state);
 }));
 
@@ -89,7 +93,8 @@ chrome.commands.onCommand.addListener(safe('command', async (command, tab) => {
   if (command === 'resume-task') { await events.resumeTask(); return; }
   if (command === 'wrap-up') {
     if (!tab) [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
-    await wrapup.wrapUp(tab, undefined, await store.getSettings());
+    const r = await wrapup.wrapUp(tab, undefined, await store.getSettings());
+    await badge.flashBadge(r.ok ? '✓' : '!');
     return;
   }
   if (command !== 'park-task') return;
@@ -99,7 +104,7 @@ chrome.commands.onCommand.addListener(safe('command', async (command, tab) => {
 
 // ---------- tabs & groups ----------
 chrome.tabs.onCreated.addListener(safe('onCreated', async (tab) => {
-  await wrapup.checkStartHere();
+  await startHere();
   if (tab.groupId != null && tab.groupId !== -1) await threads.onTabGroupChanged(tab);
 }));
 

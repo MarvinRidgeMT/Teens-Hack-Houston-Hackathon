@@ -137,6 +137,9 @@ export async function takeReturnVia(ttlMs) {
 export const getLastFocused = () => getSession(SESSION_KEYS.lastFocused, null);
 export const setLastFocused = (v) => setSession(SESSION_KEYS.lastFocused, v);
 
+export const getBadgeFlashUntil = () => getSession(SESSION_KEYS.badgeFlashUntil, 0);
+export const setBadgeFlashUntil = (v) => setSession(SESSION_KEYS.badgeFlashUntil, v);
+
 export const getPendingSwitch = () => getSession(SESSION_KEYS.pendingSwitch, null);
 export const setPendingSwitch = (v) => setSession(SESSION_KEYS.pendingSwitch, v);
 

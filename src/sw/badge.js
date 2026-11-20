@@ -34,6 +34,7 @@ export async function badgeState() {
 }
 
 export async function updateBadge() {
+  if ((await store.getBadgeFlashUntil()) > Date.now()) return; // a confirmation is showing; its timer redraws
   const s = await badgeState();
   await draw(s.text, s.color, s.title);
 }
@@ -42,6 +43,9 @@ export async function updateBadge() {
 // worker stops first, the next storage change redraws it anyway.
 export async function flashBadge(text, ms = BADGE_FLASH_MS) {
   const color = BADGE.flash[text] || BADGE.flash.default;
+  await store.setBadgeFlashUntil(Date.now() + ms);
   await draw(text, color, `Pickup: ${BADGE.flashTitle[text] || text}`);
-  setTimeout(() => { store.serial(updateBadge).catch(() => {}); }, ms);
+  setTimeout(() => {
+    store.serial(async () => { await store.setBadgeFlashUntil(0); await updateBadge(); }).catch(() => {});
+  }, ms);
 }

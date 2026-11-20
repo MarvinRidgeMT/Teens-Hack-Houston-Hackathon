@@ -867,6 +867,7 @@ let nb; // a neutral tab: activating it is user activity but never a break
 const startHereShown = () => sim.notifications.filter((n) => n.id.startsWith('starthere:'));
 await step('F2: wrap-up saves tomorrow\'s start and closes an open break without logging it', async () => {
   await settle();
+  await sleep(2100); await flush(); // let the last check's ✓ flash end
   nb = sim.openTab('https://example.com/notes', { active: false }); await flush();
   sim.setPage(wikiA, 700, 'evaporation rates');
   await sim.send({ type: 'parkNote', nextStep: 'Old step' }, wikiA); await flush();
@@ -946,6 +947,77 @@ await step('F2: with debug on, Start here comes 60 s after wrap-up (demo path)',
   assert.equal(startHereShown().length, before + 1);
   assert.equal(startHereShown().at(-1).message, 'Next: Write the conclusion', 'kept the existing next step');
   await setSettings({ debug: false });
+});
+
+await step('F2: with debug on, "Pretend it\'s tomorrow" (an earlier dayKey) still shows Start here at once', async () => {
+  await settle();
+  await setSettings({ debug: true });
+  await sim.send({ type: 'wrapUp', tabId: wikiA }); await flush();
+  const before = startHereShown().length;
+  const w = await wrapNow();
+  await chrome.storage.local.set({ wrapUp: { ...w, dayKey: '2000-01-01' } }); await flush();
+  sim.activate(nb); await flush();
+  assert.equal(startHereShown().length, before + 1);
+  await setSettings({ debug: false });
+  sim.activate(wikiA); await flush();
+});
+
+await step('Review F1: wrap up, then leave: no nudge at night, and the next morning logs no event and draws no card', async () => {
+  await settle();
+  await sim.send({ type: 'wrapUp', tabId: wikiA, nextStep: 'Conclusion' }); await flush();
+  const n = (await events()).length;
+  sim.activate(yt); await flush(); // left for the night
+  const b = await ob();
+  assert.ok(b && b.departed, 'a break opened when leaving');
+  assert.equal(sim.alarms.has('nudge:' + b.eventId), false, 'no nudge after wrapping up');
+  advance(12 * 3600000);
+  sim.sent.length = 0;
+  chrome.notifications.onClicked.fire('starthere:' + thread.id); await flush(); // not shown yet: the click is a no-op path
+  sim.activate(nb); await flush(); // first activity of the morning
+  assert.equal(startHereShown().at(-1).id, 'starthere:' + thread.id);
+  assert.equal(await ob(), null, 'the overnight break was dropped');
+  chrome.notifications.onClicked.fire('starthere:' + thread.id); await flush();
+  assert.equal(sim.tabs.get(wikiA).active, true);
+  assert.equal((await events()).length, n, 'no event');
+  assert.equal(sim.sentOfType('showCard').length, 0, 'no return card');
+});
+
+await step('Review F1: wrap up, then lock the screen: unlocking the next morning logs no event', async () => {
+  await settle();
+  await sim.send({ type: 'wrapUp', tabId: wikiA }); await flush();
+  const n = (await events()).length;
+  sim.idle('locked'); await flush();
+  const b = await ob();
+  assert.ok(b, 'idle break opened');
+  assert.equal(sim.alarms.has('nudge:' + b.eventId), false, 'no nudge');
+  advance(24 * 3600000); // surely a later day, whatever the fake clock says
+  sim.idle('active'); await flush();
+  assert.equal(await ob(), null);
+  assert.equal((await events()).length, n);
+});
+
+await step('Review F2: the ✓ flash survives the thread write on a first right-click', async () => {
+  await settle();
+  const t = sim.openTab('https://en.wikipedia.org/wiki/Monsoon'); await flush();
+  clickMenu(t, 'Monsoon timing'); await flush();
+  await sim.send({ type: 'setTaskType', threadId: thread.id, taskType: 'reading' }); // a threads write during the flash
+  await flush(); await sleep(20); await flush();
+  assert.equal(sim.badge.text, '✓');
+  await sleep(2200); await flush();
+  assert.notEqual(sim.badge.text, '✓', 'flash ends');
+  sim.closeTab(t); await flush();
+});
+
+await step('Review F4: resumeTask for a task with no breadcrumb never jumps to another task', async () => {
+  await settle();
+  const t = sim.openTab('https://en.wikipedia.org/wiki/Hail', { active: false }); await flush();
+  const other = (await sim.send({ type: 'startTask', tabId: t, name: 'Hail Notes' })).thread; await flush();
+  sim.activate(wikiA); await flush();
+  const r = await sim.send({ type: 'resumeTask', threadId: other.id }); await flush();
+  if (r.ok) assert.equal(sim.tabs.get(t).active, true, 'went to the Hail tab, not another task');
+  else assert.equal(sim.tabs.get(wikiA).active, true);
+  sim.closeTab(t); await flush();
+  sim.activate(wikiA); await flush();
 });
 
 await step('F2: a new wrap-up replaces the old one; the wrap-up command works on the active tab', async () => {

@@ -293,10 +293,10 @@ export async function resumeTask(threadId) {
     const r = await resume(id);
     return { ...r, threadId: id };
   }
-  // No breadcrumb yet (a task that never had a break): go to its last work tab.
-  const lw = await store.getAnyLastWork();
-  const tab = lw && (await getTab(lw.tabId));
-  if (!tab) { await flashBadge('?'); return { ok: false, error: 'no task to go back to' }; }
+  // No breadcrumb yet: go to a tab of this task (never another task's tab).
+  const all = await chrome.tabs.query({});
+  const tab = all.find((t) => tabInThread(t, thread, null) && !isDistractionUrl(tabUrl(t), settings)) || null;
+  if (!tab) { await flashBadge('?'); return { ok: false, error: 'no tab of this task is open' }; }
   await chrome.windows.update(tab.windowId, { focused: true });
   await chrome.tabs.update(tab.id, { active: true });
   return { ok: true, threadId: id, tabId: tab.id };

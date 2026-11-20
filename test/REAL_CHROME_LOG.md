@@ -94,4 +94,8 @@ Then open `inspect.html` in its own window, plus the service worker console.
 | 1 | Open a Google Doc. On the dev setup page click Refresh list, pick the Doc, click Start task | Doc is in a tab group "Climate Essay" | | |
 | 6–8 on the Doc | Park with a note, switch to YouTube 15 s, come back, press Enter, type in the Doc | Breadcrumb URL is the Doc URL (not `about:blank`), card drawn once, typing in the Doc records first interaction | | |
 | Popup | Click the Pickup toolbar icon, leave the popup open 20 s, close it by clicking the page | No open break, no new event | | |
+| Alt+R key | `chrome://extensions/shortcuts`: Pickup "Jump back to your task" shows ⌥R. On YouTube during a break, press ⌥R | Back on the task tab; event `returnVia: resumeKey` in the inspector | | |
+| Right-click | On Wikipedia select a sentence → right-click → "Make this my next step" | Badge flashes ✓; inspector breadcrumb next step = the sentence, source `selected` | | |
+| Right-click, not work | On YouTube select text → right-click | No "Make this my next step" item | | |
+| Right-click, Docs | In the Google Doc select text → right-click | If the item shows and nothing saves, the badge flashes `!` (Docs hides selection text) | | |
 | Load | Load unpacked on the **repo folder** (no test-build changes): note any error about the missing `src/pages/popup.html` / `setup.html` | | | |

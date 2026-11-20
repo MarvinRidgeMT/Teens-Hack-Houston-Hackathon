@@ -20,7 +20,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
-import { buildTestCopy, launch, activateApp, sleep, CFT_BUNDLE } from './cdp-driver.mjs';
+import { buildTestCopy, launch, activateApp, activatePid, frontmost, sleep, CFT_BUNDLE } from './cdp-driver.mjs';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const SCRATCH = process.env.PICKUP_SCRATCH || path.join(os.tmpdir(), 'pickup-real-chrome');
@@ -45,8 +45,11 @@ const popupProbes = [];
 const promptAnswers = [];
 const dialogsSeen = [];
 
+// "Google Chrome for Testing" only when it is *this* run's browser; another copy is named as such.
 function frontmostApp() {
-  try { return execFileSync('osascript', ['-e', 'tell application "System Events" to get name of first application process whose frontmost is true'], { encoding: 'utf8' }).trim(); } catch { return '?'; }
+  const f = frontmost();
+  if (f.name === 'Google Chrome for Testing' && proc && f.pid !== proc.pid) return `another Chrome for Testing (pid ${f.pid})`;
+  return f.name;
 }
 // Window focus losses the driver did not cause (another app took the screen).
 function stolenSince(idx) {
@@ -203,7 +206,13 @@ async function stubAlive(tabId) {
   return waitFor(() => ctl(`try { return !!(await chrome.tabs.sendMessage(${tabId}, { type: 'snapshot' }, { frameId: 0 })); } catch { return false; }`), 15000, 400);
 }
 async function focusedWindow() { return ctl(`const w = await chrome.windows.getLastFocused(); return { id: w.id, focused: w.focused };`); }
-async function bringFront() { mark('osascript: activate Chrome for Testing'); activateApp(CFT_BUNDLE); return waitFor(async () => (await focusedWindow()).focused, 5000, 200); }
+async function bringFront() {
+  mark('osascript: activate Chrome for Testing');
+  activatePid(proc.pid, CFT_BUNDLE);
+  const ok = await waitFor(async () => (await focusedWindow()).focused, 5000, 200);
+  if (!ok) mark(`bringFront failed; frontmost app: ${frontmostApp()}`);
+  return ok;
+}
 function toFinder() { mark('osascript: activate Finder'); activateApp('com.apple.finder'); }
 // Start a step from a known state: test Chrome in front, no break open (return to the work tab if one is).
 async function clean(workTab) {

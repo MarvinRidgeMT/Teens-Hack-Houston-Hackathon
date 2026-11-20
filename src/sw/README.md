@@ -47,9 +47,10 @@ Owner: Anish. Files: `manifest.json`, `src/shared/{constants,messages,store,site
 ## Wrap up → "Start here" (Feature 2)
 - `wrapUp` saves a breadcrumb with `signal: 'wrap'` (keeps the next step unless a new one is given) and stores `wrapUp = { threadId, tabId, url, scrollY, highlight, nextStep?, nextStepSource?, at, dayKey, shown }` in `chrome.storage.local`. A new wrap-up replaces the old one.
 - **Any open break is closed without an event** and its nudge is cancelled: wrapping up is not an interruption.
+- **After a wrap-up, leaving for the night opens no nudge**, and a break still open when Start here becomes due (the night) is dropped unlogged. A break that opened and closed the same evening after a wrap-up is still logged.
 - `dayKey` is the local date of `now − 4 h`, so 1 AM still counts as the night before.
 - On the first activity (tab activated or created, window focused, back from idle) on a later `dayKey`, **one** notification `starthere:<threadId>`: "Start here: <task>" / "Next: <step>" (or "Pick up where you stopped yesterday"). Then `shown: true`, never again.
-- **Debug:** it fires on the first activity 60 s after the wrap-up instead (for filming).
+- **Debug:** it also fires on the first activity 60 s after the wrap-up (for filming). A changed `dayKey` ("Pretend it's tomorrow") always counts.
 - Clicking it runs `resume()` and sends the tab the **optional** message `startHere { threadName, nextStep?, nextStepSource?, wrappedAt }`. No event is created: no break was open.
 - The badge shows `☾` until Start here is shown.
 

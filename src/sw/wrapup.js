@@ -43,6 +43,14 @@ export async function wrapUp(tab, nextStep, settings) {
   return { ok: true, wrapUp: wu };
 }
 
+// The task's current next step (the user may have changed it after wrapping up),
+// else the one saved at wrap-up. Notification and card use the same one.
+async function nextStepFor(wu) {
+  const crumb = await store.getBreadcrumb(wu.threadId);
+  if (crumb && crumb.nextStep) return { nextStep: crumb.nextStep, nextStepSource: crumb.nextStepSource };
+  return { nextStep: wu.nextStep, nextStepSource: wu.nextStepSource };
+}
+
 // Called on user activity (tab activated or created, window focused, back from idle).
 // Debug: 60 s after the wrap-up instead of the next day, for the demo video.
 export async function checkStartHere() {
@@ -50,16 +58,26 @@ export async function checkStartHere() {
   if (!wu || wu.shown) return;
   const settings = await store.getSettings();
   const now = Date.now();
-  const due = settings.debug ? now - wu.at >= START_HERE_DEBUG_MS : dayKey(now) > wu.dayKey;
+  // A later day always counts (also "Pretend it's tomorrow" in debug); debug adds the 60 s path.
+  const due = dayKey(now) > wu.dayKey || (settings.debug && now - wu.at >= START_HERE_DEBUG_MS);
   if (!due) return;
   await store.setWrapUp({ ...wu, shown: true, shownAt: now }); // first, so it can never show twice
+  // A break that began after the wrap-up is the night, not an interruption: drop it unlogged.
+  const ob = await store.getOpenBreak();
+  if (ob && ob.leftAt >= wu.at) {
+    await store.setOpenBreak(null);
+    await cancelNudge(ob.eventId);
+    try { await chrome.notifications.clear(ob.eventId); } catch { /* none */ }
+    log('dropped the break left open after wrap-up (not logged)');
+  }
   const thread = await store.getThread(wu.threadId);
   if (!thread) return;
+  const step = await nextStepFor(wu);
   await chrome.notifications.create(START_HERE_PREFIX + wu.threadId, {
     type: 'basic',
     iconUrl: chrome.runtime.getURL('assets/icon128.png'),
     title: `Start here: ${thread.name}`,
-    message: wu.nextStep ? `Next: ${wu.nextStep}` : 'Pick up where you stopped yesterday',
+    message: step.nextStep ? `Next: ${step.nextStep}` : 'Pick up where you stopped yesterday',
     priority: 0,
   });
   log('start here shown', thread.name);
@@ -73,9 +91,9 @@ export async function onStartHereClicked(threadId) {
   const r = await resume(threadId);
   if (!r.ok || !r.tabId) return r;
   // Optional message: a content script without a handler just ignores it.
-  const crumb = await store.getBreadcrumb(threadId);
+  const step = await nextStepFor({ ...(wu && wu.threadId === threadId ? wu : {}), threadId });
   const msg = { type: MSG.startHere, threadName: thread.name, wrappedAt: wu && wu.threadId === threadId ? wu.at : null };
-  if (crumb && crumb.nextStep) { msg.nextStep = crumb.nextStep; msg.nextStepSource = crumb.nextStepSource || 'typed'; }
+  if (step.nextStep) { msg.nextStep = step.nextStep; msg.nextStepSource = step.nextStepSource || 'typed'; }
   await sendToTab(r.tabId, msg);
   return r;
 }
