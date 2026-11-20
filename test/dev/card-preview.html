@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Pickup UI preview (dev only)</title>
+<style>
+  body { font: 17px/1.6 Georgia, serif; margin: 0; background: #fafaf7; color: #222; }
+  .controls { position: sticky; top: 0; background: #222; color: #fff; padding: 10px 14px;
+    font: 14px system-ui, sans-serif; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; z-index: 1; }
+  .controls button { font: inherit; padding: 6px 10px; border-radius: 6px; border: 0; cursor: pointer; }
+  #log { margin-left: auto; font-family: ui-monospace, monospace; color: #9fe8dc; }
+  article { max-width: 680px; margin: 40px auto; padding: 0 20px; }
+  /* hostile page CSS: the card must ignore all of this */
+  button { text-transform: uppercase !important; }
+  p { color: purple; letter-spacing: 2px; }
+  * { box-sizing: content-box; }
+</style>
+</head>
+<body>
+<div class="controls">
+  <strong>Pickup preview</strong>
+  <button data-demo="full">Card: next step + highlight</button>
+  <button data-demo="nonext">Card: no next step</button>
+  <button data-demo="bare">Card: no highlight, 1 tab</button>
+  <button data-demo="long">Card: long text, 2 h away</button>
+  <button data-demo="ov1">Overlay: first use</button>
+  <button data-demo="ov2">Overlay: next step only</button>
+  <span id="log">—</span>
+</div>
+<article>
+  <h1>Climate Essay — draft</h1>
+  <p>Paragraph 1. Droughts in the region have grown longer over the past two decades, and rainfall below average since 2023 has strained reservoirs across the state.</p>
+  <p>Paragraph 2. Farmers have responded by switching to drought-tolerant crops, though the switch is costly and slow.</p>
+  <p>Paragraph 3. This page has deliberately ugly CSS (purple text, uppercase buttons) to prove the Shadow DOM keeps the card clean.</p>
+</article>
+<script src="../../src/vendor/motion.js"></script>
+<script src="../../src/vendor/anime.umd.min.js"></script>
+<script src="../../src/content/card.js"></script>
+<script src="../../src/content/overlay.js"></script>
+<script>
+  const log = (s) => (document.getElementById('log').textContent = s);
+  const base = { eventId: 'evt_demo', threadName: 'Climate Essay', awayMs: 14 * 60000, tabCount: 4,
+    where: { scrollY: 900, highlight: 'rainfall below average since 2023' } };
+  const demos = {
+    full: { ...base, nextStep: 'Find a source for the drought statistic' },
+    nonext: { ...base },
+    bare: { ...base, tabCount: 1, awayMs: 3 * 60000, where: { scrollY: 0, highlight: '' } },
+    long: { ...base, awayMs: 125 * 60000, threadName: 'AP US History — Unit 4 DBQ on the Reconstruction Amendments',
+      nextStep: 'Rewrite the thesis so it answers the prompt directly, then add the Freedmen’s Bureau document as evidence in body paragraph two',
+      where: { scrollY: 2000, highlight: 'x'.repeat(0) + 'The Fourteenth Amendment granted citizenship to all persons born or naturalized in the United States, including formerly enslaved people, and guaranteed all citizens equal protection of the laws, a clause that would become one of the most litigated in American history and the basis for' } },
+  };
+  // first-interaction check: card clicks/keys must NOT count
+  ['keydown', 'mousedown', 'wheel'].forEach((t) =>
+    window.addEventListener(t, (e) => { if (!PickupUI.isOwnEvent(e)) log('page interaction: ' + t); }, true));
+
+  document.querySelector('.controls').addEventListener('click', (e) => {
+    const d = e.target.dataset.demo;
+    if (!d) return;
+    e.stopPropagation();
+    if (d === 'ov1' || d === 'ov2') {
+      PickupUI.openOverlay({ askTaskName: d === 'ov1',
+        onSave: (v) => log('parkNote ' + JSON.stringify(v)), onClose: () => log('overlay closed') });
+    } else {
+      PickupUI.showCard(demos[d], (a, id) => log('cardAction ' + a + ' ' + id));
+    }
+  });
+  const q = new URLSearchParams(location.search).get('demo');
+  if (q) setTimeout(() => document.querySelector(`[data-demo="${q}"]`).click(), 50);
+</script>
+</body>
+</html>

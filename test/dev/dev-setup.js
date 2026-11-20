@@ -4,6 +4,14 @@
 
 const STUB_ID = 'pickup-dev-stub';
 const STUB_FILE = 'test/dev/stub-content.js';
+const REAL_FILES = [
+  'src/vendor/motion.js',
+  'src/vendor/anime.umd.min.js',
+  'src/content/card.js',
+  'src/content/overlay.js',
+  'src/content/docs.js',
+  'src/content/content.js',
+];
 const WORK_SITES = ['docs.google.com', 'wikipedia.org'];
 // matchOriginAsFallback needs every pattern's path to be "/*".
 const MATCHES = ['*://docs.google.com/*', '*://wikipedia.org/*', '*://*.wikipedia.org/*'];
@@ -31,22 +39,25 @@ $('apply').addEventListener('click', async () => {
     await chrome.storage.local.set({ settings });
     out('Settings saved: ' + JSON.stringify(settings));
 
+    // Read after the permission prompt resolves; the request above is still the first call.
+    const files = $('useReal').checked ? REAL_FILES : [STUB_FILE];
+
     await unregisterStub();
     await chrome.scripting.registerContentScripts([{
       id: STUB_ID,
       matches: MATCHES,
-      js: [STUB_FILE],
+      js: files,
       allFrames: true,
       matchOriginAsFallback: true,
       runAt: 'document_idle',
     }]);
-    out('Registered ' + STUB_FILE + ' (allFrames, matchOriginAsFallback).');
+    out('Registered ' + files.join(', ') + ' (allFrames, matchOriginAsFallback).');
 
     const tabs = await chrome.tabs.query({ url: MATCHES });
     let injected = 0;
     for (const tab of tabs) {
       try {
-        await chrome.scripting.executeScript({ target: { tabId: tab.id, allFrames: true }, files: [STUB_FILE] });
+        await chrome.scripting.executeScript({ target: { tabId: tab.id, allFrames: true }, files });
         injected++;
       } catch (e) {
         out(`Could not inject into tab ${tab.id} (${tab.url}): ${e.message}`);

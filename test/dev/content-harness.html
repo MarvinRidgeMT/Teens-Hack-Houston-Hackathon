@@ -1,0 +1,22 @@
+<!doctype html><html><head><meta charset="utf-8"><title>content.js harness</title></head>
+<body style="font:16px Georgia;margin:40px">
+<h1>Harness</h1><p id="t">Droughts in the region have grown longer over the past two decades.</p>
+<div style="height:4000px"></div>
+<script>
+  // fake chrome.runtime: records what content.js sends, lets the test deliver engine messages
+  window.sent = [];
+  let listener = null;
+  window.chrome = { runtime: {
+    sendMessage(m, cb) { sent.push(m); cb && cb(); },
+    onMessage: { addListener(fn) { listener = fn; } },
+    lastError: undefined,
+  }};
+  window.engine = (msg) => new Promise((res) => { let replied = null; listener(msg, {}, (r) => { replied = r; }); res(replied); });
+</script>
+<script src="../../src/vendor/motion.js"></script>
+<script src="../../src/vendor/anime.umd.min.js"></script>
+<script src="../../src/content/card.js"></script>
+<script src="../../src/content/overlay.js"></script>
+<script src="../../src/content/docs.js"></script>
+<script src="../../src/content/content.js"></script>
+</body></html>
