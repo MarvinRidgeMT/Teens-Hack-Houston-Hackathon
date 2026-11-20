@@ -142,6 +142,7 @@ export function makeChrome({ now }) {
       async clear() { return true; },
     },
     commands: { onCommand: evt() },
+    sidePanel: { opened: [], async open(o) { c.sidePanel.opened.push(clone(o)); } },
   };
 
   function focusChrome(id = 1) {

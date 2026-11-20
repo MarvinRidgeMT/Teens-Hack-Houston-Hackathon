@@ -1,0 +1,43 @@
+:root {
+  color-scheme: light dark;
+  --fg: #1d1d1f; --muted: #5f6368; --bg: #ffffff; --line: #d0d4d9;
+  --accent: #0b6e79; --accent-fg: #ffffff; --live: #b3261e; --focus: #1a73e8;
+  font: 15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --fg: #e8eaed; --muted: #a8adb3; --bg: #202124; --line: #3c4043; --accent: #5fc4cf; --accent-fg: #0b1f22; --live: #f28b82; --focus: #8ab4f8; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); }
+main { padding: 16px; max-width: 480px; }
+h1 { font-size: 18px; margin: 0 0 4px; }
+.status { font-weight: 600; margin: 0 0 12px; }
+.status::before { content: "\25CB  "; }
+.status[data-state="listening"]::before { content: "\25CF  "; color: var(--live); }
+.status[data-state="speaking"]::before { content: "\25B6  "; }
+.setup { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; }
+.setup p { margin: 0 0 8px; }
+button { font: inherit; color: inherit; }
+button:focus-visible, input:focus-visible, summary:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+#btnSetup { background: var(--accent); color: var(--accent-fg); border: 0; border-radius: 6px; padding: 6px 14px; cursor: pointer; }
+.mic {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; min-height: 72px; margin: 4px 0 6px; padding: 12px;
+  border: 2px solid var(--accent); border-radius: 14px; background: transparent;
+  font-size: 18px; font-weight: 600; cursor: pointer; user-select: none; touch-action: none;
+}
+.mic[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg); }
+.mic:disabled { opacity: 0.45; cursor: not-allowed; }
+.mic-icon { font-size: 24px; }
+.help { color: var(--muted); font-size: 13px; margin: 0 0 12px; }
+.switch { display: flex; gap: 8px; align-items: center; margin: 0 0 14px; }
+.switch input { width: 18px; height: 18px; }
+.talk { border-top: 1px solid var(--line); padding-top: 8px; }
+.label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; margin: 8px 0 2px; }
+.heard { font-style: italic; margin: 0; min-height: 1.45em; }
+.reply { font-size: 17px; margin: 0; }
+.tips { margin-top: 14px; color: var(--muted); }
+.tips ul { margin: 6px 0 0; padding-left: 20px; }
+.privacy { color: var(--muted); font-size: 12px; margin-top: 14px; }
+.footer { display: flex; gap: 14px; }
+.link { background: none; border: 0; padding: 0; color: var(--muted); text-decoration: underline; cursor: pointer; font-size: 12px; }

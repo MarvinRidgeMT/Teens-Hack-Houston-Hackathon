@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Talk to Pickup</title>
+  <link rel="stylesheet" href="panel.css">
+</head>
+<body>
+  <main>
+    <h1>Talk to Pickup</h1>
+    <p id="status" class="status" role="status">Off</p>
+
+    <section id="setup" class="setup" hidden>
+      <p id="setupText"></p>
+      <button id="btnSetup" type="button">Set up voice</button>
+    </section>
+
+    <button id="mic" class="mic" type="button" aria-pressed="false" aria-describedby="micHelp">
+      <span class="mic-icon" aria-hidden="true">&#127908;</span>
+      <span id="micLabel">Hold to talk</span>
+    </button>
+    <p id="micHelp" class="help">Hold the button (or Space) while you talk. Click once to say one thing. Esc stops.</p>
+
+    <label class="switch">
+      <input id="wake" type="checkbox">
+      <span>Listen for "Hey Pickup"</span>
+    </label>
+
+    <section class="talk" aria-label="Conversation">
+      <p class="label">You said</p>
+      <p id="heard" class="heard">&nbsp;</p>
+      <p class="label">Pickup</p>
+      <p id="reply" class="reply" aria-live="polite">Try: "Where was I?"</p>
+    </section>
+
+    <details class="tips">
+      <summary>What you can say</summary>
+      <ul>
+        <li>"Where was I?"</li>
+        <li>"Take me back" or "I'm back"</li>
+        <li>"Park it, next step ..." or "I'm taking a break"</li>
+        <li>"My next step is ..."</li>
+        <li>"How long was I away?" / "How am I doing?"</li>
+        <li>"Tidy up" / "Wrap up"</li>
+        <li>"Stop listening"</li>
+      </ul>
+    </details>
+
+    <p class="privacy">Speech is recognised on this device. Pickup keeps no audio and no transcripts, only a next step you dictate.</p>
+    <p class="footer">
+      <button id="btnOff" type="button" class="link">Turn voice off</button>
+      <button id="btnDiag" type="button" class="link">Voice diagnostics</button>
+    </p>
+  </main>
+  <script src="panel.js" type="module"></script>
+</body>
+</html>

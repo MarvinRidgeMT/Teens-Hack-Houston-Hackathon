@@ -10,6 +10,7 @@ import * as signals from './signals.js';
 import * as threads from './threads.js';
 import * as events from './events.js';
 import * as nudge from './nudge.js';
+import * as voice from './voice.js';
 import { getTab, tabUrl, log } from './util.js';
 
 // Every handler: one at a time, and only after thread group ids were checked for
@@ -65,6 +66,16 @@ chrome.commands.onCommand.addListener(safe('command', async (command, tab) => {
   if (!tab) [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
   await signals.requestPark(tab);
 }));
+
+// Alt+V "Talk to Pickup": open the voice side panel. sidePanel.open needs the user
+// gesture, so it is called first, with nothing awaited before it (not via safe()).
+// The panel starts push-to-talk when it sees voiceShortcutAt.
+chrome.commands.onCommand.addListener((command, tab) => {
+  if (command !== 'toggle-voice') return;
+  if (!tab || tab.windowId == null) { log('toggle-voice: no tab'); return; }
+  chrome.sidePanel.open({ windowId: tab.windowId }).catch((e) => log('sidePanel.open failed', e));
+  chrome.storage.session.set({ voiceShortcutAt: Date.now() }).catch(() => {});
+});
 
 // ---------- tabs & groups ----------
 chrome.tabs.onCreated.addListener(safe('onCreated', async (tab) => {
@@ -154,6 +165,10 @@ async function route(msg, sender) {
       return signals.requestPark(await getTab(msg.tabId));
     case MSG.wrapUp:
       return { ok: false, error: 'Wrap up is not built yet (stretch)' };
+    case MSG.voiceCommand:
+      return voice.handleVoiceCommand(msg, settings);
+    case MSG.setVoiceSettings:
+      return voice.setVoiceSettings(msg);
     default:
       return undefined;
   }

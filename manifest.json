@@ -11,7 +11,9 @@
     "alarms",
     "notifications",
     "storage",
-    "scripting"
+    "scripting",
+    "sidePanel",
+    "tts"
   ],
   "optional_host_permissions": ["http://*/*", "https://*/*"],
   "background": {
@@ -29,6 +31,7 @@
     }
   },
   "options_page": "src/pages/setup.html",
+  "side_panel": { "default_path": "src/voice/panel.html" },
   "icons": {
     "16": "assets/icon16.png",
     "32": "assets/icon32.png",
@@ -39,6 +42,10 @@
     "park-task": {
       "suggested_key": { "default": "Alt+P" },
       "description": "Park this task with an optional next step"
+    },
+    "toggle-voice": {
+      "suggested_key": { "default": "Alt+V" },
+      "description": "Talk to Pickup"
     }
   }
 }

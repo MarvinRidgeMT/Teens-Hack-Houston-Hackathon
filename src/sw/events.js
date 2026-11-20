@@ -37,7 +37,7 @@ export async function snapshot(tab, settings) {
   return { url, scrollY: 0, highlight: '', live: false };
 }
 
-async function writeBreadcrumb({ thread, tab, snap, signal, leftAt, nextStep }) {
+async function writeBreadcrumb({ thread, tab, snap, signal, leftAt, nextStep, nextStepSource }) {
   const prev = await store.getBreadcrumb(thread.id);
   const crumb = {
     threadId: thread.id,
@@ -52,6 +52,9 @@ async function writeBreadcrumb({ thread, tab, snap, signal, leftAt, nextStep }) 
   // The next step is the user's own words: keep it until they write a new one.
   const step = nextStep !== undefined ? nextStep : prev && prev.nextStep;
   if (step) crumb.nextStep = cap(step, HIGHLIGHT_MAX);
+  // 'spoken' when dictated to the voice panel (STUB field until main's nextStepSource lands).
+  const source = nextStep !== undefined ? nextStepSource : prev && prev.nextStepSource;
+  if (step && source) crumb.nextStepSource = source;
   await store.putBreadcrumb(crumb);
   return crumb;
 }
@@ -87,13 +90,13 @@ export async function openBreakFor(workTab, signal, leftAt, settings, { departed
 
 // Alt+P with the overlay answered (or popup Park). The break starts when the
 // user actually leaves, so time spent working after parking is not "away".
-export async function park(tab, nextStep, settings) {
+export async function park(tab, nextStep, settings, { nextStepSource } = {}) {
   const thread = await ensureThreadForTab(tab, settings);
   if (!thread) return null;
   const snap = await snapshot(tab, settings);
   const now = Date.now();
   const step = String(nextStep || '').trim();
-  await writeBreadcrumb({ thread, tab, snap, signal: 'park', leftAt: now, nextStep: step || undefined });
+  await writeBreadcrumb({ thread, tab, snap, signal: 'park', leftAt: now, nextStep: step || undefined, nextStepSource: step ? nextStepSource : undefined });
   const prev = await store.getOpenBreak();
   if (prev) await cancelNudge(prev.eventId);
   const ob = { eventId: newId('ev'), threadId: thread.id, tabId: tab.id, leftAt: now, signal: 'park', departed: false, windowId: tab.windowId, parkedAt: now };
@@ -154,6 +157,8 @@ export async function closeBreakOnReturn(tab, settings) {
     debug: !!settings.debug,
     cardShown: false, // additive: was a card actually drawn (pickup but no content script => false)
   };
+  const via = await store.takeReturnVia(); // STUB for main's Feature 5
+  if (via) ev.returnVia = via;
   await store.addEvent(ev);
 
   // Is Sidd's content script in the tab we came back to? (snapshot always replies)

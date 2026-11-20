@@ -4,6 +4,7 @@
 //   node test/check-integration.mjs                       # the real tree
 //   node test/check-integration.mjs --content test/dev    # point at another folder
 //   node test/check-integration.mjs --pages test/dev
+//   node test/check-integration.mjs --src /tmp/fixture    # repo-wide rules on another folder
 //
 // FAIL = breaks the contract or a product rule (exit code 1). WARN = worth a look.
 // It reads source text, so it can miss things a real run would show: it never replaces the Gate test.
@@ -16,6 +17,7 @@ const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..')
 const arg = (name, def) => { const i = process.argv.indexOf(name); return i > 0 ? process.argv[i + 1] : def; };
 const CONTENT_DIR = path.resolve(ROOT, arg('--content', 'src/content'));
 const PAGES_DIR = path.resolve(ROOT, arg('--pages', 'src/pages'));
+const SRC_DIR = path.resolve(ROOT, arg('--src', 'src')); // repo-wide rules; a test points it at a fixture
 
 const results = [];
 const fail = (area, msg) => results.push(['FAIL', area, msg]);
@@ -48,6 +50,7 @@ const manifest = JSON.parse(read(path.join(ROOT, 'manifest.json')));
     manifest.background && manifest.background.service_worker,
     manifest.action && manifest.action.default_popup,
     manifest.options_page,
+    manifest.side_panel && manifest.side_panel.default_path,
     ...Object.values(manifest.icons || {}),
     ...Object.values((manifest.action && manifest.action.default_icon) || {}),
   ].filter(Boolean);
@@ -55,7 +58,7 @@ const manifest = JSON.parse(read(path.join(ROOT, 'manifest.json')));
     if (fs.existsSync(path.join(ROOT, r))) pass('manifest', `${r} exists`);
     else fail('manifest', `${r} is referenced in manifest.json but missing (not landed yet?)`);
   }
-  const expected = ['tabs', 'tabGroups', 'idle', 'alarms', 'notifications', 'storage', 'scripting'];
+  const expected = ['tabs', 'tabGroups', 'idle', 'alarms', 'notifications', 'storage', 'scripting', 'sidePanel', 'tts'];
   const extra = (manifest.permissions || []).filter((p) => !expected.includes(p));
   if (extra.length) warn('manifest', `permissions beyond the plan: ${extra.join(', ')}`);
   if (manifest.host_permissions && manifest.host_permissions.length) fail('manifest', 'host_permissions present: work sites must be optional and requested on the setup page');
@@ -63,9 +66,9 @@ const manifest = JSON.parse(read(path.join(ROOT, 'manifest.json')));
 }
 
 // ---------------- repo-wide product rules (src/) ----------------
-const srcJs = walk(path.join(ROOT, 'src'), ['.js', '.mjs']);
-const srcHtml = walk(path.join(ROOT, 'src'), ['.html']);
-const srcCss = walk(path.join(ROOT, 'src'), ['.css']);
+const srcJs = walk(SRC_DIR, ['.js', '.mjs']);
+const srcHtml = walk(SRC_DIR, ['.html']);
+const srcCss = walk(SRC_DIR, ['.css']);
 {
   const network = /\bfetch\s*\(|XMLHttpRequest|new\s+WebSocket|sendBeacon|new\s+EventSource/;
   const evalish = /\beval\s*\(|new\s+Function\s*\(/;
@@ -87,6 +90,34 @@ const srcCss = walk(path.join(ROOT, 'src'), ['.css']);
     if (/url\(\s*["']?https?:|@import\s+["']?https?:|@import\s+url\(\s*["']?https?:/i.test(read(f))) { fail('rules', `remote font/image in ${rel(f)} (network request)`); clean = false; }
   }
   if (clean) pass('rules', `no network calls, eval or inline scripts in ${srcJs.length} JS / ${srcHtml.length} HTML files`);
+}
+
+// ---------------- voice: on-device speech only ----------------
+// SpeechRecognition defaults to sending audio to a server. Every recogniser in src/
+// must set processLocally = true (and check it stuck) before start().
+{
+  let found = 0, bad = 0;
+  for (const f of srcJs) {
+    const s = read(f);
+    if (/processLocally\s*[:=]\s*false/.test(s)) { fail('voice', `${where(f, /processLocally\s*[:=]\s*false/)} sets processLocally to false (audio would leave the device)`); bad++; }
+    // Names a recogniser class goes by in this file: the globals, plus aliases like `const SR = ...SpeechRecognition`.
+    const names = new Set(['SpeechRecognition', 'webkitSpeechRecognition']);
+    for (const m of s.matchAll(/\b(?:const|let|var)\s+(\w+)\s*=\s*[^;\n]*\bSpeechRecognition\b/g)) names.add(m[1]);
+    const ctor = new RegExp(`new\\s+(?:globalThis\\.|window\\.|self\\.)?(?:${[...names].join('|')})\\s*\\(`, 'g');
+    for (const m of s.matchAll(ctor)) {
+      found++;
+      const line = s.slice(0, m.index).split('\n').length;
+      const after = s.slice(m.index);
+      const startAt = after.search(/\.start\s*\(/);
+      const body = after.slice(0, startAt < 0 ? 1500 : startAt);
+      const v = (s.slice(0, m.index).match(/(\w+)\s*=\s*$/) || [])[1]; // `rec = new SR()`
+      const setRe = v ? new RegExp(`\\b${v}\\.processLocally\\s*=\\s*true\\b`) : /\.processLocally\s*=\s*true\b/;
+      const checkRe = v ? new RegExp(`\\b${v}\\.processLocally\\s*!==\\s*true\\b`) : /\.processLocally\s*!==\s*true\b/;
+      if (!setRe.test(body)) { fail('voice', `${rel(f)}:${line}: SpeechRecognition created without processLocally = true before start() (audio would go to a server)`); bad++; }
+      else if (!checkRe.test(body)) { fail('voice', `${rel(f)}:${line}: processLocally = true is set but never checked (refuse to start if it reads back otherwise)`); bad++; }
+    }
+  }
+  if (!bad) pass('voice', `${found} SpeechRecognition constructor(s) in src/, all set and check processLocally = true`);
 }
 
 // ---------------- Sidd: content script ----------------

@@ -124,6 +124,15 @@ export const setFocusPopupSeen = (v) => setSession(SESSION_KEYS.focusPopupSeen, 
 export const getGroupsLinked = () => getSession(SESSION_KEYS.groupsLinked, false);
 export const setGroupsLinked = (v) => setSession(SESSION_KEYS.groupsLinked, v);
 
+// How the next return was started. STUB for main's Feature 5 (store.setReturnVia):
+// set just before Pickup activates the task tab, read once by closeBreakOnReturn.
+export const setReturnVia = (via) => setSession(SESSION_KEYS.returnVia, { via, at: Date.now() });
+export async function takeReturnVia(maxAgeMs = 10000) {
+  const v = await getSession(SESSION_KEYS.returnVia, null);
+  if (v) await setSession(SESSION_KEYS.returnVia, null);
+  return v && Date.now() - v.at <= maxAgeMs ? v.via : null;
+}
+
 export const getFocusLostAt = () => getSession(SESSION_KEYS.focusLostAt, null);
 export const setFocusLostAt = (v) => setSession(SESSION_KEYS.focusLostAt, v);
 

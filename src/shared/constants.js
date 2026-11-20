@@ -22,6 +22,7 @@ export const SESSION_KEYS = Object.freeze({
   focusPopupSeen: 'focusPopupSeen',
   pendingSwitch: 'pendingSwitch',           // { at, workTabId, windowId } a window switch onto a distraction, confirmed after FOCUS_BLIP_MS         // true while a focus loss was caused by Pickup's own popup             // true once thread groupIds were checked this browser session
   lastNudgeDay: 'lastNudgeDay',
+  returnVia: 'returnVia',                   // { via, at } how the next return was started (voice); STUB until main's Feature 5
 });
 
 export const DEFAULT_SETTINGS = Object.freeze({
@@ -32,6 +33,8 @@ export const DEFAULT_SETTINGS = Object.freeze({
   nudgeDelayMin: 5,
   debug: false,            // testing only: 10 s threshold, events tagged debug:true
   forceCard: false,        // testing only (needs debug): every return shows the card
+  voiceEnabled: false,     // voice side panel may use the mic (push-to-talk)
+  wakeWord: false,         // listen for "Hey Pickup" while the panel is open
 });
 
 export const DEBUG_THRESHOLD_MS = 10000;

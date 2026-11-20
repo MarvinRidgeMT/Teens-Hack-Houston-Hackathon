@@ -24,6 +24,8 @@ export const MSG = Object.freeze({
   park: 'park',                 // { tabId } -> { ok }   same as Alt+P
   wrapUp: 'wrapUp',             // { tabId } -> { ok }   stretch: Tomorrow start
   setTaskType: 'setTaskType',   // { threadId, taskType } -> { ok }
+  voiceCommand: 'voiceCommand', // { intent, args } -> { ok, say, data }   voice side panel
+  setVoiceSettings: 'setVoiceSettings', // { voiceEnabled?, wakeWord? } -> { ok, voiceEnabled, wakeWord }
 });
 
 // Types the service worker answers (content script + popup/pages -> SW).
@@ -31,6 +33,7 @@ export const TO_ENGINE = Object.freeze([
   MSG.state, MSG.firstInteraction, MSG.cardAction, MSG.parkNote,
   MSG.getTabInfo, MSG.startTask, MSG.removeFromThread, MSG.keepInThread,
   MSG.setTaskType, MSG.park, MSG.wrapUp,
+  MSG.voiceCommand, MSG.setVoiceSettings,
 ]);
 
 // Types the content script receives (SW -> content).
