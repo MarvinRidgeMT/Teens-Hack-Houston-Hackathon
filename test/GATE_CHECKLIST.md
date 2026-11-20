@@ -39,6 +39,11 @@ Steps are from the team plan, p.12. "Engine evidence" is what Anish checks in `t
 - [ ] Worker kill: open a break, stop the worker in `chrome://serviceworker-internals`, return. The event is logged.
 - [ ] Popup: open the Pickup popup for 20 s, close it. No break and no event.
 - [ ] Docs: steps 6–8 on the Doc itself. The breadcrumb URL is the Doc (not `about:blank`), the card is drawn once, and typing counts.
+- [ ] Event fields (Feature 5, only if agreed at the Thu sync): the step 6 event has `awayMs`, `distractionHost: "youtube.com"`, `distractionHosts`, `returnVia: "tab"`; the step 10 event has `distractionHost: null`.
+- [ ] Badge (Feature 4): `P` after step 4, `•` during step 5, empty after step 6. Hover shows the task name.
+- [ ] Alt+R (Feature 1): `chrome://extensions/shortcuts` shows Pickup "Jump back to your task" = Alt+R (⌥R). During a break on YouTube, press it: back on the task, event `returnVia: "resumeKey"`.
+- [ ] Right-click (Feature 3): select a sentence on Wikipedia → right-click → "Make this my next step". Badge flashes ✓; breadcrumb `nextStep` = the sentence, `nextStepSource: "selected"`. The menu item is not shown on YouTube.
+- [ ] Wrap up (Feature 2): inspector → Wrap up → badge `☾` → "Pretend it's tomorrow" → switch tab → one "Start here" notification → click it: back on the task, no new event.
 
 ## 4. At 2:00 PM, Gate passed
 

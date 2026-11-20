@@ -574,6 +574,132 @@ async function main() {
     return 'no break, no event';
   });
 
+  // ---- Thursday night features ----
+  const badgeNow = () => ctl(`return { text: await chrome.action.getBadgeText({}), title: await chrome.action.getTitle({}) };`);
+  async function swEval(expr) {
+    const t = await swTarget();
+    check(t, 'no service worker');
+    const sid = await attach(t.targetId);
+    return evalIn(sid, expr);
+  }
+  async function leaveAndWait(workTab) {
+    await activate(workTab); await sleep(800);
+    await activate(yt);
+    const ob = await waitFor(async () => { const o = await openBreak(); return o && o.departed && o; }, 5000);
+    check(ob, 'no break after switching to YouTube');
+    await sleep(11000); // past the debug threshold
+    return ob;
+  }
+
+  await step('N5', 'New event fields on the events logged so far (awayMs, distraction hosts, returnVia)', async () => {
+    const evs = await eventsNow();
+    check(evs.length, 'no events');
+    for (const e of evs) {
+      check(e.awayMs === e.returnedAt - e.leftAt, `awayMs ${e.awayMs} on ${e.signal}`);
+      check(Array.isArray(e.distractionHosts) && 'distractionHost' in e && e.returnVia, 'fields missing ' + JSON.stringify(e));
+    }
+    const tab = evs.find((e) => e.signal === 'park' || e.signal === 'tab');
+    const focus = evs.find((e) => e.signal === 'focus');
+    check(tab && tab.distractionHost === 'youtube.com' && tab.distractionHosts[0] === 'youtube.com', 'tab/park hosts ' + JSON.stringify(tab));
+    check(!focus || (focus.distractionHost === null && focus.distractionHosts.length === 0), 'focus hosts ' + JSON.stringify(focus));
+    const vias = [...new Set(evs.map((e) => `${e.signal}:${e.returnVia}`))].join(', ');
+    return `${evs.length} events, all with the fields; ${tab.signal} → ${tab.distractionHost}; returnVia seen: ${vias}`;
+  });
+
+  await step('N4', 'Toolbar badge: P while parked, • while away, empty after the return', async () => {
+    await clean(wikiA);
+    await activate(wikiA); await sleep(800);
+    promptAnswers.push('Badge check');
+    const r = await sendSW({ type: 'park', tabId: wikiA });
+    check(r && r.ok, 'park ' + JSON.stringify(r));
+    check(await waitFor(async () => { const o = await openBreak(); return o && o.departed === false; }, 6000), 'not parked');
+    const parked = await waitFor(async () => { const b = await badgeNow(); return b.text === 'P' && b; }, 3000);
+    check(parked, 'parked badge ' + JSON.stringify(await badgeNow()));
+    await activate(yt);
+    const away = await waitFor(async () => { const b = await badgeNow(); return b.text === '•' && b; }, 4000);
+    check(away, 'away badge ' + JSON.stringify(await badgeNow()));
+    await activate(wikiA);
+    const none = await waitFor(async () => { const b = await badgeNow(); return b.text === '' && b; }, 4000);
+    check(none, 'badge after return ' + JSON.stringify(await badgeNow()));
+    return `"${parked.text}" "${parked.title}" → "${away.text}" "${away.title}" → "" "${none.title}"`;
+  });
+
+  await step('N1', 'Alt+R (resumeTask message) from YouTube during a break: back on the task, returnVia resumeKey', async () => {
+    await clean(wikiA);
+    const cmds = await ctl(`return (await chrome.commands.getAll()).map(c => c.name + '=' + (c.shortcut || '(none)'));`);
+    const n = (await eventsNow()).length;
+    const ob = await leaveAndWait(wikiA);
+    check(await bringFront(), 'could not focus the test Chrome window');
+    const r = await sendSW({ type: 'resumeTask' });
+    check(r && r.ok && r.threadId === ob.threadId, 'resumeTask ' + JSON.stringify(r));
+    const ev = await waitFor(async () => { const e = await eventsNow(); return e.length > n && e.at(-1); }, 6000);
+    check(ev && ev.id === ob.eventId, 'no event');
+    check(ev.returnVia === 'resumeKey', 'returnVia ' + ev.returnVia);
+    const active = (await tabsAll()).find((t) => t.id === wikiA);
+    check(active && active.active, 'task tab not active');
+    const resume = cmds.find((c) => c.startsWith('resume-task='));
+    return `event ${ev.signal}/${ev.condition}, returnVia ${ev.returnVia}; shortcuts: ${cmds.join(', ')}${resume && resume.endsWith('(none)') ? ' — Alt+R NOT assigned (clash?)' : ''}`;
+  });
+
+  await step('N2', 'Wrap up → pretend tomorrow → activity → one Start-here notification → click → resume, no event', async () => {
+    await clean(wikiA);
+    await activate(wikiA); await sleep(800);
+    const r = await sendSW({ type: 'wrapUp', tabId: wikiA, nextStep: 'Write the conclusion' });
+    check(r && r.ok && r.wrapUp && r.wrapUp.shown === false, 'wrapUp ' + JSON.stringify(r));
+    const wrapped = await waitFor(async () => { const b = await badgeNow(); return b.text === '☾' && b; }, 3000);
+    check(wrapped, 'wrapped badge ' + JSON.stringify(await badgeNow()));
+    // "Pretend it's tomorrow" (the inspector button does the same).
+    await ctl(`const { wrapUp } = await chrome.storage.local.get('wrapUp'); const d = new Date(Date.now() - 4 * 3600000 - 86400000); const p = (n) => String(n).padStart(2, '0'); await chrome.storage.local.set({ wrapUp: { ...wrapUp, dayKey: d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) } }); return true;`);
+    const n = (await eventsNow()).length;
+    await activate(ids.essay); // first activity of the "next day"
+    const id = 'starthere:' + r.wrapUp.threadId;
+    const shown = await waitFor(async () => (await ctl(`return Object.keys(await chrome.notifications.getAll());`)).includes(id), 5000);
+    check(shown, 'no Start-here notification');
+    await activate(wikiA); await sleep(500);
+    const count = swLog.filter((l) => l.includes('start here shown')).length;
+    check(count === 1, `start here shown ${count} times`);
+    // The OS notification can't be clicked from DevTools. Fire the engine's own onClicked listener in the worker if Chrome exposes dispatch; else note it.
+    await evalIn(wikiASid, 'scrollTo(0, 0)');
+    const fired = await swEval(`(() => { const e = chrome.notifications.onClicked; if (typeof e.dispatch === 'function') { e.dispatch(${JSON.stringify(id)}); return true; } return false; })()`).catch(() => false);
+    let how;
+    if (fired) how = 'notifications.onClicked.dispatch in the worker (same listener as a click)';
+    else { await sendSW({ type: 'resumeTask', threadId: r.wrapUp.threadId }); how = 'CLICK NOT SIMULATED (no dispatch); resumeTask used instead, so the startHere message is not checked'; }
+    const y = await waitFor(async () => { const v = await evalIn(wikiASid, 'Math.round(scrollY)'); return v > 100 && v; }, 5000);
+    check(y, 'scroll not restored after Start here');
+    const startCard = fired ? await waitFor(() => evalIn(wikiASid, `(document.querySelector('[aria-label="Pickup dev stub start here"]') || {}).textContent || ''`), 3000) : '';
+    if (fired) check(startCard && startCard.includes(TASK) && startCard.includes('Write the conclusion'), 'start-here card: ' + startCard);
+    check((await eventsNow()).length === n, 'an event was logged');
+    const after = await badgeNow();
+    return `notification ${id} shown once; resumed (scroll ${y}) via ${how}${fired ? `; stub card "${startCard.slice(0, 70)}…"` : ''}; badge after: "${after.text}"`;
+  }, { retries: 0 });
+
+  await step('N3', 'Right-click menu exists for work-site selections (the click itself is manual)', async () => {
+    const perms = await ctl(`return (await chrome.permissions.getAll()).permissions;`);
+    check(perms.includes('contextMenus'), 'no contextMenus permission');
+    // There's no API to list menus; updating the item throws if it doesn't exist.
+    const ok = await ctl(`try { await chrome.contextMenus.update('pickup-next-step', {}); return true; } catch (e) { return e.message; }`);
+    check(ok === true, 'menu item missing: ' + ok);
+    return 'menu item "pickup-next-step" exists; selecting text and clicking it is in the manual checklist';
+  });
+
+  await step('N2d', 'Debug path: Start here on the first activity 60 s after wrap-up', async () => {
+    await clean(wikiA);
+    await activate(wikiA); await sleep(800);
+    const r = await sendSW({ type: 'wrapUp', tabId: wikiA });
+    check(r && r.ok, 'wrapUp ' + JSON.stringify(r));
+    const id = 'starthere:' + r.wrapUp.threadId;
+    await ctl(`await chrome.notifications.clear(${JSON.stringify(id)}); return true;`);
+    await sleep(20000);
+    await activate(ids.essay); await sleep(1000);
+    check(!(await ctl(`return Object.keys(await chrome.notifications.getAll());`)).includes(id), 'shown before 60 s');
+    await sleep(41000);
+    await activate(wikiA);
+    const shown = await waitFor(async () => (await ctl(`return Object.keys(await chrome.notifications.getAll());`)).includes(id), 5000);
+    check(shown, 'not shown after 60 s');
+    await ctl(`await chrome.notifications.clear(${JSON.stringify(id)}); return true;`);
+    return 'not shown at 20 s; shown on the first activity after 61 s';
+  }, { retries: 0 });
+
   // ---- restart ----
   let restartNotes = '';
   await step('Xd', 'Chrome restart with a break open: group re-linked by title, break tab re-pointed', async () => {
