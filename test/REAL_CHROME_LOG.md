@@ -92,6 +92,23 @@ Driver fixes tonight (not engine bugs): focus by pid (run 8); the frontmost-app 
 
 **Still to verify in real Chrome:** the voice panel with a real microphone (`test/VOICE_SPIKE.md`, 9 manual steps), the manual rows below (Docs, right-click, the real ⌥R key), and Sidd's and Abhinav's code once it lands.
 
+## Pickup panel, 2026-11-20 (Fri, branch `feature/panel`)
+
+`node test/dev/panel-check.mjs`: Chrome for Testing 157.0.8103.78, fresh profile, debug on (a "10 min" break = 100 s). The panel opens in its own small, unfocused popup window at 360x800, so it doesn't count as leaving the task. Screenshots are in `docs-shots/panel-*.png`.
+
+**Final run (run 6, after the review fixes): 6 pass, 0 fail.**
+
+| # | Check | Result | Notes |
+|---|---|---|---|
+| P0 | Setup; opening the panel window opens no break | **PASS** | |
+| P1 | Typed "where was I" | **PASS** | "You were on Drought Essay." (falls back to the last work tab's task, like Alt+R). Task list shows it |
+| P2 | Typed "back in 10, next step …" | **PASS** | Parks the essay with `plannedMin` 10; `breakend:` alarm and no nudge alarm; clock 1:39 and counting down; badge `2m` "Pickup: back to Drought Essay at 12:14 PM" |
+| P3 | Leave for YouTube; break ends; click the notification | **PASS** | One notification (`breakend:<id>`), click via `notifications.onClicked.dispatch` in the worker. Event `returnVia: timer`, `plannedBreakMin: 10`, away 97 s |
+| P4 | Leave; Resume from the task list | **PASS** | Chip "Away 1 min"; event `returnVia: panel` |
+| P5 | Edit next step in the list; Today strip | **PASS** | Saved as typed ("you wrote this"). Today strip: "No breaks logged today.", correct because debug events are left out |
+
+Earlier runs: run 1 never started (the test copy skipped itself, because the `.claude` path filter matched the worktree's own path); runs 2 and 3 found the wrong extension (Chrome for Testing has two built-in extensions with their own workers); run 5 lost P3 and P4 because a second test Chrome, the site screenshots, was running at the same time and took focus. All were driver problems. **Engine bugs found:** none in real Chrome; the code review found the notification-order bugs, fixed with checks first.
+
 ## Engine bugs found in real Chrome
 
 None so far. Every focus loss the engine acted on traces to a real `WINDOW_ID_NONE` in the timeline. With another app frontmost, the engine opened a `focus` break after 1 s and discarded short absences (< 10 s), which is correct.
