@@ -6,6 +6,8 @@
 .pk { font-family: var(--font-sans); color: var(--ink); -webkit-font-smoothing: antialiased; font-optical-sizing: auto; }
 .pk *, .pk *::before, .pk *::after { box-sizing: border-box; }
 .pk p { margin: 0; }
+/* Component display rules (.pk-card is flex, .pk-row is flex…) must never beat the hidden attribute. */
+[hidden] { display: none !important; }
 .pk :focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .pk-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
