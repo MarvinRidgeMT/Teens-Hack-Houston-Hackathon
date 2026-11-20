@@ -137,3 +137,12 @@ Restyled panel on the design system, screenshots in both themes (`docs-shots/pan
 - **P0 FAIL, environmental:** `chrome.idle` reported idle when the panel window opened (signal `idle`): no one had touched the Mac for over 3 minutes. The panel window itself opened no break; P0 passed in run 6.
 - **P1 to P5 pass:** typed Ask; "back in 10" timer 1:40 (debug); one "Break's over" with `returnVia: timer`, `plannedBreakMin: 10`; Resume from the list gives `returnVia: panel`; next step edit is saved as typed.
 - **Found and fixed:** task rows replayed their rise-in animation on every refresh, so a screenshot caught them half-faded. Only new rows animate now.
+
+## Run 14 + pages shots (Fri afternoon, local test merge: redesign/engine-panel + origin/sid/content + redesign/pages + redesign/site)
+
+Local branch `redesign/integration-test` (never pushed), Chrome for Testing 157.0.8103.78.
+- **First Gate run: 15 pass, 8 fail.** Sidd's dev setup now pre-ticks "Use Sid's real content scripts", so the harness's stub prompt never answered Park (step 4), and steps 5–9, N4 and the N2 card text followed from that. Not an engine fault: the harness now unticks it, because it drives the stub.
+- **Run 14: 23 pass, 0 fail** (1 inconclusive, as before). Steps 6–8 pass: return, card with task, next step and highlight, Resume restores scroll, first interaction recorded.
+- **`test/dev/pages-shots.mjs`:** popup (360 wide) and setup/dashboard (1280×800 @2x) in both themes, plus the receipt PNG. These use made-up events in a throwaway profile; they are not results. No request left `chrome-extension://` on any page.
+- **Found and fixed:** `.pk-card { display: flex }` beat the `hidden` attribute, so the popup's "Add your work sites first" card stayed visible. `pk.css` now makes `[hidden]` always win.
+- `check-integration` on the merged tree: no FAIL, no WARN.
