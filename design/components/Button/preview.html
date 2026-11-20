@@ -1,0 +1,18 @@
+<!-- @dsCard group="Actions" height=96 subtitle="Primary, quiet, ghost; hover and press springs" -->
+<div class="pk" style="padding:20px;display:flex;gap:8px;flex-wrap:wrap;background:var(--paper)">
+  <button class="pk-btn pk-btn--primary" type="button">Resume <span class="pk-kbd">Enter</span></button>
+  <button class="pk-btn" type="button">Tidy <span class="pk-kbd">T</span></button>
+  <button class="pk-btn pk-btn--ghost" type="button">Not now <span class="pk-kbd">Esc</span></button>
+</div>
+<script>
+const M = window.Motion || {};
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const go = (el, k, o) => (M.animate && !reduce ? M.animate(el, k, o) : Promise.resolve());
+const OUT = [0.22, 1, 0.36, 1], IN = [0.4, 0, 1, 1];
+document.querySelectorAll(".pk-btn").forEach((b) => {
+  b.addEventListener("pointerenter", () => go(b, { y: -1 }, { duration: 0.12, ease: OUT }));
+  b.addEventListener("pointerleave", () => go(b, { y: 0, scale: 1 }, { duration: 0.12, ease: OUT }));
+  b.addEventListener("pointerdown", () => go(b, { scale: 0.96 }, { duration: 0.08 }));
+  b.addEventListener("pointerup", () => go(b, { scale: 1 }, { type: "spring", bounce: 0.5, duration: 0.35 }));
+});
+</script>

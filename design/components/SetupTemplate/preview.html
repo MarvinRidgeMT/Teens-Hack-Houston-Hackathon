@@ -1,0 +1,60 @@
+<!-- @dsCard group="Templates" height=640 width=1200 page subtitle="Options page, after the MotionSites Driftbar footer" -->
+<style>
+  html,body{margin:0}
+  .st{position:relative;width:1200px;height:640px;overflow:hidden;background:var(--paper);isolation:isolate}
+  .st svg.meadow{position:absolute;left:0;bottom:0;width:1200px;height:360px;z-index:0}
+  .sky0{stop-color:var(--paper)} .sky1{stop-color:var(--mist)} .sky2{stop-color:var(--periwinkle);stop-opacity:.55}
+  .h1{fill:var(--periwinkle);opacity:.28} .h2{fill:var(--state-wrapped);opacity:.22} .h3{fill:var(--periwinkle);opacity:.45}
+  .fly{fill:#ffd27a}
+  .haze{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(to bottom,var(--paper) 0%,var(--paper) 52%,transparent 74%)}
+  .wm{position:absolute;left:0;right:0;text-align:center;bottom:-4px;z-index:2;margin:0;font:600 300px/.74 var(--font-sans);letter-spacing:-.045em;white-space:nowrap;pointer-events:none;user-select:none;
+      color:rgba(232,234,250,.4);background:linear-gradient(to bottom,rgba(255,255,255,.78),rgba(214,218,246,.36) 48%,rgba(255,255,255,.62));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+      filter:drop-shadow(0 -1px 0 rgba(255,255,255,.55)) drop-shadow(0 0 18px rgba(190,200,255,.45))}
+  .fog{position:absolute;left:0;right:0;bottom:0;height:17%;z-index:3;background:linear-gradient(to top,var(--mist) 0%,transparent 100%)}
+  .ct{position:relative;z-index:4;display:grid;grid-template-columns:420px 210px 210px 1fr;padding:64px 80px 0 120px}
+  .ttl{font:600 20px/1.2 var(--font-sans);letter-spacing:-.045em;margin:18px 0 0}
+  .txt{font:400 14px/1.43 var(--font-sans);letter-spacing:-.012em;color:var(--ink-body);max-width:380px;margin:14px 0 0}
+  .copy{font:400 12px/16px var(--font-sans);color:var(--ink-body);margin:20px 0 0}
+  .colt{font:600 16px/1 var(--font-sans);letter-spacing:-.045em;margin:0}
+  .coll{list-style:none;margin:20px 0 0;padding:0;display:grid;gap:14px;font:400 14px/1.24 var(--font-sans);color:var(--ink)}
+  .coll li{display:flex;align-items:center;gap:8px}
+</style>
+<div class="pk st">
+  <svg class="meadow" viewBox="0 0 1200 360" preserveAspectRatio="none" aria-hidden="true">
+    <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="sky0"/><stop offset=".45" class="sky1"/><stop offset="1" class="sky2"/></linearGradient></defs>
+    <rect width="1200" height="360" fill="url(#sky)"/>
+    <path class="h1" d="M0 230 C220 170 420 200 640 180 C860 160 1020 190 1200 170 L1200 360 L0 360Z"/>
+    <path class="h2" d="M0 270 C260 220 520 250 760 230 C960 214 1080 240 1200 228 L1200 360 L0 360Z"/>
+    <path class="h3" d="M0 300 C180 250 360 262 560 290 C760 318 980 290 1200 300 L1200 360 L0 360Z"/>
+    <g id="flies" transform="translate(0,-280)"><circle class="fly" cx="703" cy="508" r="2"/><circle class="fly" cx="138" cy="488" r="2.4"/><circle class="fly" cx="232" cy="563" r="2.4"/><circle class="fly" cx="158" cy="599" r="1.6"/><circle class="fly" cx="116" cy="492" r="2"/><circle class="fly" cx="896" cy="487" r="1.6"/><circle class="fly" cx="225" cy="578" r="1.6"/><circle class="fly" cx="293" cy="527" r="2.4"/><circle class="fly" cx="166" cy="571" r="1.6"/><circle class="fly" cx="492" cy="481" r="2.4"/><circle class="fly" cx="312" cy="544" r="2"/><circle class="fly" cx="335" cy="500" r="2.4"/><circle class="fly" cx="671" cy="516" r="1.6"/><circle class="fly" cx="424" cy="565" r="1.6"/><circle class="fly" cx="168" cy="485" r="2.4"/><circle class="fly" cx="461" cy="597" r="2.4"/><circle class="fly" cx="1128" cy="579" r="2"/><circle class="fly" cx="993" cy="586" r="2"/></g>
+  </svg>
+  <div class="haze" aria-hidden="true"></div>
+  <p class="wm" id="wm" aria-hidden="true">Pickup</p>
+  <div class="fog" aria-hidden="true"></div>
+  <div class="ct">
+    <div data-s>
+      <span class="pk-logo"><span class="pk-mark" aria-hidden="true"></span>Pickup</span>
+      <h2 class="ttl">The calm way back to your work</h2>
+      <p class="txt">Pickup remembers where you were in a task, so when a break or a distraction pulls you away you can jump straight back to the right tab, the right spot and your next step.</p>
+      <div class="pk-row" style="margin-top:18px"><button class="pk-btn pk-btn--primary" type="button">Save and start</button><button class="pk-btn pk-btn--ghost" type="button">Try voice <span class="pk-kbd">Alt+V</span></button></div>
+      <div class="pk-row" style="margin-top:16px"><span class="pk-chip"><span class="pk-dot" aria-hidden="true"></span>Saved on this device</span><span class="pk-chip">Away after 2 min</span><span class="pk-chip">Nudge after 5 min</span></div>
+      <p class="copy">Made at Teens Hack Houston.</p>
+    </div>
+    <nav data-s aria-label="Work sites"><h3 class="colt">Work sites</h3><ul class="coll"><li>docs.google.com</li><li>wikipedia.org</li><li>classroom.google.com</li><li><a class="pk-link" href="#">+ Add a site</a></li></ul></nav>
+    <nav data-s aria-label="Distraction sites"><h3 class="colt">Distractions</h3><ul class="coll"><li>youtube.com</li><li>instagram.com</li><li>reddit.com</li><li><a class="pk-link" href="#">+ Add a site</a></li></ul></nav>
+    <nav data-s aria-label="Shortcuts"><h3 class="colt">Shortcuts</h3><ul class="coll"><li><span class="pk-kbd">Alt+P</span> Park</li><li><span class="pk-kbd">Alt+R</span> Resume</li><li><span class="pk-kbd">Alt+V</span> Talk to Pickup</li><li><a class="pk-link" href="#">Change shortcuts</a></li></ul></nav>
+  </div>
+</div>
+<script>
+const M = window.Motion || {};
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const go = (el, k, o) => (M.animate && !reduce ? M.animate(el, k, o) : Promise.resolve());
+const OUT = [0.22, 1, 0.36, 1], IN = [0.4, 0, 1, 1];
+go(document.querySelectorAll("[data-s]"), { opacity: [0, 1], y: [10, 0] }, { duration: 0.22, ease: OUT, delay: M.stagger ? M.stagger(0.06) : 0 });
+go(document.getElementById("wm"), { opacity: [0, 1], y: [24, 0] }, { duration: 0.42 * 2, ease: OUT, delay: 0.2 });
+document.querySelectorAll(".fly").forEach((f) => {
+  const dx = (Math.random() - 0.5) * 60, dy = (Math.random() - 0.5) * 30;
+  go(f, { x: [0, dx, 0], y: [0, dy, 0] }, { duration: 6 + Math.random() * 6, repeat: Infinity, ease: "easeInOut" });
+  go(f, { opacity: [0.15, 1, 0.15] }, { duration: 2 + Math.random() * 3, repeat: Infinity, delay: Math.random() * 2, ease: "easeInOut" });
+});
+</script>

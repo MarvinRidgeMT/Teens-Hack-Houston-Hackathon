@@ -1,0 +1,61 @@
+<!-- @dsCard group="Templates" height=600 page subtitle="Extension popup, 360px" -->
+<style>
+  .pp{width:360px;margin:0 auto;padding:20px;background:var(--paper);display:flex;flex-direction:column;gap:16px}
+  .seg{position:relative;display:grid;grid-template-columns:repeat(3,1fr);padding:3px;border:1px solid var(--border);border-radius:var(--radius-pill);background:var(--surface)}
+  .seg button{position:relative;z-index:1;appearance:none;border:0;background:none;height:28px;font:500 12px/1 var(--font-sans);color:var(--ink-body);border-radius:var(--radius-pill);cursor:pointer}
+  .seg button[aria-pressed="true"]{color:var(--on-accent)}
+  .seg button:focus-visible{outline:2px solid var(--focus-ring);outline-offset:2px}
+  .seg i{position:absolute;top:3px;left:3px;height:28px;width:calc((100% - 6px)/3);border-radius:var(--radius-pill);background:var(--accent)}
+  .list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+  .list li{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:12px}
+  .list b{font:500 13px/18px var(--font-sans);color:var(--ink);flex:1}
+  .foot{display:flex;gap:12px;flex-wrap:wrap;font:400 12px/16px var(--font-sans);color:var(--ink-body)}
+  .h{font:600 13px/18px var(--font-sans);letter-spacing:-.01em;color:var(--ink);margin:0 0 8px}
+</style>
+<div class="pk pp">
+  <header data-s style="display:flex;justify-content:space-between;align-items:center">
+    <span class="pk-logo"><span class="pk-mark" aria-hidden="true"></span>Pickup</span>
+    <span class="pk-chip"><span class="pk-dot" aria-hidden="true"></span>Saved</span>
+  </header>
+  <section class="pk-card" data-s style="box-shadow:none">
+    <div><p class="pk-eyebrow">Now</p><p class="pk-task">History essay draft</p><p class="pk-meta">Writing · 3 tabs · next: finish the 1836 paragraph</p></div>
+    <div class="pk-row"><button class="pk-btn pk-btn--primary" type="button">Resume <span class="pk-kbd">Alt+R</span></button><button class="pk-btn" type="button">Wrap up</button></div>
+  </section>
+  <section data-s>
+    <p class="h">Start a task</p>
+    <div style="display:flex;gap:8px;margin-bottom:8px"><input class="pk-input" id="name" aria-label="Task name" placeholder="e.g. Chem problem set 4"><button class="pk-btn" type="button" id="add">Start</button></div>
+    <div class="seg" role="group" aria-label="Task type"><i id="pill"></i><button type="button" aria-pressed="true">Writing</button><button type="button" aria-pressed="false">Reading</button><button type="button" aria-pressed="false">Problems</button></div>
+  </section>
+  <section data-s>
+    <p class="h">Parked</p>
+    <ul class="list" id="list">
+      <li><span class="pk-badge pk-badge--parked" aria-hidden="true">P</span><b>Biology reading ch. 7</b><span class="pk-meta">2 h ago</span></li>
+      <li><span class="pk-badge pk-badge--wrapped" aria-hidden="true">☾</span><b>College essay outline</b><span class="pk-meta">Yesterday</span></li>
+    </ul>
+  </section>
+  <footer class="foot" data-s><span><span class="pk-kbd">Alt+P</span> Park</span><span><span class="pk-kbd">Alt+R</span> Resume</span><span><span class="pk-kbd">Alt+V</span> Talk</span></footer>
+</div>
+<script>
+const M = window.Motion || {};
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const go = (el, k, o) => (M.animate && !reduce ? M.animate(el, k, o) : Promise.resolve());
+const OUT = [0.22, 1, 0.36, 1], IN = [0.4, 0, 1, 1];
+go(document.querySelectorAll("[data-s]"), { opacity: [0, 1], y: [8, 0] }, { duration: 0.22, ease: OUT, delay: M.stagger ? M.stagger(0.05) : 0 });
+const pill = document.getElementById("pill"), segs = [...document.querySelectorAll(".seg button")];
+segs.forEach((b, i) => b.addEventListener("click", () => {
+  segs.forEach((s) => s.setAttribute("aria-pressed", String(s === b)));
+  const x = i * b.offsetWidth;
+  if (reduce || !M.animate) pill.style.transform = "translateX(" + x + "px)";
+  else M.animate(pill, { x }, { type: "spring", bounce: 0.25, duration: 0.4 });
+}));
+const list = document.getElementById("list");
+const hover = (li) => { li.addEventListener("pointerenter", () => go(li, { y: -1 }, { duration: 0.12 })); li.addEventListener("pointerleave", () => go(li, { y: 0 }, { duration: 0.12 })); };
+list.querySelectorAll("li").forEach(hover);
+document.getElementById("add").addEventListener("click", () => {
+  const name = document.getElementById("name"), v = name.value.trim() || "Untitled task";
+  const li = document.createElement("li");
+  li.innerHTML = '<span class="pk-badge pk-badge--parked" aria-hidden="true">P</span><b></b><span class="pk-meta">Just now</span>';
+  li.querySelector("b").textContent = v; list.prepend(li); hover(li); name.value = "";
+  go(li, { opacity: [0, 1], scale: [0.94, 1], y: [-6, 0] }, { type: "spring", bounce: 0.35, duration: 0.45 });
+});
+</script>
