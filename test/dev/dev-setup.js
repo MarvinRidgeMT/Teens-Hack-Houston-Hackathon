@@ -15,6 +15,8 @@ const REAL_FILES = [
 const WORK_SITES = ['docs.google.com', 'wikipedia.org'];
 // matchOriginAsFallback needs every pattern's path to be "/*".
 const MATCHES = ['*://docs.google.com/*', '*://wikipedia.org/*', '*://*.wikipedia.org/*'];
+// permissions.request only accepts patterns inside manifest optional_host_permissions (http://*/*, https://*/*), so ask for https:// here.
+const ORIGINS = MATCHES.map((m) => m.replace(/^\*:\/\//, 'https://'));
 
 const $ = (id) => document.getElementById(id);
 const out = (line) => { $('out').textContent += line + '\n'; };
@@ -22,10 +24,10 @@ const out = (line) => { $('out').textContent += line + '\n'; };
 $('apply').addEventListener('click', async () => {
   $('out').textContent = '';
   // permissions.request must be the first call in the click handler, with no await before it.
-  const asking = chrome.permissions.request({ origins: MATCHES });
+  const asking = chrome.permissions.request({ origins: ORIGINS });
   try {
     if (!(await asking)) { out('Host access was not granted. Nothing else was changed.'); return; }
-    out('Host access granted for ' + MATCHES.join(', '));
+    out('Host access granted for ' + ORIGINS.join(', '));
 
     const settings = {
       participant: 'anish-dev',

@@ -95,14 +95,20 @@
   }
 
   // ---------- restoreScroll ----------
+  // Smooth only for short hops: a long smooth scroll is cancelled by the first wheel
+  // or key press (which is also the first-interaction moment), so far jumps are instant.
   function restoreScroll(y) {
     const top = Math.max(0, Number(y) || 0);
-    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const behavior = reduce ? 'auto' : 'smooth';
     const s = scroller();
-    if (s) s.scrollTo({ top, behavior });
-    else window.scrollTo({ top, behavior });
-    log('restoreScroll', top, behavior);
+    const from = currentScroll();
+    const viewH = s ? s.clientHeight : window.innerHeight;
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const behavior = reduce || Math.abs(top - from) > viewH * 1.5 ? 'auto' : 'smooth';
+    const go = () => (s ? s.scrollTo({ top, behavior }) : window.scrollTo({ top, behavior }));
+    // Let the card's exit frame paint first, then scroll.
+    requestAnimationFrame(go);
+    log('restoreScroll', { to: top, from, behavior });
+    if (DEBUG) setTimeout(() => log('restoreScroll landed at', currentScroll()), 1200);
   }
 
   // ---------- first interaction timer (all frames) ----------
@@ -158,7 +164,7 @@
     switch (msg.type) {
       case MSG.snapshot:
         if (!TOP) return false;                 // let the top frame answer
-        sendResponse(snapshot());               // synchronous; also used as a ping
+        { const s = snapshot(); log('snapshot', s); sendResponse(s); } // synchronous; also a ping
         return false;
       case MSG.armTimer:      armOnce(msg.eventId); return false;           // all frames
       case MSG.showCard:      if (TOP) showCard(msg); return false;
