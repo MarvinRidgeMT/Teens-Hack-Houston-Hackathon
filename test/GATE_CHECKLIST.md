@@ -45,6 +45,13 @@ Steps are from the team plan, p.12. "Engine evidence" is what Anish checks in `t
 - [ ] Right-click (Feature 3): select a sentence on Wikipedia → right-click → "Make this my next step". Badge flashes ✓; breadcrumb `nextStep` = the sentence, `nextStepSource: "selected"`. The menu item is not shown on YouTube.
 - [ ] Wrap up (Feature 2): inspector → Wrap up → badge `☾` → "Pretend it's tomorrow" → switch tab → one "Start here" notification → click it: back on the task, no new event.
 
+### Extras (redesign, Fri night)
+
+- [ ] **Keyboard only (F5)**, no mouse: on a work page press **Alt+P** → type a next step → **Enter** (Toast "Parked") → **Ctrl+Tab** to YouTube, wait past the threshold → **Alt+R** → the card opens with focus on Resume → **Enter** (back at the spot) → open the card again on the next return → **Esc** (Not now). Focus is visible at every step and never leaves the card while it is open (Tab wraps).
+- [ ] Panel: **Alt+V** opens it; Tab reaches Ask, every quick question, the timer and each task's Resume; every control shows the 2px focus ring in both light and dark (System Settings → Appearance).
+- [ ] Fonts: DevTools → Network on the panel, popup and setup page shows `InterVariable.woff2` from `chrome-extension://` and **no** request to `fonts.googleapis.com` / `fonts.gstatic.com`.
+- [ ] Badge colours: `P` periwinkle, `•` amber, `☾` violet, `✓` green, each with its glyph.
+
 ## 4. At 2:00 PM, Gate passed
 
 - [ ] Every laptop: debug **off**, force card **off** (setup page). Inspector shows `debug: false, forceCard: false`.

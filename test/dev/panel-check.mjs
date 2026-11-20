@@ -66,10 +66,18 @@ async function attachTo(match, { page = true } = {}) {
 }
 async function shot(name) {
   fs.mkdirSync(SHOTS, { recursive: true });
-  const { data } = await cdp.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: true }, panelSid);
-  const f = path.join(SHOTS, `panel-${name}.png`);
-  fs.writeFileSync(f, Buffer.from(data, 'base64'));
-  return path.relative(REPO, f);
+  // Both design-system themes: Paper (light) and Blue hour (dark).
+  const out = [];
+  for (const scheme of ['light', 'dark']) {
+    await cdp.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-color-scheme', value: scheme }] }, panelSid);
+    await sleep(150);
+    const { data } = await cdp.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: true }, panelSid);
+    const f = path.join(SHOTS, `panel-${name}${scheme === 'dark' ? '-dark' : ''}.png`);
+    fs.writeFileSync(f, Buffer.from(data, 'base64'));
+    out.push(path.relative(REPO, f));
+  }
+  await cdp.send('Emulation.setEmulatedMedia', { features: [] }, panelSid);
+  return out.join(', ');
 }
 async function ask(text) {
   await inPanel(`$('askInput').value = ${JSON.stringify(text)}; $('askForm').requestSubmit(); return true;`);

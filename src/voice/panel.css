@@ -60,7 +60,8 @@ p { margin: 0; }
 /* tasks */
 .tasks { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
 .task { padding: var(--space-3); border-radius: 12px; background: var(--surface); border: 1px solid var(--border);
-  display: grid; gap: 6px; animation: pk-rise var(--duration-base) var(--ease-out) both; animation-delay: calc(var(--i, 0) * var(--stagger)); }
+  display: grid; gap: 6px; }
+.task--new { animation: pk-rise var(--duration-base) var(--ease-out) both; animation-delay: calc(var(--i, 0) * var(--stagger)); }
 .task-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .task-name { font: 600 var(--fs-heading)/var(--lh-heading) var(--font-sans); letter-spacing: -.03em; overflow-wrap: anywhere; }
 .task[data-active] .task-name { color: var(--periwinkle); }

@@ -130,3 +130,10 @@ Then open `inspect.html` in its own window, plus the service worker console.
 | Right-click, not work | On YouTube select text → right-click | No "Make this my next step" item | | |
 | Right-click, Docs | In the Google Doc select text → right-click | If the item shows and nothing saves, the badge flashes `!` (Docs hides selection text) | | |
 | Load | Load unpacked on the **repo folder** (no test-build changes): note any error about the missing `src/pages/popup.html` / `setup.html` | | | |
+
+## Panel run 7 (Fri 2:16 PM, redesign/engine-panel, Chrome for Testing 157.0.8103.78)
+
+Restyled panel on the design system, screenshots in both themes (`docs-shots/panel-*.png` and `panel-*-dark.png`).
+- **P0 FAIL, environmental:** `chrome.idle` reported idle when the panel window opened (signal `idle`): no one had touched the Mac for over 3 minutes. The panel window itself opened no break; P0 passed in run 6.
+- **P1 to P5 pass:** typed Ask; "back in 10" timer 1:40 (debug); one "Break's over" with `returnVia: timer`, `plannedBreakMin: 10`; Resume from the list gives `returnVia: panel`; next step edit is saved as typed.
+- **Found and fixed:** task rows replayed their rise-in animation on every refresh, so a screenshot caught them half-faded. Only new rows animate now.

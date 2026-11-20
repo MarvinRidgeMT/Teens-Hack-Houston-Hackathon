@@ -112,7 +112,8 @@ function el(tag, cls, text) {
 
 function taskRow(row, i = 0) {
   const li = el('li', 'task');
-  li.style.setProperty('--i', String(i));
+  // Only a task that wasn't on screen before rises in; a refresh redraws in place.
+  if (!shown.has(row.threadId)) { li.classList.add('task--new'); li.style.setProperty('--i', String(i)); }
   if (row.isOpenBreak || row.isParked) li.dataset.active = '';
   const head = el('div', 'task-head');
   head.append(el('p', 'task-name', row.name));
@@ -176,10 +177,12 @@ function taskRow(row, i = 0) {
 }
 
 let lastRows = [];
+const shown = new Set(); // threadIds already drawn once
 function renderTasks(rows, focusThread) {
   lastRows = rows || [];
   const ul = $('tasks');
   ul.replaceChildren(...lastRows.map((r, i) => taskRow(r, i)));
+  for (const r of lastRows) shown.add(r.threadId);
   $('tasksEmpty').hidden = lastRows.length > 0;
   if (focusThread) {
     const input = document.getElementById(`step-${focusThread}`);
