@@ -9,6 +9,7 @@ import { DEFAULT_SETTINGS, KEYS } from '../shared/constants.js';
 import { $, h, send, hasChrome, getLocal, button, badge } from './ui.js';
 import { FEATURE_DEFAULTS, featuresOf, cleanSite, originsFor, matchesFor, mergeSettings, validate } from './setup-logic.js';
 import { plural } from './format.js';
+import { urlMatches } from '../shared/sites.js';
 
 const SCRIPT_ID = 'pickup-content';
 const lists = { work: [], distraction: [] };
@@ -146,6 +147,10 @@ async function finishSave(form, asking) {
     const lines = [`${plural(next.workSites.length, 'work site')}, ${plural(next.distractionSites.length, 'distraction site')}.`];
     lines.push(injected === null ? 'Reload your open work tabs so Pickup can see them.' : `${plural(injected, 'open work tab')} ready without a reload.`);
     if (next.debug) lines.push('Debug is on: events are marked as testing.');
+    for (const w of next.workSites) {
+      const blocked = next.distractionSites.find((d) => urlMatches(`https://${w}`, [d]));
+      if (blocked) lines.push(`${w} is also covered by ${blocked} in your distractions, so it still counts as a distraction. Remove ${blocked} there to make it work.`);
+    }
     if (voice && !voice.ok) lines.push('Voice settings not saved.');
     status('saved', 'Saved. Pickup is on.', [...lines, ...notes]);
   } catch (e) {

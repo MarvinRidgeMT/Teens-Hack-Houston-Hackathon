@@ -33,7 +33,7 @@ export function cleanSite(raw) {
 const hostOfSite = (site) => normalizeSite(site).split('/')[0];
 
 // Host permissions to ask for. Only https: optional_host_permissions accepts these
-// (a "*://" pattern is refused by permissions.request).
+// (Chrome refuses a "*://" pattern in the permission prompt).
 export function originsFor(sites) {
   const out = new Set();
   for (const s of sites || []) {

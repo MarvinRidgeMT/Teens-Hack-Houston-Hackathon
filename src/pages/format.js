@@ -25,6 +25,7 @@ export function awayText(ms) {
 // "7 min", "1 h 5 min", "2 h"
 export function durationText(ms) {
   if (!Number.isFinite(ms) || ms < 0) return '';
+  if (ms < MIN) return 'under 1 min';
   const totalMin = Math.round(ms / MIN);
   if (totalMin < 60) return `${totalMin} min`;
   const h = Math.floor(totalMin / 60);

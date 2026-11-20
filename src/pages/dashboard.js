@@ -5,7 +5,7 @@
 
 import { KEYS, DEFAULT_SETTINGS } from '../shared/constants.js';
 import { summarize, awayBuckets, comebacksThisWeek, longestBreakMs, byCondition, bucketOf, secondsToFirst,
-  awayMsOf, formatSeconds, formatHM, BUCKETS } from '../shared/stats.js';
+  awayMsOf, formatSeconds, BUCKETS } from '../shared/stats.js';
 import { $, h, hasChrome, getLocal, badge } from './ui.js';
 import { toCsv } from './csv.js';
 import { sampleEvents, sampleThreadNames } from './sample-data.js';
@@ -69,7 +69,7 @@ function renderSummary(events) {
 
   const week = comebacksThisWeek(events);
   const longest = longestBreakMs(week);
-  $('week-facts').textContent = `This week: ${plural(week.length, 'comeback')}${longest !== null ? ` · longest break ${formatHM(longest)}` : ''}.`;
+  $('week-facts').textContent = `This week: ${plural(week.length, 'comeback')}${longest !== null ? ` · longest break ${durationText(longest)}` : ''}.`;
 
   $('chip-count').textContent = `${s.total} counted`;
   $('chip-debug-text').textContent = `${s.debugLeftOut} testing (left out)`;

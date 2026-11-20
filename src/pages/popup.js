@@ -38,12 +38,11 @@ const checkedType = (fieldset) => {
 };
 
 // ---------- render ----------
-function renderTask(thread, breadcrumb, suggestedCount, row) {
+function renderTask(thread, breadcrumb, row) {
   $('task-card').hidden = false;
   $('task-name').textContent = thread.name;
   const tabs = (row && row.tabCount) || (thread.tabUrls && thread.tabUrls.length) || 1;
   const bits = [capitalize(thread.taskType || DEFAULT_TASK_TYPE), plural(tabs, 'tab')];
-  if (suggestedCount) bits.push(`${suggestedCount} suggested`);
   $('task-meta').textContent = bits.join(' · ');
   if (breadcrumb && breadcrumb.nextStep) {
     $('task-step').hidden = false;
@@ -202,7 +201,7 @@ async function load() {
   const url = (tab && (tab.url || tab.pendingUrl)) || '';
   const isWeb = /^https?:/i.test(url);
   if (info && info.thread) {
-    renderTask(info.thread, info.breadcrumb, (info.suggested || []).length, list.find((r) => r.threadId === info.thread.id));
+    renderTask(info.thread, info.breadcrumb, list.find((r) => r.threadId === info.thread.id));
     renderSuggested(info.thread, info.suggested || []);
   } else if (isWeb && !isDistractionUrl(url, settings) && !(info && info.isDistraction)) {
     $('start-section').hidden = false;
