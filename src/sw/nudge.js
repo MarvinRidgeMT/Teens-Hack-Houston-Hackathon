@@ -30,6 +30,7 @@ export async function onAlarm(alarm) {
   const eventId = alarm.name.slice(NUDGE_ALARM_PREFIX.length);
   const ob = await store.getOpenBreak();
   if (!ob || ob.eventId !== eventId || !ob.departed || ob.nudged) return;
+  if (ob.plannedMin || ob.breakOverShown) return; // a break timer owns this break's one notification
   const crumb = await store.getBreadcrumb(ob.threadId);
   const thread = await store.getThread(ob.threadId);
   if (!crumb || !crumb.nextStep || !thread) return;

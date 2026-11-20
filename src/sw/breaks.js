@@ -55,12 +55,14 @@ export async function startBreak({ minutes, nextStep, tabId } = {}, settings, { 
   if (!ob) return { ok: false, error: 'no task to take a break from' };
   const endsAt = Date.now() + breakMs(n, settings);
   await cancelNudge(ob.eventId); // the timer's notification replaces the drift nudge (and any older timer)
-  const { breakOverShown, ...rest } = ob;
-  await store.setOpenBreak({ ...rest, plannedMin: n, endsAt });
-  await chrome.alarms.create(BREAK_ALARM_PREFIX + ob.eventId, { when: endsAt });
+  // One notification per break: if this break already had its nudge or its
+  // "Break's over", the new timer counts down without another notification.
+  const notify = !ob.nudged && !ob.breakOverShown;
+  await store.setOpenBreak({ ...ob, plannedMin: n, endsAt });
+  if (notify) await chrome.alarms.create(BREAK_ALARM_PREFIX + ob.eventId, { when: endsAt });
   await chrome.alarms.create(BREAK_TICK_ALARM, { periodInMinutes: 0.5 });
-  log('break timer', n, 'min', settings.debug ? '(debug: 10 s per minute)' : '', 'ends', clockTime(endsAt));
-  return { ok: true, endsAt, threadId: ob.threadId };
+  log('break timer', n, 'min', settings.debug ? '(debug: 10 s per minute)' : '', 'ends', clockTime(endsAt), notify ? '' : '(no notification: already reminded)');
+  return { ok: true, endsAt, threadId: ob.threadId, notify };
 }
 
 // Clears the plan. The break itself stays open: they may still be away.
@@ -86,8 +88,8 @@ export async function onAlarm(alarm) {
   if (!alarm.name.startsWith(BREAK_ALARM_PREFIX)) return;
   const eventId = alarm.name.slice(BREAK_ALARM_PREFIX.length);
   const ob = await store.getOpenBreak();
-  // Came back early (break closed), cancelled, or already shown: nothing.
-  if (!ob || ob.eventId !== eventId || !ob.plannedMin || ob.breakOverShown) return;
+  // Came back early (break closed), cancelled, or this break already had a notification: nothing.
+  if (!ob || ob.eventId !== eventId || !ob.plannedMin || ob.breakOverShown || ob.nudged) return;
   const thread = await store.getThread(ob.threadId);
   const crumb = await store.getBreadcrumb(ob.threadId);
   await chrome.notifications.create(BREAK_ALARM_PREFIX + eventId, {
@@ -100,6 +102,14 @@ export async function onAlarm(alarm) {
   await store.setOpenBreak({ ...ob, breakOverShown: true });
   await chrome.alarms.clear(BREAK_TICK_ALARM);
   log('break over', thread && thread.name);
+}
+
+// Chrome doesn't promise alarms survive a browser restart: put them back from endsAt.
+export async function restoreAlarms() {
+  const ob = await store.getOpenBreak();
+  if (!ob || !ob.endsAt || !ob.plannedMin) return;
+  if (!ob.nudged && !ob.breakOverShown) await chrome.alarms.create(BREAK_ALARM_PREFIX + ob.eventId, { when: Math.max(ob.endsAt, Date.now() + 1000) });
+  if (ob.endsAt > Date.now()) await chrome.alarms.create(BREAK_TICK_ALARM, { periodInMinutes: 0.5 });
 }
 
 export async function onNotificationClicked(id) {
@@ -136,6 +146,7 @@ export async function listThreads() {
     if (crumb && crumb.nextStep) { row.nextStep = crumb.nextStep; row.nextStepSource = crumb.nextStepSource || NEXT_STEP_SOURCE.typed; }
     if (mine && ob.departed) row.awaySince = ob.leftAt;
     if (mine && ob.endsAt) row.endsAt = ob.endsAt;
+    if (mine && ob.endsAt) row.timerNotifies = !ob.nudged && !ob.breakOverShown;
     rows.push(row);
   }
   return rows.sort((a, b) => b.sortAt - a.sortAt);

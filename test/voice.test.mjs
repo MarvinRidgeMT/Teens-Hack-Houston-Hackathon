@@ -78,6 +78,23 @@ await step('parse: cancel the break / back early vs cancel / I am back', async (
   assert.equal(parse("I'm back").intent, 'resume');
 });
 
+await step('parse (review): "back in N" inside a next step stays park / next step / wrap up', async () => {
+  assert.deepEqual(parse('park it, next step call them back in 10'), { intent: 'park', args: { nextStep: 'call them back in 10' } });
+  assert.deepEqual(parse('next step call Bob back in 2 hours'), { intent: 'setNextStep', args: { nextStep: 'call Bob back in 2 hours' } });
+  assert.deepEqual(parse('wrap up, next step reply back in 2 days'), { intent: 'wrapUp', args: { nextStep: 'reply back in 2 days' } });
+  assert.deepEqual(parse('next step: cancel the break room booking'), { intent: 'setNextStep', args: { nextStep: 'cancel the break room booking' } });
+});
+await step('parse (review): timer phrases, longer breaks, and back early', async () => {
+  assert.equal(parse('cancel the timer').intent, 'cancelBreak');
+  assert.equal(parse('stop the timer').intent, 'cancelBreak');
+  assert.deepEqual(parse('back in ninety minutes'), { intent: 'breakTimer', args: { minutes: 90 } });
+  assert.deepEqual(parse('back in sixty five'), { intent: 'breakTimer', args: { minutes: 65 } });
+  assert.deepEqual(parse('back in an hour and a half'), { intent: 'breakTimer', args: { minutes: 90 } });
+  assert.deepEqual(parse('back in 1.5 hours'), { intent: 'breakTimer', args: { minutes: 90 } });
+  assert.deepEqual(parse("I'm back early"), { intent: 'cancelBreak', args: { early: true } });
+  assert.deepEqual(parse('I am back early'), { intent: 'cancelBreak', args: { early: true } });
+});
+
 await step('splitWake: hey pickup / hey pick up / pick up, and the rest is the command', async () => {
   assert.deepEqual(splitWake('Hey Pickup, where was I?'), { wake: true, rest: 'where was I' });
   assert.deepEqual(splitWake('hey pick up take me back'), { wake: true, rest: 'take me back' });

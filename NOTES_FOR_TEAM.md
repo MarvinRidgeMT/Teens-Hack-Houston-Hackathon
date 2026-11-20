@@ -75,3 +75,15 @@ For the Pickup panel (break timer, task list). Additive: older code that ignores
 - **Two new `returnVia` values:** `panel` (Resume from the Pickup panel) and `timer` (clicked "Break's over"). Like `resumeKey`, Pickup did the navigating for both.
 
 **Sidd:** nothing to do.
+
+## Pickup panel (new, Fri, branch `feature/panel`): all optional
+
+Alt+V now opens the **Pickup panel** (it was the voice panel): type or talk to ask ("where was I?"), a **break timer** ("back in 10"), **your tasks** with Resume and Edit next step, and a **Today** line. Voice still works the same and stays off by default.
+
+**Abhinav:**
+- **Worth doing:** a popup button **"Open Pickup panel"** that calls `chrome.sidePanel.open({ windowId })` directly in the click handler (no `await` before it).
+- **Stats/CSV:** `plannedBreakMin` and the `returnVia` values `panel` / `timer` (see "Panel schema" above). A break with `plannedBreakMin` set was planned, not an interruption.
+- **Settings:** `readAloud` (default true) joins `voiceEnabled` and `wakeWord`; the panel writes it with `setVoiceSettings`.
+
+**Sidd:**
+- **Must do: nothing.** Optional: when the card's event was a planned break, it could say "Planned break: 10 min". That needs `plannedBreakMin` in `showCard`; tell me and I'll add it (it's a recorded fact).

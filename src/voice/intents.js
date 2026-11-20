@@ -39,17 +39,19 @@ export const BREAK_MIN = 1;
 export const BREAK_MAX = 120;
 const ONES = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
   'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
-const TENS = { twenty: 20, thirty: 30, forty: 40, fifty: 50, sixty: 60 };
-// Number words one..sixty -> digits; "half an hour" = 30, "an hour" = 60, "N hours" = N*60.
+const TENS = { twenty: 20, thirty: 30, forty: 40, fifty: 50, sixty: 60, seventy: 70, eighty: 80, ninety: 90 };
+// Number words one..ninety-nine -> digits; "half an hour" = 30, "an hour" = 60,
+// "an hour and a half" = 90, "N hours" / "1.5 hours" = N*60.
 export function numbersToDigits(text) {
   let s = ` ${String(text || '').toLowerCase()} `;
+  s = s.replace(/\b(?:an|one)\s+(?:hour\s+and\s+a\s+half|and\s+a\s+half\s+hours?)\b/g, '90 minutes');
   s = s.replace(/\b(?:half\s+an\s+hour|a\s+half\s+hour)\b/g, '30 minutes');
   s = s.replace(/\b(?:an|one)\s+hour\b/g, '60 minutes');
-  s = s.replace(/\b(twenty|thirty|forty|fifty)[\s-]+(one|two|three|four|five|six|seven|eight|nine)\b/g,
+  s = s.replace(/\b(twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)[\s-]+(one|two|three|four|five|six|seven|eight|nine)\b/g,
     (_, t, o) => String(TENS[t] + ONES.indexOf(o)));
-  s = s.replace(/\b(twenty|thirty|forty|fifty|sixty)\b/g, (_, t) => String(TENS[t]));
+  s = s.replace(/\b(twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)\b/g, (_, t) => String(TENS[t]));
   s = s.replace(new RegExp(`\\b(${ONES.slice(1).join('|')})\\b`, 'g'), (_, w) => String(ONES.indexOf(w)));
-  s = s.replace(/\b(\d+)\s*hours?\b/g, (_, n) => `${Number(n) * 60} minutes`);
+  s = s.replace(/\b(\d+(?:\.\d+)?)\s*hours?\b/g, (_, n) => `${Math.round(Number(n) * 60)} minutes`);
   return s.trim();
 }
 const MIN = String.raw`(?:m|mins?|minutes?)\b`;
@@ -73,9 +75,11 @@ export function breakMinutes(text) {
 // Order matters: "park it, next step ..." is park, "I'm done for today" is wrapUp, not today.
 const RULES = [
   // Only at the start, so "next step is cancel the meeting" stays a next step.
-  ['cancelBreak', /\bcancel\s+(?:the\s+|my\s+)?break\b|\b(?:i'?m|i\s+am)\s+back\s+early\b/i],
+  // Only at the start, so a next step like "cancel the break room booking" stays a next step.
+  ['cancelBreak', /^\s*(?:cancel|stop|end)\s+(?:the\s+|my\s+)?(?:break(?:\s+timer)?|timer)\b|^\s*(?:i'?m|i\s+am)\s+back\s+early\b/i],
   ['stop', /^\s*(?:stop\s+listening|never\s*mind|cancel)\b|^\s*stop\s*[.!]?\s*$/i],
-  ['breakTimer', { test: (s) => breakMinutes(s) !== null }],
+  // Only outside a next step: "park it, next step call them back in 10" is park.
+  ['breakTimer', { test: (s) => breakMinutes(s.replace(NEXT_STEP, '')) !== null }],
   ['park', /\bpark\b|\b(?:i'?m|i\s+am)\s+taking\s+a\s+break\b|\btake\s+a\s+break\b/i],
   ['setNextStep', /^\s*(?:(?:my|the)\s+)?next\s+step\b/i],
   ['wrapUp', /\bwrap(?:\s+it)?\s+up\b|\bwrapping\s+up\b|\b(?:i'?m|i\s+am)\s+done\s+for\s+(?:today|the\s+day|now)\b/i],
@@ -94,6 +98,7 @@ export function parse(text) {
   for (const [intent, re] of RULES) {
     if (!re.test(s)) continue;
     const args = {};
+    if (intent === 'cancelBreak' && /\bback\s+early\b/i.test(s)) args.early = true;
     if (intent === 'breakTimer') {
       const n = breakMinutes(s.replace(NEXT_STEP, ''));
       if (Number.isInteger(n) && n >= BREAK_MIN && n <= BREAK_MAX) args.minutes = n;

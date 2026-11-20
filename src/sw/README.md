@@ -20,7 +20,12 @@ Owner: Anish. Files: `manifest.json`, `src/shared/{constants,messages,store,site
 | `wrapUp` | `{ tabId, nextStep? }` | `{ ok, wrapUp }`: save this task for tomorrow (see below). `ok: false` on a page that can't hold a task |
 | `resumeTask` | `{ threadId? }` | `{ ok, threadId }`: same as Alt+R. Without `threadId` the engine picks the open break's task, else the most recent breadcrumb, else the last work tab's task. `ok: false` when there is none (the badge flashes `?`) |
 | `voiceCommand` | `{ intent, args }` | `{ ok, say, data }`: sent by the voice side panel (`src/voice/panel.js`). `say` is the exact sentence to show and speak |
-| `setVoiceSettings` | `{ voiceEnabled?, wakeWord? }` | `{ ok, voiceEnabled, wakeWord }`; only these two booleans are written. Send `{}` to read them |
+| `setVoiceSettings` | `{ voiceEnabled?, wakeWord?, readAloud? }` | `{ ok, voiceEnabled, wakeWord, readAloud }`; only these booleans are written. Send `{}` to read them |
+| `startBreak` | `{ minutes (1–120), nextStep?, tabId? }` | `{ ok, endsAt, threadId }`: break timer. Parks the active work tab like Alt+P (or plans the break already open, or parks the most recent task's tab). `nextStep` is stored as typed |
+| `cancelBreak` | `{}` | `{ ok }`: clears the timer; the break stays open (the drift nudge applies again if nothing was shown) |
+| `listThreads` | `{}` | `[{ threadId, name, taskType, nextStep?, nextStepSource?, leftAt?, url, tabCount, isOpenBreak, isParked, isWrapped, awaySince?, endsAt?, sortAt }]`, newest first. Auto threads only with a breadcrumb, named "Untitled (from host)" |
+| `setNextStep` | `{ threadId, nextStep }` | `{ ok }`: typed in the panel's task list (`nextStepSource: 'typed'`). Empty clears it |
+| `resumeTask` `via` | `{ threadId?, via: 'panel' }` | the Pickup panel's Resume; the event gets `returnVia: 'panel'`. Any other `via` is ignored (`resumeKey`) |
 
 ## Keyboard commands (manifest)
 | command | suggested key | what it does |
@@ -28,7 +33,7 @@ Owner: Anish. Files: `manifest.json`, `src/shared/{constants,messages,store,site
 | `park-task` | Alt+P | open the park overlay |
 | `wrap-up` | none (bind it in `chrome://extensions/shortcuts`) | wrap up the active tab's task |
 | `resume-task` | Alt+R (Option+R on a Mac) | jump back to the task (`resumeTask` above). If you're already on it with nothing open, it only restores the scroll. A return made this way is a normal event (coin flip, card or not) with `returnVia: 'resumeKey'` |
-| `toggle-voice` | Alt+V (Option+V on a Mac) | open the voice side panel and start push-to-talk (see Voice below) |
+| `toggle-voice` | Alt+V (Option+V on a Mac) | open the Pickup panel (and start push-to-talk when voice is on) |
 
 ## Settings the engine reads (setup page writes them)
 `participant, workSites[], distractionSites[], awayThresholdMs (120000), nudgeDelayMin (5), debug, forceCard`.
@@ -100,3 +105,11 @@ To check that nothing breaks when the worker stops, stop it mid-break from chrom
 - A dictated next step is stored like a typed one, with `nextStepSource: 'spoken'` on the breadcrumb.
 - Speech recognition runs only with `processLocally = true` (on-device). `test/check-integration.mjs` FAILs any recogniser that skips it.
 - Alt+V (`toggle-voice`) opens the side panel (`chrome.sidePanel.open`, called first in the listener so the gesture counts) and starts push-to-talk via `chrome.storage.session.voiceShortcutAt`.
+
+## Pickup panel (side panel, Alt+V)
+Files: `src/voice/panel.html` (+ `panel.js` voice, `pickup.js` the rest, `panel.css`) and `src/sw/breaks.js`. Works with voice off.
+- **Ask**: typed text uses the same `parse()` → `voiceCommand` → `buildReply()` path as speech, sent with `via: 'panel'`, so a typed "take me back" logs `returnVia: 'panel'` (spoken stays `'voice'`). Replies are spoken only if voice and "Read replies aloud" (`settings.readAloud`, default on) are on.
+- **Break timer**: intents `breakTimer { minutes, nextStep? }` ("back in 10", "take a 15 minute break", "give me 5 minutes", number words, "half an hour" = 30, "an hour" = 60) and `cancelBreak` ("cancel the break", "I'm back early": a return, only while a timer runs). `startBreak` stores `plannedMin` and `endsAt` on `openBreak`, creates alarm `breakend:<eventId>` and a 30 s `breaktick` for the badge, and cancels the drift nudge. When the alarm fires and the break is still open: one notification `breakend:<eventId>` ("Break's over: <task>"); click → `returnVia: 'timer'` → `resume()`. Came back early: no notification. The return's event gets `plannedBreakMin`. Debug: a minute is 10 s.
+- **Badge**: while a timer runs, the minutes left (`9m`) with "Pickup: back to <task> at 3:40 PM".
+- **Task list**: `listThreads`; Resume → `resumeTask { threadId, via: 'panel' }`; Edit next step → `setNextStep`. Refreshes on `storage.onChanged`.
+- **Today strip**: `todayFacts` (debug events left out) + most time away by `distractionHost`. Facts only.

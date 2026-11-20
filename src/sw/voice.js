@@ -71,7 +71,7 @@ export function buildReply(intent, state = {}) {
       if (!state.ok) return NO_TASK;
       return `Break started. Back to ${task} at ${state.endsAtText}.`;
     case 'cancelBreak':
-      return "There's no break timer running.";
+      return state.cancelled ? 'Break timer cancelled.' : "There's no break timer running.";
     default:
       return HELP;
   }
@@ -219,15 +219,20 @@ export async function handleVoiceCommand(msg, settings) {
       break;
     }
 
-    case 'cancelBreak':
-      // "Cancel the break" / "I'm back early": a return, only while a timer runs.
-      if (ob && ob.plannedMin && thread) {
+    case 'cancelBreak': {
+      // "Cancel the break" / "I'm back early". Before you've left: just cancel the
+      // timer. While away: a return. "Back early" with no timer is a plain "I'm back".
+      const timer = !!(ob && ob.plannedMin);
+      if (timer && !ob.departed) {
+        state.cancelled = !!(await breaks.cancelBreak(settings)).ok;
+      } else if ((timer || args.early) && thread) {
         const r = await events.resumeTask(thread.id, { via });
         state.ok = !!(r && r.ok);
         state.already = !!(r && r.already);
         data.intent = 'resume';
       }
       break;
+    }
 
     case 'stop':
       break;

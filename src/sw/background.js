@@ -40,6 +40,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 });
 // Group ids were already re-linked by ensureLinked() inside safe().
 chrome.runtime.onStartup.addListener(safe('startup', async () => {
+  await breaks.restoreAlarms();
   signals.setupIdleDetection();
   await badge.updateBadge();
 }));

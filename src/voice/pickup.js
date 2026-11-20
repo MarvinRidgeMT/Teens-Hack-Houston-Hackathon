@@ -45,9 +45,9 @@ async function startBreak(minutes) {
   const nextStep = $('timerStep').value.trim();
   const r = await send({ type: MSG.startBreak, minutes, nextStep: nextStep || undefined });
   if (r && r.ok) { $('timerStep').value = ''; $('timerMin').value = ''; }
-  else $('reply').textContent = (r && r.error === 'no task to take a break from')
-    ? 'Open your work page first, then start the break.'
-    : 'Pick a number of minutes from 1 to 120.';
+  else if (!r) $('reply').textContent = "Pickup didn't answer. Try again.";
+  else if (r.error === 'no task to take a break from') $('reply').textContent = 'Open your work page first, then start the break.';
+  else $('reply').textContent = 'Pick a number of minutes from 1 to 120.';
   refreshAll();
 }
 
@@ -56,7 +56,9 @@ function wireTimer() {
   $('timerForm').addEventListener('submit', (e) => { e.preventDefault(); startBreak(Number($('timerMin').value)); });
   $('timerBack').addEventListener('click', async () => {
     const { openBreak } = await chrome.storage.local.get('openBreak');
-    if (openBreak) await send({ type: MSG.resumeTask, threadId: openBreak.threadId, via: 'panel' });
+    // Never left: there's nothing to come back from, so just stop the timer.
+    if (openBreak && !openBreak.departed) await send({ type: MSG.cancelBreak });
+    else if (openBreak) await send({ type: MSG.resumeTask, threadId: openBreak.threadId, via: 'panel' });
     refreshAll();
   });
   $('timerCancel').addEventListener('click', async () => { await send({ type: MSG.cancelBreak }); refreshAll(); });
@@ -66,7 +68,7 @@ function drawClock(endsAt) {
   const left = Math.max(0, endsAt - Date.now());
   const s = Math.ceil(left / 1000);
   $('timerClock').textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-  if (!left) { $('timerEnds').textContent = "Time's up. Pickup sent one notification."; clearInterval(tick); tick = null; }
+  if (!left) { $('timerEnds').textContent = "Time's up."; clearInterval(tick); tick = null; }
 }
 
 async function renderTimer(ob, threads, settings) {
@@ -76,9 +78,12 @@ async function renderTimer(ob, threads, settings) {
   $('timerDebug').hidden = !settings.debug;
   clearInterval(tick); tick = null;
   if (!running) return;
+  const row = lastRows.find((r) => r.threadId === ob.threadId); // same name as the task list
   const t = threads[ob.threadId];
-  $('timerTask').textContent = t ? (t.auto ? 'Your task' : t.name) : 'Your task';
-  $('timerEnds').textContent = `Ends at ${clock(ob.endsAt)}${settings.debug ? ' (debug: 10 s per minute)' : ''}. You'll get one notification.`;
+  $('timerTask').textContent = row ? row.name : t && !t.auto ? t.name : 'Your task';
+  const notifies = !ob.nudged && !ob.breakOverShown;
+  $('timerEnds').textContent = `Ends at ${clock(ob.endsAt)}${settings.debug ? ' (debug: 10 s per minute)' : ''}. `
+    + (notifies ? "You'll get one notification." : 'No notification: Pickup already reminded you during this break.');
   drawClock(ob.endsAt);
   if (ob.endsAt > Date.now()) tick = setInterval(() => drawClock(ob.endsAt), 1000); // from stored endsAt: survives closing the panel
 }
@@ -194,9 +199,9 @@ async function refreshAll(focusThread) {
     send({ type: MSG.listThreads }),
     send({ type: MSG.voiceCommand, intent: 'today', args: {}, via: 'panel' }),
   ]);
-  await renderTimer(openBreak, threads, settings);
   // Don't redraw under someone typing a next step.
   if (!editing.size || focusThread) renderTasks(Array.isArray(rows) ? rows : [], focusThread);
+  await renderTimer(openBreak, threads, settings);
   renderToday(today && today.data && today.data.today);
 }
 function soon() { clearTimeout(pending); pending = setTimeout(() => refreshAll(), 150); }

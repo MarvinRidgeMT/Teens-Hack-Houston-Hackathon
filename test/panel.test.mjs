@@ -183,6 +183,79 @@ await step('startBreak rejects minutes outside 1-120; debug counts a minute as 1
   await setDebug(false);
 });
 
+// Review fixes: one notification per break, whatever the order
+await step('review: nudge already shown, then a timer: no second notification', async () => {
+  await settle();
+  await sim.send({ type: 'parkNote', nextStep: 'Check the rainfall table' }, doc); await flush();
+  sim.activate(yt); await flush();
+  const b = await ob();
+  advance(6 * 60000);
+  sim.fireAlarm('nudge:' + b.eventId); await flush();
+  assert.equal(sim.notifications.filter((n) => n.id === b.eventId).length, 1, 'nudge shown');
+  const r = await send({ type: 'startBreak', minutes: 5 }); await flush();
+  assert.equal(r.ok, true);
+  assert.equal(r.notify, false, 'already reminded this break');
+  advance(6 * 60000);
+  chrome.alarms.onAlarm.fire({ name: 'breakend:' + b.eventId }); await flush();
+  assert.equal(breakNotes().length, 0);
+});
+
+await step('review: a second timer on the same break never shows a second "Break\'s over"', async () => {
+  await settle();
+  await send({ type: 'startBreak', minutes: 5, tabId: doc }); await flush();
+  sim.activate(yt); await flush();
+  const b = await ob();
+  advance(6 * 60000);
+  sim.fireAlarm('breakend:' + b.eventId); await flush();
+  assert.equal(breakNotes().length, 1);
+  const r = await send({ type: 'startBreak', minutes: 5 }); await flush();
+  assert.equal(r.notify, false);
+  assert.equal((await ob()).breakOverShown, true, 'flag kept');
+  advance(6 * 60000);
+  chrome.alarms.onAlarm.fire({ name: 'breakend:' + b.eventId }); await flush();
+  assert.equal(breakNotes().length, 1);
+});
+
+await step('review: "cancel the break" before leaving cancels the timer (no notification later)', async () => {
+  await settle();
+  await send({ type: 'startBreak', minutes: 10, tabId: doc }); await flush();
+  const b = await ob();
+  assert.equal(b.departed, false);
+  const r = await send({ type: 'voiceCommand', intent: 'cancelBreak', args: {}, via: 'panel' }); await flush();
+  assert.equal(r.say, 'Break timer cancelled.');
+  assert.equal((await ob()).plannedMin, undefined);
+  assert.ok(!sim.alarms.has('breakend:' + b.eventId));
+});
+
+await step('review: "I\'m back early" with no timer is an ordinary "I\'m back"', async () => {
+  await settle();
+  sim.activate(yt); await flush();
+  advance(3 * 60000);
+  const r = await send({ type: 'voiceCommand', intent: 'cancelBreak', args: { early: true }, via: 'panel' }); await flush();
+  assert.equal(r.say, 'Taking you back to Drought Essay.');
+  assert.equal((await lastEvent()).returnVia, 'panel');
+});
+
+await step('review: a nudge alarm that fires after a timer started shows nothing', async () => {
+  await settle();
+  await sim.send({ type: 'parkNote', nextStep: 'Check the rainfall table' }, doc); await flush();
+  sim.activate(yt); await flush();
+  const b = await ob();
+  await send({ type: 'startBreak', minutes: 10 }); await flush();
+  chrome.alarms.onAlarm.fire({ name: 'nudge:' + b.eventId }); await flush(); // already in flight
+  assert.equal(sim.notifications.filter((n) => n.id === b.eventId).length, 0);
+});
+
+await step('review: browser restart re-creates the break-over alarm from endsAt', async () => {
+  await settle();
+  await send({ type: 'startBreak', minutes: 10, tabId: doc }); await flush();
+  const b = await ob();
+  sim.alarms.clear();
+  chrome.runtime.onStartup.fire(); await flush();
+  assert.ok(sim.alarms.has('breakend:' + b.eventId), 'alarm restored');
+  await send({ type: 'cancelBreak' }); await flush();
+});
+
 // ---------------- task list ----------------
 await step('listThreads: newest first, auto threads only with a breadcrumb, named "Untitled (from host)"', async () => {
   await settle();
