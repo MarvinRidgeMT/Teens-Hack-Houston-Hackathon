@@ -99,14 +99,37 @@ await step('F1: old breadcrumbs (next step only) give a card with no stoppedAt/s
   assert.ok(!('stoppedAt' in card) && !('stuckOn' in card));
 });
 
-await step('F1: a typed next step from the panel keeps the stored stoppedAt/stuckOn', async () => {
+await step('F1: the plan belongs to its next step: a different typed step drops it, the same step keeps it', async () => {
   await sim.send({ type: 'parkNote', nextStep: 'first', stoppedAt: 'Causes', stuckOn: 'a date' }, wiki); await flush();
+  await sim.send({ type: 'setNextStep', threadId: thread.id, nextStep: 'first' }); await flush();
+  let c = await crumbOf(thread.id);
+  assert.equal(c.stoppedAt, 'Causes', 'same step: plan kept');
   await sim.send({ type: 'setNextStep', threadId: thread.id, nextStep: 'second' }); await flush();
-  const c = await crumbOf(thread.id);
+  c = await crumbOf(thread.id);
   assert.equal(c.nextStep, 'second');
-  assert.equal(c.stoppedAt, 'Causes');
-  assert.equal(c.stuckOn, 'a date');
+  assert.equal(c.stoppedAt, undefined);
+  assert.equal(c.stuckOn, undefined);
   await leaveAndReturn(wiki);
+});
+
+await step('F1: clearing the next step clears the plan; retyping does not bring it back', async () => {
+  await sim.send({ type: 'parkNote', nextStep: 'A', stoppedAt: 'para 2', stuckOn: 'the 1936 source' }, wiki); await flush();
+  await sim.send({ type: 'setNextStep', threadId: thread.id, nextStep: '' }); await flush();
+  let c = await crumbOf(thread.id);
+  assert.ok(!('stoppedAt' in c) && !('stuckOn' in c) && !('nextStep' in c));
+  await sim.send({ type: 'setNextStep', threadId: thread.id, nextStep: 'brand new step' }); await flush();
+  await leaveAndReturn(wiki);
+  const card = lastOfType('showCard');
+  assert.equal(card.nextStep, 'brand new step');
+  assert.ok(!('stoppedAt' in card) && !('stuckOn' in card));
+});
+
+await step('F1: a stray plan on a breadcrumb with no next step is never sent', async () => {
+  const { nextStep, nextStepSource, ...rest } = await crumbOf(thread.id);
+  await store.putBreadcrumb({ ...rest, stoppedAt: 'stray', stuckOn: 'stray' });
+  await leaveAndReturn(wiki);
+  const card = lastOfType('showCard');
+  assert.ok(!('stoppedAt' in card) && !('stuckOn' in card));
 });
 
 // ---------- F2 ----------
@@ -162,6 +185,14 @@ await step('F2 find: text not on the page gives null (the caller restores scroll
   assert.equal(F.locateHighlight(PAGE, '', { yAt, savedY: 0 }), null);
   assert.equal(F.locateHighlight(PAGE, 'a', { yAt, savedY: 0 }), null, 'too short to be a real highlight');
 });
+await step('F2 find: a highlight across two paragraphs matches text joined without a separator', () => {
+  const m = F.locateHighlight('the end.Start of next part', 'end.\n\nStart of', { yAt, savedY: 0 });
+  assert.ok(m, 'found');
+  assert.equal('the end.Start of next part'.slice(m.start, m.end), 'end.Start of');
+});
+await step('F2 find: rawIndexToNode with no nodes gives null', () => {
+  assert.equal(F.rawIndexToNode([], 3), null);
+});
 await step('F2 find: Google Docs (canvas) skips the text search', () => {
   assert.equal(F.canSearchText('https://docs.google.com/document/d/abc/edit'), false);
   assert.equal(F.canSearchText('https://en.wikipedia.org/wiki/Drought'), true);
@@ -201,6 +232,22 @@ await step('F3: a video under 5 s, a bad value, or videoReplay off is not stored
   assert.equal((await crumbOf(lthread.id)).video, undefined);
   await setSettings();
 });
+await step('F3: cleanVideo rejects a non-string src, a time past the duration, and absurd times', async () => {
+  const E = await import('../src/sw/events.js');
+  const S = { features: {} };
+  assert.equal(E.cleanVideo({ currentTime: 50, duration: 100, src: { a: 1 } }, S), null);
+  assert.equal(E.cleanVideo({ currentTime: 1e12, duration: 30, src: LECT }, S), null);
+  assert.equal(E.cleanVideo({ currentTime: 1e9, duration: null, src: LECT }, S), null);
+  assert.deepEqual(E.cleanVideo({ currentTime: 50, duration: 100, src: LECT }, S), { currentTime: 50, duration: 100, src: LECT });
+});
+await step('F3: the video goes only to the exact page it came from (?v= changed: no video)', async () => {
+  const E = await import('../src/sw/events.js');
+  const crumb = { scrollY: 5, highlight: 'hi there', url: 'https://www.youtube.com/watch?v=A', video: { currentTime: 2050, duration: 3000, src: 'https://www.youtube.com/watch?v=A' } };
+  assert.ok(E.restoreMsg(crumb, {}, 'https://www.youtube.com/watch?v=A').video);
+  assert.equal(E.restoreMsg(crumb, {}, 'https://www.youtube.com/watch?v=B').video, undefined);
+  assert.equal(E.restoreMsg(crumb, {}).video, undefined, 'unknown tab URL: no video');
+});
+
 await step('F3 maths: replay 10 s back, never below 0; clock text; chip text', () => {
   assert.equal(C.VIDEO_REPLAY_SEC, 10);
   assert.equal(L.replayFrom(770.4), 760.4);

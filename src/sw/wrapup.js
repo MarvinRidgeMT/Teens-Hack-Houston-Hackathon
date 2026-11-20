@@ -96,8 +96,8 @@ export async function onStartHereClicked(threadId) {
   if (step.nextStep) { msg.nextStep = step.nextStep; msg.nextStepSource = step.nextStepSource || 'typed'; }
   // Additive (F1/F4): the plan from the breadcrumb, and which features the card may use.
   const crumb = await store.getBreadcrumb(threadId);
-  if (crumb && crumb.stoppedAt) msg.stoppedAt = crumb.stoppedAt;
-  if (crumb && crumb.stuckOn) msg.stuckOn = crumb.stuckOn;
+  if (crumb && crumb.nextStep && crumb.stoppedAt) msg.stoppedAt = crumb.stoppedAt; // only with its next step
+  if (crumb && crumb.nextStep && crumb.stuckOn) msg.stuckOn = crumb.stuckOn;
   msg.features = featuresOf(await store.getSettings());
   await sendToTab(r.tabId, msg);
   return r;

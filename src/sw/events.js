@@ -10,7 +10,7 @@ import { MSG } from '../shared/messages.js';
 import {
   CONDITIONS, DEBUG_THRESHOLD_MS, HIGHLIGHT_MAX, LATER_GROUP_TITLE, awayBucket, DEFAULT_TASK_TYPE,
   NEXT_STEP_CLEARS_ON_RETURN, RETURN_VIA, RETURN_VIA_TTL_MS, NEXT_STEP_SOURCE, BREAK_ALARM_PREFIX,
-  NOTE_FIELD_MAX, VIDEO_MIN_SEC, featuresOf,
+  NOTE_FIELD_MAX, VIDEO_MIN_SEC, VIDEO_MAX_SEC, featuresOf,
 } from '../shared/constants.js';
 import { isWorkUrl, isDistractionUrl } from '../shared/sites.js';
 import { ensureThreadForTab, tabInThread, threadForTab } from './threads.js';
@@ -26,18 +26,22 @@ const note = (s) => cap(String(s || '').replace(/\s+/g, ' ').trim(), NOTE_FIELD_
 export function cleanVideo(v, settings) {
   if (!v || !featuresOf(settings).videoReplay) return null;
   const t = Number(v.currentTime);
-  if (typeof v.currentTime !== 'number' || !Number.isFinite(t) || t <= VIDEO_MIN_SEC) return null;
-  const d = Number(v.duration);
-  return { currentTime: t, duration: typeof v.duration === 'number' && Number.isFinite(d) ? d : null, src: cap(v.src, 500) };
+  if (typeof v.currentTime !== 'number' || !Number.isFinite(t) || t <= VIDEO_MIN_SEC || t > VIDEO_MAX_SEC) return null;
+  if (typeof v.src !== 'string') return null;
+  const d = typeof v.duration === 'number' && Number.isFinite(v.duration) ? v.duration : null;
+  if (d != null && t > d) return null;
+  return { currentTime: t, duration: d, src: cap(v.src, 500) };
 }
 
 // What Resume sends the page: scrollY always; the highlight (F2) and the video (F3)
 // when their features are on. Additive: an old content script reads scrollY only.
-export function restoreMsg(crumb, settings) {
+// The video goes only to the exact page it was saved on (?v= is part of a URL's
+// identity on YouTube); pageUrl unknown means no video.
+export function restoreMsg(crumb, settings, pageUrl) {
   const msg = { type: MSG.restoreScroll, scrollY: (crumb && crumb.scrollY) || 0 };
   const f = featuresOf(settings);
   if (crumb && f.youWereHere && crumb.highlight) msg.highlight = crumb.highlight;
-  if (crumb && f.videoReplay && crumb.video) msg.video = crumb.video;
+  if (crumb && f.videoReplay && crumb.video && pageUrl && pageUrl === crumb.url) msg.video = crumb.video;
   return msg;
 }
 
@@ -79,7 +83,10 @@ export async function writeBreadcrumb({ thread, tab, snap, signal, leftAt, nextS
   if (step) {
     crumb.nextStep = cap(step, HIGHLIGHT_MAX);
     crumb.nextStepSource = nextStep !== undefined ? nextStepSource : (prev && prev.nextStepSource) || NEXT_STEP_SOURCE.typed;
-    const p = plan !== undefined ? plan : prev || {}; // only Alt+P (park) brings a new plan
+    // The plan belongs to its next step: Alt+P brings a new one; the same step keeps
+    // the stored one; a different step written elsewhere drops it.
+    const keep = nextStep === undefined || (prev && prev.nextStep === crumb.nextStep);
+    const p = plan !== undefined ? plan : keep ? prev || {} : {};
     if (p.stoppedAt) crumb.stoppedAt = note(p.stoppedAt);
     if (p.stuckOn) crumb.stuckOn = note(p.stuckOn);
   }
@@ -93,14 +100,20 @@ export async function writeBreadcrumb({ thread, tab, snap, signal, leftAt, nextS
 // made from the page with signal 'note'.
 export async function noteNextStep(thread, tab, text, source, settings) {
   const prev = await store.getBreadcrumb(thread.id);
-  if (prev) return store.putBreadcrumb({ ...prev, nextStep: cap(text, HIGHLIGHT_MAX), nextStepSource: source });
+  if (prev) {
+    const step = cap(text, HIGHLIGHT_MAX);
+    // A different next step drops the plan written with the old one (F1).
+    const { stoppedAt, stuckOn, ...rest } = prev;
+    const keep = step === prev.nextStep ? { ...(stoppedAt ? { stoppedAt } : {}), ...(stuckOn ? { stuckOn } : {}) } : {};
+    return store.putBreadcrumb({ ...rest, ...keep, nextStep: step, nextStepSource: source });
+  }
   const snap = await snapshot(tab, settings);
   return writeBreadcrumb({ thread, tab, snap, signal: 'note', leftAt: Date.now(), nextStep: text, nextStepSource: source });
 }
 
 // Decision 7: what the breadcrumb looks like after a logged return.
 export function crumbAfterReturn(crumb, clearNextStep) {
-  if (!clearNextStep || !crumb || !crumb.nextStep) return crumb;
+  if (!clearNextStep || !crumb || !(crumb.nextStep || crumb.stoppedAt || crumb.stuckOn)) return crumb;
   const { nextStep, nextStepSource, stoppedAt, stuckOn, ...rest } = crumb;
   return rest;
 }
@@ -233,8 +246,8 @@ export async function closeBreakOnReturn(tab, settings, { via = RETURN_VIA.tab }
       card.nextStep = crumb.nextStep;
       card.nextStepSource = crumb.nextStepSource || NEXT_STEP_SOURCE.typed; // additive: 'typed' | 'selected'
     }
-    if (crumb && crumb.stoppedAt) card.stoppedAt = crumb.stoppedAt; // additive (F1)
-    if (crumb && crumb.stuckOn) card.stuckOn = crumb.stuckOn;       // additive (F1)
+    if (crumb && crumb.nextStep && crumb.stoppedAt) card.stoppedAt = crumb.stoppedAt; // additive (F1), only with its next step
+    if (crumb && crumb.nextStep && crumb.stuckOn) card.stuckOn = crumb.stuckOn;
     await sendToTab(tab.id, card);
     await store.updateEvent(ev.id, { cardShown: true });
   }
@@ -280,7 +293,7 @@ export async function resume(threadId) {
   if (thread && thread.groupId != null) {
     try { await chrome.tabGroups.update(thread.groupId, { collapsed: false }); } catch { /* group gone */ }
   }
-  const msg = restoreMsg(crumb, await store.getSettings());
+  const msg = restoreMsg(crumb, await store.getSettings(), created ? crumb.url : tabUrl(tab));
   // A recreated tab has to load before it can scroll. Wait for that outside the
   // serial queue (not awaited), so other handlers are not held for up to 8 s.
   if (created) restoreAfterLoad(tab.id, msg);
@@ -332,7 +345,7 @@ export async function resumeTask(threadId, { via = RETURN_VIA.resumeKey } = {}) 
   if (!ob) {
     const here = await focusedActiveTab();
     if (here && tabInThread(here, thread, crumb) && !isDistractionUrl(tabUrl(here), settings)) {
-      if (crumb) await sendToTab(here.id, restoreMsg(crumb, settings));
+      if (crumb) await sendToTab(here.id, restoreMsg(crumb, settings)); // already here: no video seek (it would lose time)
       return { ok: true, threadId: id, already: true };
     }
   }

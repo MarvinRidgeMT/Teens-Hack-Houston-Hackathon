@@ -58,6 +58,7 @@ export const featuresOf = (settings) => ({ ...DEFAULT_FEATURES, ...((settings &&
 export const NOTE_FIELD_MAX = 120;         // F1: stoppedAt and stuckOn on a breadcrumb
 export const VIDEO_REPLAY_SEC = 10;        // F3: Resume rewinds this far before where you left
 export const VIDEO_MIN_SEC = 5;            // F3: a video under this is not worth saving
+export const VIDEO_MAX_SEC = 86400;        // F3: anything past 24 h is a bad value
 export const COMPACT_AWAY_MS = 300000;     // F4: under 5 min away the card is one line (decided only from awayMs)
 
 export const DEBUG_THRESHOLD_MS = 10000;

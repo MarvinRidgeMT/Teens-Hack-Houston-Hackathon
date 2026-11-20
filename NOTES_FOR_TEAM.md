@@ -115,14 +115,15 @@ Copy two pure files as they are into your scripts. Both are tested in `test/feat
 
 1. **Theme (D1).**
    - Swap `TOKENS` in `card.js` for the token values in `src/shared/tokens.css`: Paper by default, and Blue hour under `@media (prefers-color-scheme: dark)` on `:host`.
-   - Load Inter inside the shadow root with `@font-face { font-family: Inter; src: url(${chrome.runtime.getURL('assets/fonts/InterVariable.woff2')}) }`, falling back to `system-ui`.
+   - Load Inter at **document level**, not inside the shadow root: Chrome ignores `@font-face` in shadow trees. Use `const f = new FontFace('Pickup Inter', `url(${chrome.runtime.getURL('assets/fonts/InterVariable.woff2')})`); document.fonts.add(f); f.load()`. The unique family name means a page's own "Inter" can't collide. Fall back to `system-ui`. Check in Chrome that the `getURL` URL loads (the manifest entry uses `use_dynamic_url`).
+   - Put the tokens on an inner wrapper inside the shadow root, or prefix them `--pk-`. Names like `--border` set on `:host` lose to page rules that match the host element.
    - Restyle the three surfaces: return card → ReturnCard (`design/components/ReturnCard/`); overlay → ParkPrompt; parked pill → Toast with the drawn check.
    - Keep the same keys (Enter, T, Esc), the same messages, your `TOP` guards and `isOwnEvent` (card clicks never count as work interaction).
    - Motion: keep your vendored `src/vendor/motion.js` as the only copy. The design system's copy is v11.18.2 and a different build; check that `animate`, `stagger` and the spring options it uses exist in yours. Only animate opacity and transforms.
 2. **F1, ParkPrompt plan.**
    - Add three fields: **Stopped at…**, prefilled with `stoppedAtDefault(document.title, <nearest h1–h3 above the viewport>)` and editable; **Next I'll…**, placeholder "When I'm back, I'll first ___"; **Stuck on…**, optional.
    - Fast path: typing and pressing Enter saves at once with the next step only. Tab reveals the other two fields. Esc cancels.
-   - Send `{ type: 'parkNote', nextStep, stoppedAt, stuckOn, taskName? }`. Skip the extra fields when `features.readyNote` is false (read `settings.features` from storage when the overlay opens).
+   - Send `{ type: 'parkNote', nextStep, stoppedAt, stuckOn, taskName? }`. The plan belongs to its next step: the engine drops it when a different next step is written later, and never sends it without one. Skip the extra fields when `features.readyNote` is false (read `settings.features` from storage when the overlay opens).
 3. **F4, adaptive card.**
    - Choose the variant with `cardVariant(msg.awayMs, { adaptive: msg.features.adaptiveCard })`.
    - `compact` is one line, `compactLine(msg)`, with the same keys.
@@ -132,14 +133,14 @@ Copy two pure files as they are into your scripts. Both are tested in `test/feat
    - On `restoreScroll` with `highlight` (and `canSearchText(location.href)`):
      - TreeWalker over the visible text nodes; join their text; record each node's start index.
      - Call `locateHighlight(joined, msg.highlight, { yAt, savedY: msg.scrollY })`, where `yAt` maps an index to its text node's `getBoundingClientRect().top + scrollY`.
-     - Turn the result into a `Range` with `rawIndexToNode`, scroll it to the centre, and mark it with `CSS.highlights.set('pickup-here', new Highlight(range))`.
+     - Turn the result into a `Range` with `rawIndexToNode` (for the end, map `end - 1` and add 1 to the offset), scroll it to the centre, and mark it with `CSS.highlights.set('pickup-here', new Highlight(range))`.
      - Inject `::highlight(pickup-here) { background: rgba(67,71,184,.22); }` in the page (`<style>` with an id, removed on clear); don't wrap DOM nodes.
      - Show a one-time ring glow of about 2 s in a fixed shadow-DOM box over the range rect (a static outline under reduced motion).
      - Clear the mark on the next scroll or keypress.
    - `null`, or no `CSS.highlights`: restore `scrollY` exactly as today, silently. In Google Docs keep the scroll restore only.
 5. **F3, video.**
    - On `snapshot` and `state`: if the top frame has a `<video>` with `currentTime > 5`, add `video: { currentTime, duration, src: location.href }`.
-   - On `restoreScroll` with `video`: re-query the `<video>` at that moment (YouTube is a single-page app) and set `currentTime = replayFrom(video.currentTime)`.
+   - On `restoreScroll` with `video`: re-query the `<video>` at that moment (YouTube is a single-page app). Apply it only when there is exactly one candidate video, then set `currentTime = replayFrom(video.currentTime)`. The engine sends `video` only when the tab's URL is exactly the saved one, query included, and never on an Alt+R while you're already on the task.
    - Leave it paused (never call `play()`, never unmute).
    - Show a Chip near the player with `videoChipText(video.currentTime)` ("Replaying from 12:40 · you left at 12:50 · Space to play").
    - Panopto, Kaltura and Canvas iframes are roadmap (they need extra host permissions).
