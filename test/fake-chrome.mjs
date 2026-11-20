@@ -12,8 +12,10 @@ function evt() {
 }
 const clone = (v) => (v === undefined ? undefined : JSON.parse(JSON.stringify(v)));
 
-function area() {
+// `onChanged` is chrome.storage.onChanged; it fires after every write, like Chrome.
+function area(name, onChanged) {
   let data = {};
+  const fire = (changes) => { if (onChanged && Object.keys(changes).length) setTimeout(() => onChanged.fire(changes, name), 0); };
   return {
     async get(k) {
       if (k == null) return clone(data);
@@ -22,8 +24,16 @@ function area() {
       for (const key of keys) if (key in data) o[key] = clone(data[key]);
       return o;
     },
-    async set(o) { for (const [k, v] of Object.entries(o)) data[k] = clone(v); },
-    async clear() { data = {}; },
+    async set(o) {
+      const changes = {};
+      for (const [k, v] of Object.entries(o)) { changes[k] = { oldValue: clone(data[k]), newValue: clone(v) }; data[k] = clone(v); }
+      fire(changes);
+    },
+    async clear() {
+      const changes = {};
+      for (const k of Object.keys(data)) changes[k] = { oldValue: clone(data[k]) };
+      data = {}; fire(changes);
+    },
     _raw: () => data,
   };
 }
@@ -50,8 +60,18 @@ export function makeChrome({ now }) {
   const hasContent = (t) => t && contentSites.some((s) => (t.url || '').includes(s))
     && ![...blockedContent].some((s) => (t.url || '').includes(s));
 
+  const storageChanged = evt();
+  const badge = { text: '', color: null, title: 'Pickup' };
+  const menus = new Map(); // id -> createProperties (contextMenus)
   const c = {
-    storage: { local: area(), session: area() },
+    storage: { local: area('local', storageChanged), session: area('session', storageChanged), onChanged: storageChanged },
+    action: {
+      async setBadgeText({ text }) { badge.text = text; },
+      async setBadgeBackgroundColor({ color }) { badge.color = color; },
+      async setTitle({ title }) { badge.title = title; },
+      async getBadgeText() { return badge.text; },
+      async getTitle() { return badge.title; },
+    },
     runtime: {
       onInstalled: evt(), onStartup: evt(), onMessage: evt(),
       async openOptionsPage() {}, getURL: (p) => `chrome-extension://x/${p}`,
@@ -155,7 +175,7 @@ export function makeChrome({ now }) {
 
   // ---- user simulation ----
   const sim = {
-    sent, notifications, alarms, tabs, groups, page, windows, moved: [],
+    sent, notifications, alarms, tabs, groups, page, windows, moved: [], badge, menus,
     setContentSites(s) { contentSites = s; },
     addWindow(id) { windows.set(id, { id, focused: false, type: 'normal' }); },
     addChildFrame(tabId, { url, answersSnapshot = false }) {

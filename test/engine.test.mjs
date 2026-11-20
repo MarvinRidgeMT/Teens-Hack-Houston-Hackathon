@@ -691,6 +691,39 @@ await step('F5: a park break returned by clicking the nudge logs returnVia "noti
   assert.equal(ev.returnVia, 'notification');
 });
 
+// Feature 4: toolbar badge
+const badgeNow = async () => { await flush(); await sleep(5); await flush(); return { ...sim.badge }; };
+await step('F4: badge shows P (teal) while parked, • (amber) while away, and clears on return', async () => {
+  await settle();
+  assert.equal((await badgeNow()).text, '');
+  await sim.send({ type: 'parkNote', nextStep: 'Write the intro' }, wikiA); await flush();
+  let b = await badgeNow();
+  assert.equal(b.text, 'P');
+  assert.equal(b.color, '#0D9488');
+  assert.equal(b.title, "Pickup: Climate Essay parked: leave when you're ready");
+  sim.activate(yt); await flush();
+  b = await badgeNow();
+  assert.equal(b.text, '•');
+  assert.equal(b.color, '#D97706');
+  assert.equal(b.title, 'Pickup: Climate Essay is waiting');
+  advance(3 * 60000);
+  sim.activate(wikiA); await flush();
+  b = await badgeNow();
+  assert.equal(b.text, '');
+  assert.equal(b.title, 'Pickup');
+});
+
+await step('F4: flashBadge shows a confirmation for ~2 s, then the real state comes back', async () => {
+  await settle();
+  await sim.send({ type: 'parkNote', nextStep: 'Write the intro' }, wikiA); await flush();
+  const badge = await import('../src/sw/badge.js');
+  await badge.flashBadge('✓');
+  assert.equal(sim.badge.text, '✓');
+  await sleep(2200); await flush();
+  assert.equal((await badgeNow()).text, 'P');
+  sim.activate(yt); await flush(); advance(10); sim.activate(wikiA); await flush(); // discard the short break
+});
+
 const total = (await events()).length;
 (quiet || console.log)(`\n${passed} checks passed, ${total} events logged${process.exitCode ? ' — SOME FAILED' : ''}`);
 process.exit(process.exitCode || 0);

@@ -36,6 +36,18 @@ Owner: Anish. Files: `manifest.json`, `src/shared/{constants,messages,store,site
   | `distractionHosts` | unique distraction hostnames seen in the break, in order; never paths or titles |
   | `returnVia` | `tab` (a normal tab/window activation), `resumeKey` (Alt+R or `resumeTask`), `notification` (clicked the nudge or Start-here notification), `idle` (back at the keyboard while Chrome showed the task). Pickup sets a short session marker (10 s) just before it activates the tab itself; the return reads and clears it |
 
+## Toolbar badge (Feature 4)
+Drawn by `src/sw/badge.js` from storage on every `openBreak` / `wrapUp` / `threads` write, on install and on startup.
+
+| state | text | colour | tooltip |
+|---|---|---|---|
+| parked (`departed: false`) | `P` | teal `#0D9488` | "Pickup: <task> parked: leave when you're ready" |
+| break open (`departed: true`) | `•` | amber `#D97706` | "Pickup: <task> is waiting" |
+| wrapped up for the day | `☾` | indigo `#4F46E5` | "Pickup: <task> saved for tomorrow" |
+| none | (empty) | | "Pickup" |
+
+Confirmations flash for 2 s, then the real state returns: `✓` saved, `!` nothing saved, `?` no task to go back to.
+
 ## Engine behaviour worth knowing (Phase 1 hardening)
 - **Frames:** `snapshot`, `showCard`, `restoreScroll` and `openOverlay` go to the top frame only (`frameId: 0`). `armTimer` goes to every frame, because Docs types into an iframe. Keep the `if (!TOP) return` guards anyway.
 - **Resume of a closed tab:** the engine reopens it in its task group's window, puts it back in the group, replies at once, and sends `restoreScroll` when the page finishes loading (up to 8 s), after the content script answers a `snapshot` ping (3 tries, 500 ms apart). Other handlers are not held while it waits.

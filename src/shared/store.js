@@ -64,6 +64,10 @@ export async function putBreadcrumb(crumb) {
 export const getOpenBreak = () => getLocal(KEYS.openBreak, null);
 export const setOpenBreak = (b) => setLocal(KEYS.openBreak, b);
 
+// ---- wrapUp: WrapUp | null (Feature 2) ----
+export const getWrapUp = () => getLocal(KEYS.wrapUp, null);
+export const setWrapUp = (w) => setLocal(KEYS.wrapUp, w);
+
 // ---- events: Event[] ----
 // Note: the whole array is rewritten on every add/update. Fine for a pilot (~200
 // events, a few KB each write). If it ever grows to thousands, split it into

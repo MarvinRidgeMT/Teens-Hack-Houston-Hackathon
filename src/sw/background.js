@@ -10,6 +10,7 @@ import * as signals from './signals.js';
 import * as threads from './threads.js';
 import * as events from './events.js';
 import * as nudge from './nudge.js';
+import * as badge from './badge.js';
 import { getTab, tabUrl, log } from './util.js';
 
 // Every handler: one at a time, and only after thread group ids were checked for
@@ -27,6 +28,7 @@ signals.setupIdleDetection();
 // ---------- install / startup ----------
 chrome.runtime.onInstalled.addListener(async (details) => {
   signals.setupIdleDetection();
+  await safe('badge', badge.updateBadge)();
   if (details.reason === 'install') {
     try { await chrome.runtime.openOptionsPage(); } catch (e) { log('no setup page yet', e); }
   }
@@ -34,7 +36,14 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 // Group ids were already re-linked by ensureLinked() inside safe().
 chrome.runtime.onStartup.addListener(safe('startup', async () => {
   signals.setupIdleDetection();
+  await badge.updateBadge();
 }));
+
+// Every write to openBreak or wrapUp redraws the badge (Feature 4).
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area !== 'local') return;
+  if (changes.openBreak || changes.wrapUp || changes.threads) safe('badge', badge.updateBadge)(); // threads: the tooltip names the task
+});
 
 // ---------- signals ----------
 chrome.tabs.onActivated.addListener(safe('onActivated', signals.handleActivated));
