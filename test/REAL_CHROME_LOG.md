@@ -86,10 +86,11 @@ Debug on: 10 s threshold, 30 s nudge. Force card on.
 | 9 | Features 1–5 | **22 pass, 1 fail**, 1 not run (Docs) | Every Gate step and every older extra passed, plus N1 (Alt+R, `returnVia: resumeKey`, `chrome://extensions/shortcuts` shows ⌥P / ⌥R), N3 (menu item exists), N4 (badge P → • → empty), N5 (event fields), N2d (debug Start here at 60 s). **N2 failed: a real engine bug.** In debug mode "Pretend it's tomorrow" did nothing, because debug ignored `dayKey`. Fixed in `checkStartHere` with a failing check first |
 | 10 | review fixes | stopped | Stopped at Anish's request |
 | 11, 12 | **voice merged** (785c4cd) | 12 and 13 pass; every focus-needing step from 10 on failed | Steps 1–9, N3 and N5 passed. After the Finder step, Chrome came back on its own (10 s into a 15 s pause), then the driver could never get a focused Chrome window again, though Chrome for Testing was the frontmost app. The Mac had user input 1 s before I checked, so I think someone was using it during the run. **Inconclusive, not counted.** Run on its own, Xa passed. Needs one clean full run with hands off the Mac |
+| **13** | **voice merged + review fixes** (7f701d7) | **23 pass, 0 fail**, 1 not run (Docs) | Clean run with nobody using the Mac. All 11 Gate steps, Xa–Xf, N1–N5, N2d and the restart check Xd pass. **N2 now passes on the fixed engine:** one Start-here notification, the click resumes the task (scroll 641), the start-here card is drawn, no event, badge empty afterwards. `chrome://extensions/shortcuts`: park ⌥P, resume ⌥R, voice ⌥V, wrap-up unbound, with no clashes |
 
 Driver fixes tonight (not engine bugs): focus by pid (run 8); the frontmost-app probe had an AppleScript syntax error and always said `?` (fixed after run 11); on a focus failure the driver now logs every window's type/state/focused and saves a screenshot in its scratch dir.
 
-**Still to verify in real Chrome:** N2 (wrap-up → pretend tomorrow → Start here → resume, no event) on the fixed engine, and the voice panel with a real microphone (`test/VOICE_SPIKE.md`, 9 manual steps).
+**Still to verify in real Chrome:** the voice panel with a real microphone (`test/VOICE_SPIKE.md`, 9 manual steps), the manual rows below (Docs, right-click, the real ⌥R key), and Sidd's and Abhinav's code once it lands.
 
 ## Engine bugs found in real Chrome
 
