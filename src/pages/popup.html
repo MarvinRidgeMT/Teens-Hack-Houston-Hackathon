@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pickup</title>
+  <link rel="stylesheet" href="../shared/tokens.css">
+  <link rel="stylesheet" href="../shared/pk.css">
+  <link rel="stylesheet" href="popup.css">
+  <script type="module" src="popup.js"></script>
+</head>
+<body class="pk">
+  <main class="pp">
+    <header class="pp-head pk-rise" style="--i:0">
+      <span class="pk-logo"><span class="pk-mark" aria-hidden="true"></span>Pickup</span>
+      <span class="pk-chip" id="status-chip"><span class="pk-dot pk-dot--neutral" id="status-dot" aria-hidden="true"></span><span id="status-text">Saved on this device</span></span>
+    </header>
+
+    <p id="notice" class="pp-notice" role="status" aria-live="polite" hidden></p>
+
+    <section id="setup-needed" class="pk-card pk-card--flat pk-rise" style="--i:1" hidden>
+      <p class="pk-body">Add your work sites first, so Pickup knows which tabs are work.</p>
+      <div class="pk-row"><button class="pk-btn" type="button" id="go-setup">Set up Pickup</button></div>
+    </section>
+
+    <section id="task-card" class="pk-card pk-card--flat pk-rise" style="--i:1" aria-labelledby="task-name" hidden>
+      <div>
+        <p class="pk-eyebrow">Now</p>
+        <p class="pk-task" id="task-name"></p>
+        <p class="pk-meta" id="task-meta"></p>
+      </div>
+      <p class="pk-step" id="task-step" hidden><small id="task-step-label"></small><span id="task-step-text"></span></p>
+      <div class="seg" id="task-type-current" role="radiogroup" aria-label="Task type"><i aria-hidden="true"></i></div>
+      <div class="pp-actions">
+        <button class="pk-btn pk-btn--primary" type="button" id="resume">Resume <span class="pk-kbd">Alt+R</span></button>
+        <button class="pk-btn" type="button" id="park">Park <span class="pk-kbd">Alt+P</span></button>
+        <button class="pk-btn" type="button" id="wrapup">Wrap up</button>
+      </div>
+    </section>
+
+    <section id="suggested-section" class="pk-rise" style="--i:2" aria-labelledby="suggested-h" hidden>
+      <h2 class="pp-h" id="suggested-h">Suggested tabs</h2>
+      <p class="pk-meta pp-sub">Links you opened from this task joined its group. Keep each one or remove it.</p>
+      <ul class="pp-list" id="suggested"></ul>
+    </section>
+
+    <section id="start-section" class="pk-rise" style="--i:1" aria-labelledby="start-h" hidden>
+      <h2 class="pp-h" id="start-h">Start a task</h2>
+      <form id="start-form" class="pp-start" autocomplete="off">
+        <label for="start-name" class="pk-sr">Task name</label>
+        <input class="pk-input" id="start-name" maxlength="60" placeholder="e.g. Chem problem set 4" required>
+        <button class="pk-btn pk-btn--primary" type="submit" id="start-btn">Start <span class="pk-kbd">Enter</span></button>
+      </form>
+      <div class="seg" id="task-type" role="radiogroup" aria-label="Task type for the new task"><i aria-hidden="true"></i></div>
+    </section>
+
+    <section id="not-work" class="pk-rise" style="--i:1" hidden>
+      <p class="pk-meta" id="not-work-text"></p>
+    </section>
+
+    <section id="threads-section" class="pk-rise" style="--i:3" aria-labelledby="threads-h" hidden>
+      <h2 class="pp-h" id="threads-h">Your tasks</h2>
+      <ul class="pp-list" id="threads"></ul>
+    </section>
+
+    <footer class="pp-foot pk-rise" style="--i:4">
+      <p class="pp-keys"><span><span class="pk-kbd">Alt+P</span> Park</span><span><span class="pk-kbd">Alt+R</span> Resume</span><span><span class="pk-kbd">Alt+V</span> Panel</span></p>
+      <div class="pk-row">
+        <button class="pk-btn pk-btn--ghost pk-btn--sm" type="button" id="open-panel">Open Pickup panel <span class="pk-kbd">Alt+V</span></button>
+        <button class="pk-btn pk-btn--ghost pk-btn--sm" type="button" id="open-dashboard">Dashboard</button>
+        <button class="pk-btn pk-btn--ghost pk-btn--sm" type="button" id="open-setup">Setup</button>
+      </div>
+    </footer>
+  </main>
+</body>
+</html>
