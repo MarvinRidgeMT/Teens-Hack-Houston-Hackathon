@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pickup: undo the interruption</title>
+  <meta name="description" content="Pickup is a free Chrome extension that saves your place when you get pulled away and hands it back when you return. No account. Nothing leaves your computer.">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0e0f11">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icon32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/icon16.png">
+  <link rel="apple-touch-icon" href="assets/icon128.png">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Pickup: undo the interruption, not the mistake">
+  <meta property="og:description" content="A Chrome extension that saves your place when you get pulled away and hands it back when you return.">
+  <meta property="og:image" content="assets/shot-card.jpg">
+  <meta property="og:image:alt" content="Pickup's return card: task name, time away, your next step and where you were.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Pickup: undo the interruption, not the mistake">
+  <meta name="twitter:description" content="Saves your place when you get pulled away. Hands it back when you return.">
+  <meta name="twitter:image" content="assets/shot-card.jpg">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="nav">
+    <a class="brand" href="#top"><img src="assets/icon32.png" width="24" height="24" alt=""> Pickup</a>
+    <nav aria-label="Sections">
+      <a href="#how">How it works</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#install">Install</a>
+      <a href="#demo">Demo</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <!-- 1. Hero -->
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <img class="logo" src="assets/icon128.png" width="64" height="64" alt="Pickup logo">
+        <h1 id="hero-title">Undo the interruption, not the mistake.</h1>
+        <p class="lede">A Chrome extension that saves your place when you get pulled away and hands it back when you return.</p>
+        <div class="ctas">
+          <a class="btn primary" href="https://github.com/MarvinRidgeMT/Teens-Hack-Houston-Hackathon/releases/latest">
+            <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M11 4h2v9.17l3.59-3.58L18 11l-6 6-6-6 1.41-1.41L11 13.17z M5 18h14v2H5z"/></svg>
+            Download for Chrome
+          </a>
+          <a class="btn" href="#demo">Watch the 6-min demo</a>
+        </div>
+        <p class="caption">Free · Load unpacked · No account · Nothing leaves your computer</p>
+      </div>
+      <figure class="hero-shot">
+        <img src="assets/shot-card.jpg" width="1600" height="1000" alt="Pickup's return card over a student's essay draft: welcome back to Climate Essay, the next step the student wrote, the sentence they last highlighted, and Resume, Tidy and Not now buttons.">
+      </figure>
+    </section>
+
+    <!-- 2. The problem -->
+    <section class="problem" aria-labelledby="problem-title">
+      <h2 id="problem-title" class="micro">The problem</h2>
+      <p class="big">You open a tab to check one thing.<br>Twenty minutes later you're somewhere else.<br>Getting back means remembering where you were.</p>
+      <p class="note">For context, not a promise: Gloria Mark's field studies of office workers found that interrupted work was typically resumed about 23 minutes later, often after two other tasks in between. <a href="https://news.gallup.com/businessjournal/23146/too-many-interruptions-work.aspx">Source: Gallup Business Journal interview with Gloria Mark</a>.</p>
+    </section>
+
+    <!-- 3. How it works -->
+    <section id="how" aria-labelledby="how-title">
+      <h2 id="how-title">How it works</h2>
+      <ol class="steps">
+        <li>
+          <figure><img src="assets/shot-leave.jpg" width="1600" height="1000" loading="lazy" alt="The park overlay on a work page: one line asking for your next step, with Enter to save."></figure>
+          <h3><span class="num">1</span> Leave</h3>
+          <p>When you switch away from a work page, Pickup saves where you were: the page, your scroll position and what you last highlighted. Press Alt+P first if you want to leave a next step in your own words.</p>
+        </li>
+        <li>
+          <figure><img class="portrait" src="assets/shot-panel.jpg" width="720" height="1600" loading="lazy" alt="The Pickup panel while you are away: asked &quot;where was I?&quot;, it answers with the task, your next step and your last highlight."></figure>
+          <h3><span class="num">2</span> Drift</h3>
+          <p>If you wrote a next step, Pickup can send one quiet reminder after a few minutes away. One per break, never more, and it never blocks a site. Ask the Pickup panel "where was I?" any time.</p>
+        </li>
+        <li>
+          <figure><img src="assets/shot-card.jpg" width="1600" height="1000" loading="lazy" alt="The return card: task name, time away, your next step and your last highlight."></figure>
+          <h3><span class="num">3</span> Return</h3>
+          <p>Come back and a small card shows what you were doing, how long you were gone, and the next step you wrote. Every line is something you did or wrote.</p>
+        </li>
+        <li>
+          <figure><img src="assets/shot-resume.jpg" width="1600" height="1000" loading="lazy" alt="The work page after Resume: scrolled back to the saved spot with the highlighted sentence in view."></figure>
+          <h3><span class="num">4</span> Resume</h3>
+          <p>Press Enter and you're back at the exact spot. Press T to tidy the tabs you opened while away into a collapsed "Later" group. Nothing is closed.</p>
+        </li>
+      </ol>
+    </section>
+
+    <!-- 4. Features (only what ships in v1.0) -->
+    <section aria-labelledby="features-title">
+      <h2 id="features-title">What's in v1.0</h2>
+      <ul class="features">
+        <li><h3>Return card + Resume</h3><p>Your task, time away, your next step and last highlight. Enter jumps back.</p></li>
+        <li><h3>Park with Alt+P</h3><p>Leave a next step in your own words before you go.</p></li>
+        <li><h3>Task tab groups</h3><p>Each task is a named Chrome tab group, so its tabs stay together.</p></li>
+        <li><h3>Tidy</h3><p>Tabs from the break go into a collapsed "Later" group. Nothing is closed.</p></li>
+        <li><h3>Drift nudge</h3><p>One reminder per break, only if you wrote a next step.</p></li>
+        <li><h3>Alt+R from anywhere</h3><p>Jump back to your task from any tab.</p></li>
+        <li><h3>"Make this my next step"</h3><p>Right-click a sentence on a work page to save it as your next step.</p></li>
+        <li><h3>Wrap up → Start here</h3><p>Save your place at night; get one "Start here" reminder the next morning.</p></li>
+        <li><h3>Pickup panel</h3><p>Ask "where was I?", set a break timer ("back in 10"), and see your tasks.</p></li>
+        <li><h3>"Hey Pickup" voice</h3><p>Optional and off by default. Speech is recognised on your device.</p></li>
+      </ul>
+    </section>
+
+    <!-- 5. Privacy -->
+    <section id="privacy" class="privacy" aria-labelledby="privacy-title">
+      <h2 id="privacy-title">Privacy</h2>
+      <ul class="checks">
+        <li>Everything stays in Chrome's local storage on your computer.</li>
+        <li>No accounts, no servers, no analytics.</li>
+        <li>Pickup stores a highlight of up to 200 characters, never the page's text.</li>
+        <li>Voice is recognised on your device, and no audio is kept.</li>
+        <li>One button deletes everything Pickup has stored.</li>
+      </ul>
+      <details class="limits">
+        <summary>Honest limits</summary>
+        <ul>
+          <li>Pickup can't see your phone. It only knows what happens in Chrome.</li>
+          <li>It can't read the text of a Google Doc, so in Docs it saves your place but not your highlight.</li>
+          <li>"Time to first interaction" (your first click, key or scroll back on the task) is a stand-in for getting back into work, not a measure of focus.</li>
+        </ul>
+      </details>
+    </section>
+
+    <!-- 6. Evidence -->
+    <section aria-labelledby="evidence-title">
+      <h2 id="evidence-title">Evidence</h2>
+      <!-- PILOT RESULTS: filled Sat 10 AM -->
+      <div class="evidence" id="pilot-results">
+        <p>Results from our 3-person pilot are posted Saturday.</p>
+      </div>
+      <!-- /PILOT RESULTS -->
+    </section>
+
+    <!-- 7. Install -->
+    <section id="install" aria-labelledby="install-title">
+      <h2 id="install-title">Install in 4 steps</h2>
+      <div class="install">
+        <ol class="install-steps">
+          <li><strong>Download</strong> the zip and unzip it.</li>
+          <li>Open <code>chrome://extensions</code> in Chrome.</li>
+          <li>Turn on <strong>Developer mode</strong> (top right).</li>
+          <li>Click <strong>Load unpacked</strong> and pick the unzipped folder.</li>
+        </ol>
+        <!-- INSTALL GIF: replace assets/install-poster.jpg with Sidd's 30-second assets/install.gif when it exists -->
+        <figure class="install-gif">
+          <img src="assets/install-poster.jpg" width="1600" height="1000" loading="lazy" alt="The chrome://extensions page with Developer mode on and the Load unpacked button.">
+          <figcaption>A 30-second install video is coming.</figcaption>
+        </figure>
+      </div>
+      <p>Try it without your own data: open the dashboard and click <strong>Load sample data</strong>.</p>
+    </section>
+
+    <!-- 8. Demo video -->
+    <section id="demo" aria-labelledby="demo-title">
+      <h2 id="demo-title">Demo</h2>
+      <!-- VIDEO: unlisted YouTube id goes here. Replace the poster block with:
+           <iframe src="https://www.youtube-nocookie.com/embed/VIDEO_ID" title="Pickup demo video" loading="lazy"
+             allow="encrypted-media; picture-in-picture" allowfullscreen></iframe>
+           (no autoplay) -->
+      <div class="video">
+        <img src="assets/shot-card.jpg" width="1600" height="1000" loading="lazy" alt="">
+        <p class="video-soon">The 6-minute demo video is posted Saturday.</p>
+      </div>
+    </section>
+
+    <!-- 9. Roadmap -->
+    <section aria-labelledby="roadmap-title">
+      <h2 id="roadmap-title">Next</h2>
+      <ul class="roadmap">
+        <li><strong>Classmate pilot.</strong> A bigger, longer study with students in our school.</li>
+        <li><strong>Edge version.</strong> The same extension for Microsoft Edge.</li>
+        <li><strong>On-device suggestions.</strong> Ideas for your next step, always labelled as suggestions, never stored as yours.</li>
+        <li><strong>Desktop companion.</strong> Saving your place outside the browser too.</li>
+      </ul>
+    </section>
+  </main>
+
+  <!-- 10. Team and footer -->
+  <footer class="footer">
+    <ul class="team">
+      <li><strong>Anish</strong> Engine</li>
+      <li><strong>Sidd</strong> Surface</li>
+      <li><strong>Abhinav</strong> Setup, Evidence &amp; Story</li>
+    </ul>
+    <p>Built in 48 hours for Triple H 2026.</p>
+    <p class="links">
+      <a href="https://github.com/MarvinRidgeMT/Teens-Hack-Houston-Hackathon">GitHub</a>
+      <!-- DEVPOST: link goes here --><span>Devpost (coming)</span>
+      <a href="https://github.com/motiondivision/motion/blob/main/LICENSE.md">Motion (MIT licence)</a>
+      <a href="https://github.com/juliangarnier/anime/blob/master/LICENSE.md">Anime.js (MIT licence)</a>
+    </p>
+  </footer>
+</body>
+</html>

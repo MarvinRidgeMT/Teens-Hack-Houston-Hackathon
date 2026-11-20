@@ -76,7 +76,7 @@ For the Pickup panel (break timer, task list). Additive: older code that ignores
 
 **Sidd:** nothing to do.
 
-## Pickup panel (new, Fri, branch `feature/panel`): all optional
+## Pickup panel (new, Fri, on main): all optional
 
 Alt+V now opens the **Pickup panel** (it was the voice panel): type or talk to ask ("where was I?"), a **break timer** ("back in 10"), **your tasks** with Resume and Edit next step, and a **Today** line. Voice still works the same and stays off by default.
 
@@ -87,3 +87,10 @@ Alt+V now opens the **Pickup panel** (it was the voice panel): type or talk to a
 
 **Sidd:**
 - **Must do: nothing.** Optional: when the card's event was a planned break, it could say "Planned break: 10 min". That needs `plannedBreakMin` in `showCard`; tell me and I'll add it (it's a recorded fact).
+
+## Download site (new, Fri, on main)
+
+One static page in `site/` for judges (preview: `python3 -m http.server -d site 8080`). Real screenshots from the extension (`node test/dev/site-shots.mjs`).
+- **The Download button needs two things by Saturday:** a **v1.0 GitHub release with the zip** (it links to `/releases/latest`), and the **repo public** (a private repo's releases and Pages are invisible to judges).
+- **Abhinav:** fill the `PILOT RESULTS` block Saturday 10 AM (real numbers only), the `VIDEO` id and the `DEVPOST` link. The page says "open the dashboard and click Load sample data": that button must exist.
+- **Sidd:** drop the 30-second install GIF at `site/assets/install.gif` and swap it in for `install-poster.jpg` (comment in `index.html`).
