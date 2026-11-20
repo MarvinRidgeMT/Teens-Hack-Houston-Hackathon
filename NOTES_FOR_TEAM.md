@@ -94,3 +94,9 @@ One static page in `site/` for judges (preview: `python3 -m http.server -d site 
 - **The Download button needs two things by Saturday:** a **v1.0 GitHub release with the zip** (it links to `/releases/latest`), and the **repo public** (a private repo's releases and Pages are invisible to judges).
 - **Abhinav:** fill the `PILOT RESULTS` block Saturday 10 AM (real numbers only), the `VIDEO` id and the `DEVPOST` link. The page says "open the dashboard and click Load sample data": that button must exist.
 - **Sidd:** drop the 30-second install GIF at `site/assets/install.gif` and swap it in for `install-poster.jpg` (comment in `index.html`).
+
+## Site restyle (redesign/site)
+
+`site/` now uses the design system: Paper (light) and Blue hour (dark) follow the visitor's system setting, Inter is self-hosted in `site/assets/fonts/` (OFL), the brand tile is `pk-mark`, and the footer is the Driftbar meadow (SVG hills, frosted "Pickup" wordmark, fog). Fireflies and fog only move when reduced motion is off. The CSS is copied into `site/styles.css`, so `site/` still works on its own with no third-party requests. Same content, anchors and placeholders as before.
+- **Screenshots** are still the old teal look. `<!-- SHOTS: replace with redesign screenshots -->` marks the three places to swap (hero, How it works, demo poster). Keep `site/` under 1.5 MB (it's about 1.3 MB now).
+- **Favicons** (`site/assets/icon*.png`) are still the old teal icon. Swap them when a real logo exists.

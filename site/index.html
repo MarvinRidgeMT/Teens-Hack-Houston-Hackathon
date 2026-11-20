@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pickup: undo the interruption</title>
   <meta name="description" content="Pickup is a free Chrome extension that saves your place when you get pulled away and hands it back when you return. No account. Nothing leaves your computer.">
-  <meta name="color-scheme" content="dark">
-  <meta name="theme-color" content="#0e0f11">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#f1f1ee" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0d0e1a" media="(prefers-color-scheme: dark)">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icon32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="assets/icon16.png">
   <link rel="apple-touch-icon" href="assets/icon128.png">
@@ -19,12 +20,13 @@
   <meta name="twitter:title" content="Pickup: undo the interruption, not the mistake">
   <meta name="twitter:description" content="Saves your place when you get pulled away. Hands it back when you return.">
   <meta name="twitter:image" content="assets/shot-card.jpg">
+  <link rel="preload" href="assets/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
   <header class="nav">
-    <a class="brand" href="#top"><img src="assets/icon32.png" width="24" height="24" alt=""> Pickup</a>
+    <a class="brand" href="#top"><span class="pk-mark" aria-hidden="true"></span> Pickup</a>
     <nav aria-label="Sections">
       <a href="#how">How it works</a>
       <a href="#privacy">Privacy</a>
@@ -37,7 +39,7 @@
     <!-- 1. Hero -->
     <section class="hero" id="top" aria-labelledby="hero-title">
       <div class="hero-copy">
-        <img class="logo" src="assets/icon128.png" width="64" height="64" alt="Pickup logo">
+        <span class="pk-mark logo" role="img" aria-label="Pickup logo"></span>
         <h1 id="hero-title">Undo the interruption, not the mistake.</h1>
         <p class="lede">A Chrome extension that saves your place when you get pulled away and hands it back when you return.</p>
         <div class="ctas">
@@ -47,8 +49,14 @@
           </a>
           <a class="btn" href="#demo">Watch the 6-min demo</a>
         </div>
-        <p class="caption">Free · Load unpacked · No account · Nothing leaves your computer</p>
+        <ul class="caption chips" aria-label="At a glance">
+          <li class="chip">Free</li>
+          <li class="chip">Load unpacked</li>
+          <li class="chip">No account</li>
+          <li class="chip"><span class="dot" aria-hidden="true"></span>Nothing leaves your computer</li>
+        </ul>
       </div>
+      <!-- SHOTS: replace with redesign screenshots -->
       <figure class="hero-shot">
         <img src="assets/shot-card.jpg" width="1600" height="1000" alt="Pickup's return card over a student's essay draft: welcome back to Climate Essay, the next step the student wrote, the sentence they last highlighted, and Resume, Tidy and Not now buttons.">
       </figure>
@@ -64,11 +72,12 @@
     <!-- 3. How it works -->
     <section id="how" aria-labelledby="how-title">
       <h2 id="how-title">How it works</h2>
+      <!-- SHOTS: replace with redesign screenshots -->
       <ol class="steps">
         <li>
           <figure><img src="assets/shot-leave.jpg" width="1600" height="1000" loading="lazy" alt="The park overlay on a work page: one line asking for your next step, with Enter to save."></figure>
           <h3><span class="num">1</span> Leave</h3>
-          <p>When you switch away from a work page, Pickup saves where you were: the page, your scroll position and what you last highlighted. Press Alt+P first if you want to leave a next step in your own words.</p>
+          <p>When you switch away from a work page, Pickup saves where you were: the page, your scroll position and what you last highlighted. Press <kbd>Alt+P</kbd> first if you want to leave a next step in your own words.</p>
         </li>
         <li>
           <figure><img class="portrait" src="assets/shot-panel.jpg" width="720" height="1600" loading="lazy" alt="The Pickup panel while you are away: asked &quot;where was I?&quot;, it answers with the task, your next step and your last highlight."></figure>
@@ -83,7 +92,7 @@
         <li>
           <figure><img src="assets/shot-resume.jpg" width="1600" height="1000" loading="lazy" alt="The work page after Resume: scrolled back to the saved spot with the highlighted sentence in view."></figure>
           <h3><span class="num">4</span> Resume</h3>
-          <p>Press Enter and you're back at the exact spot. Press T to tidy the tabs you opened while away into a collapsed "Later" group. Nothing is closed.</p>
+          <p>Press <kbd>Enter</kbd> and you're back at the exact spot. Press <kbd>T</kbd> to tidy the tabs you opened while away into a collapsed "Later" group. Nothing is closed.</p>
         </li>
       </ol>
     </section>
@@ -151,7 +160,7 @@
           <figcaption>A 30-second install video is coming.</figcaption>
         </figure>
       </div>
-      <p>Try it without your own data: open the dashboard and click <strong>Load sample data</strong>.</p>
+      <p class="tip">Try it without your own data: open the dashboard and click <strong>Load sample data</strong>.</p>
     </section>
 
     <!-- 8. Demo video -->
@@ -161,9 +170,10 @@
            <iframe src="https://www.youtube-nocookie.com/embed/VIDEO_ID" title="Pickup demo video" loading="lazy"
              allow="encrypted-media; picture-in-picture" allowfullscreen></iframe>
            (no autoplay) -->
+      <!-- SHOTS: replace with redesign screenshots -->
       <div class="video">
         <img src="assets/shot-card.jpg" width="1600" height="1000" loading="lazy" alt="">
-        <p class="video-soon">The 6-minute demo video is posted Saturday.</p>
+        <p class="video-soon"><span>The 6-minute demo video is posted Saturday.</span></p>
       </div>
     </section>
 
@@ -179,20 +189,48 @@
     </section>
   </main>
 
-  <!-- 10. Team and footer -->
+  <!-- 10. Team and footer (Driftbar meadow: decorative layers are aria-hidden) -->
   <footer class="footer">
-    <ul class="team">
-      <li><strong>Anish</strong> Engine</li>
-      <li><strong>Sidd</strong> Surface</li>
-      <li><strong>Abhinav</strong> Setup, Evidence &amp; Story</li>
-    </ul>
-    <p>Built in 48 hours for Triple H 2026.</p>
-    <p class="links">
-      <a href="https://github.com/MarvinRidgeMT/Teens-Hack-Houston-Hackathon">GitHub</a>
-      <!-- DEVPOST: link goes here --><span>Devpost (coming)</span>
-      <a href="https://github.com/motiondivision/motion/blob/main/LICENSE.md">Motion (MIT licence)</a>
-      <a href="https://github.com/juliangarnier/anime/blob/master/LICENSE.md">Anime.js (MIT licence)</a>
-    </p>
+    <div class="footer-content">
+      <span class="brand"><span class="pk-mark" aria-hidden="true"></span> Pickup</span>
+      <ul class="team">
+        <li><strong>Anish</strong> Engine</li>
+        <li><strong>Sidd</strong> Surface</li>
+        <li><strong>Abhinav</strong> Setup, Evidence &amp; Story</li>
+      </ul>
+      <p>Built in 48 hours for Triple H 2026.</p>
+      <p class="links">
+        <a href="https://github.com/MarvinRidgeMT/Teens-Hack-Houston-Hackathon">GitHub</a>
+        <!-- DEVPOST: link goes here --><span>Devpost (coming)</span>
+        <a href="https://github.com/motiondivision/motion/blob/main/LICENSE.md">Motion (MIT licence)</a>
+        <a href="https://github.com/juliangarnier/anime/blob/master/LICENSE.md">Anime.js (MIT licence)</a>
+      </p>
+    </div>
+    <div class="meadow" aria-hidden="true">
+      <svg class="hills" viewBox="0 0 1200 360" preserveAspectRatio="none" focusable="false">
+        <defs>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" class="sky0"/><stop offset=".45" class="sky1"/><stop offset="1" class="sky2"/>
+          </linearGradient>
+        </defs>
+        <rect width="1200" height="360" fill="url(#sky)"/>
+        <path class="h1" d="M0 230 C220 170 420 200 640 180 C860 160 1020 190 1200 170 L1200 360 L0 360Z"/>
+        <path class="h2" d="M0 270 C260 220 520 250 760 230 C960 214 1080 240 1200 228 L1200 360 L0 360Z"/>
+        <path class="h3" d="M0 300 C180 250 360 262 560 290 C760 318 980 290 1200 300 L1200 360 L0 360Z"/>
+      </svg>
+      <div class="haze"></div>
+      <svg class="flies" viewBox="0 0 1200 360" preserveAspectRatio="xMidYMax slice" focusable="false">
+        <circle cx="703" cy="228" r="2"/><circle cx="138" cy="208" r="2.4"/><circle cx="232" cy="283" r="2.4"/>
+        <circle cx="158" cy="319" r="1.6"/><circle cx="116" cy="212" r="2"/><circle cx="896" cy="207" r="1.6"/>
+        <circle cx="225" cy="298" r="1.6"/><circle cx="293" cy="247" r="2.4"/><circle cx="166" cy="291" r="1.6"/>
+        <circle cx="492" cy="201" r="2.4"/><circle cx="312" cy="264" r="2"/><circle cx="335" cy="220" r="2.4"/>
+        <circle cx="671" cy="236" r="1.6"/><circle cx="424" cy="285" r="1.6"/><circle cx="168" cy="205" r="2.4"/>
+        <circle cx="461" cy="317" r="2.4"/><circle cx="1128" cy="299" r="2"/><circle cx="993" cy="306" r="2"/>
+      </svg>
+      <p class="wordmark">Pickup</p>
+      <div class="fog"></div>
+      <div class="fog-drift"></div>
+    </div>
   </footer>
 </body>
 </html>
