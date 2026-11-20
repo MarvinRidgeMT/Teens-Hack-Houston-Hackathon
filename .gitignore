@@ -7,3 +7,5 @@ node_modules/
 *profile*/
 pickup-real-chrome/
 results*.json
+# Claude Code local state and agent worktrees
+.claude/

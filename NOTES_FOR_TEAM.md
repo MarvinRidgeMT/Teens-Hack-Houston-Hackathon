@@ -33,6 +33,8 @@ Everything below is **additive**. Code that ignores it keeps working. **The new 
 
 - **`showCard` has a new optional field `nextStepSource`** (Feature 3): `'typed'` or `'selected'`. When it's `'selected'`, label the line **"Your next step (you picked this)"** instead of "(you wrote this)". Missing means typed. The card must stay honest about where the line came from.
 
+- **Optional new message `startHere { threadName, nextStep?, nextStepSource?, wrappedAt }`** (Feature 2, stretch). Sent to the tab after the user clicks the morning "Start here" notification. If you have time: a card variant "Start here: <task> · Next: … · stopped yesterday at <time>" with one Resume button (Resume can just close it; the engine already resumed). Ignore it and nothing breaks; `check-integration` only WARNs.
+
 ### For Abhinav
 
 - **Four new event fields** (Feature 5). New columns for the CSV export. CSV import must accept older rows without them (treat missing as empty).
@@ -42,3 +44,6 @@ Everything below is **additive**. Code that ignores it keeps working. **The new 
   - `returnVia`: how the user came back: `tab` (normal), `resumeKey` (Alt+R), `notification` (clicked the nudge or Start here) or `idle` (back at the keyboard). Pickup did the navigating for `resumeKey` and `notification`, so stats can keep those returns apart.
 - **`resumeTask { threadId? }` → `{ ok, threadId }`** (Feature 1). Same as the new **Alt+R** key: jumps back to the task (focus window, tab, group, scroll). Without `threadId` the engine picks the task. A popup "Back to task" button can send it and then `window.close()`. `ok: false` means there's no task yet.
 - **Badge** (Feature 4): the toolbar icon now shows `P` (parked), `•` (task waiting), `☾` (saved for tomorrow) with a tooltip. Nothing to do; just don't set the badge from the popup.
+- **`wrapUp { tabId, nextStep? }` now works** → `{ ok, wrapUp }` (Feature 2). A popup "Wrap up for today" button with an optional next-step box. It closes any open break without logging it (not an interruption), and the next morning the user gets one "Start here" notification. There's also a `wrap-up` command with no default key.
+- With **debug** on, Start here fires 60 s after wrap-up, for filming the demo ("Next morning" title card).
+- If you show a breadcrumb's next step, `nextStepSource: 'selected'` means picked from the page (right-click), `'typed'` or missing means typed.

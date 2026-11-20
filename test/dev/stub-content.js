@@ -13,7 +13,7 @@
     snapshot: 'snapshot', showCard: 'showCard', armTimer: 'armTimer',
     restoreScroll: 'restoreScroll', openOverlay: 'openOverlay',
     state: 'state', firstInteraction: 'firstInteraction',
-    cardAction: 'cardAction', parkNote: 'parkNote',
+    cardAction: 'cardAction', parkNote: 'parkNote', startHere: 'startHere',
   };
   const TOP = window === window.top;
   const HIGHLIGHT_MAX = 200;
@@ -74,7 +74,7 @@
       line(`Task: ${msg.threadName}`),
       line(`Away: ${Math.round(msg.awayMs / 1000)} s`),
     );
-    if (msg.nextStep) card.append(line(`Your next step (you wrote this): ${msg.nextStep}`));
+    if (msg.nextStep) card.append(line(`Your next step (${msg.nextStepSource === 'selected' ? 'you picked this' : 'you wrote this'}): ${msg.nextStep}`));
     if (msg.where && msg.where.highlight) card.append(line(`Where: "${msg.where.highlight}"`));
     card.append(line(`Scroll: ${msg.where ? msg.where.scrollY : 0} · Tabs: ${msg.tabCount}`));
     const row = document.createElement('div');
@@ -88,6 +88,26 @@
     card.append(row);
     document.documentElement.append(card);
     row.firstChild.focus();
+  }
+
+  // Start here (optional message, Feature 2): one line + one Resume button.
+  function showStartHere(msg) {
+    closeCard();
+    card = document.createElement('div');
+    card.setAttribute('role', 'dialog');
+    card.setAttribute('aria-label', 'Pickup dev stub start here');
+    card.style.cssText = 'position:fixed;top:12px;right:12px;z-index:2147483647;background:#fff;color:#000;border:2px solid #000;padding:8px;font:13px monospace;max-width:360px;';
+    const at = msg.wrappedAt ? new Date(msg.wrappedAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : '';
+    card.append(line('DEV STUB START HERE (not Sidd\'s)'), line(`Start here: ${msg.threadName}`));
+    if (msg.nextStep) card.append(line(`Next: ${msg.nextStep}`));
+    if (at) card.append(line(`Stopped yesterday at ${at}`));
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = 'Resume';
+    b.addEventListener('click', () => closeCard());
+    card.append(b);
+    document.documentElement.append(card);
+    b.focus();
   }
 
   if (TOP) {
@@ -147,6 +167,7 @@
         return false;
       case MSG.armTimer: armOnce(msg.eventId); return false;
       case MSG.showCard: if (TOP) showCard(msg); return false;
+      case MSG.startHere: if (TOP) showStartHere(msg); return false;
       case MSG.restoreScroll: if (TOP) restoreScroll(msg.scrollY); return false;
       // prompt() blocks the page, so return from the listener first.
       case MSG.openOverlay: if (TOP) setTimeout(() => openOverlay(msg.askTaskName), 0); return false;

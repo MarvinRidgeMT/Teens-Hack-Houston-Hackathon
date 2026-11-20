@@ -17,13 +17,14 @@ Owner: Anish. Files: `manifest.json`, `src/shared/{constants,messages,store,site
 | `keepInThread` | `{ threadId, tabId }` | `{ ok }` |
 | `setTaskType` | `{ threadId, taskType }` | `{ ok }` |
 | `park` | `{ tabId }` | `{ ok }`: opens the overlay in the page, so call `window.close()` on the popup afterwards |
-| `wrapUp` | `{ tabId }` | not built yet (stretch) |
+| `wrapUp` | `{ tabId, nextStep? }` | `{ ok, wrapUp }`: save this task for tomorrow (see below). `ok: false` on a page that can't hold a task |
 | `resumeTask` | `{ threadId? }` | `{ ok, threadId }`: same as Alt+R. Without `threadId` the engine picks the open break's task, else the most recent breadcrumb, else the last work tab's task. `ok: false` when there is none (the badge flashes `?`) |
 
 ## Keyboard commands (manifest)
 | command | suggested key | what it does |
 |---|---|---|
 | `park-task` | Alt+P | open the park overlay |
+| `wrap-up` | none (bind it in `chrome://extensions/shortcuts`) | wrap up the active tab's task |
 | `resume-task` | Alt+R (Option+R on a Mac) | jump back to the task (`resumeTask` above). If you're already on it with nothing open, it only restores the scroll. A return made this way is a normal event (coin flip, card or not) with `returnVia: 'resumeKey'` |
 
 ## Settings the engine reads (setup page writes them)
@@ -42,6 +43,15 @@ Owner: Anish. Files: `manifest.json`, `src/shared/{constants,messages,store,site
   | `distractionHost` | hostname (no `www.`) of the first distraction tab seen in the break; `null` if none (focus/idle breaks) |
   | `distractionHosts` | unique distraction hostnames seen in the break, in order; never paths or titles |
   | `returnVia` | `tab` (a normal tab/window activation), `resumeKey` (Alt+R or `resumeTask`), `notification` (clicked the nudge or Start-here notification), `idle` (back at the keyboard while Chrome showed the task). Pickup sets a short session marker (10 s) just before it activates the tab itself; the return reads and clears it |
+
+## Wrap up → "Start here" (Feature 2)
+- `wrapUp` saves a breadcrumb with `signal: 'wrap'` (keeps the next step unless a new one is given) and stores `wrapUp = { threadId, tabId, url, scrollY, highlight, nextStep?, nextStepSource?, at, dayKey, shown }` in `chrome.storage.local`. A new wrap-up replaces the old one.
+- **Any open break is closed without an event** and its nudge is cancelled: wrapping up is not an interruption.
+- `dayKey` is the local date of `now − 4 h`, so 1 AM still counts as the night before.
+- On the first activity (tab activated or created, window focused, back from idle) on a later `dayKey`, **one** notification `starthere:<threadId>`: "Start here: <task>" / "Next: <step>" (or "Pick up where you stopped yesterday"). Then `shown: true`, never again.
+- **Debug:** it fires on the first activity 60 s after the wrap-up instead (for filming).
+- Clicking it runs `resume()` and sends the tab the **optional** message `startHere { threadName, nextStep?, nextStepSource?, wrappedAt }`. No event is created: no break was open.
+- The badge shows `☾` until Start here is shown.
 
 ## Right-click "Make this my next step" (Feature 3)
 - A context-menu item on **text selections, on work sites only** (match patterns built from `settings.workSites`: host and subdomains, plus the path when the entry has one). It follows settings changes; with no work sites it is hidden.

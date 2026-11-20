@@ -10,7 +10,7 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { MSG, TO_ENGINE, TO_CONTENT, CARD_ACTIONS } from '../src/shared/messages.js';
+import { MSG, TO_ENGINE, TO_CONTENT, OPTIONAL_TO_CONTENT, CARD_ACTIONS } from '../src/shared/messages.js';
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const arg = (name, def) => { const i = process.argv.indexOf(name); return i > 0 ? process.argv[i + 1] : def; };
@@ -100,6 +100,10 @@ if (!contentJs.length) {
     if (hasStr(t)) pass('content', `uses message type '${t}'`);
     else fail('content', `message type '${t}' not found as a string (copy it from messages.js)`);
   }
+  for (const t of OPTIONAL_TO_CONTENT) {
+    if (!hasStr(t)) warn('content', `optional message '${t}' not handled (fine: it's a stretch card variant)`);
+  }
+  if (!hasStr('selected')) warn('content', "showCard.nextStepSource 'selected' not handled: label it \"(you picked this)\"");
   for (const a of Object.values(CARD_ACTIONS)) {
     if (!hasStr(a)) fail('content', `card action '${a}' not found`);
   }

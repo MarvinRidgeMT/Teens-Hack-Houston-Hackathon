@@ -44,6 +44,9 @@
     "resume-task": {
       "suggested_key": { "default": "Alt+R" },
       "description": "Jump back to your task"
+    },
+    "wrap-up": {
+      "description": "Wrap up for today (Pickup shows where to start tomorrow)"
     }
   }
 }

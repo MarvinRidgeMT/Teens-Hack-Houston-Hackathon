@@ -861,6 +861,109 @@ await step('F3: a menu click on a page the engine knows nothing about makes a br
   sim.closeTab(t); await flush();
 });
 
+// Feature 2: wrap up -> "Start here" the next morning
+const wrapNow = async () => (await chrome.storage.local.get('wrapUp')).wrapUp || null;
+let nb; // a neutral tab: activating it is user activity but never a break
+const startHereShown = () => sim.notifications.filter((n) => n.id.startsWith('starthere:'));
+await step('F2: wrap-up saves tomorrow\'s start and closes an open break without logging it', async () => {
+  await settle();
+  nb = sim.openTab('https://example.com/notes', { active: false }); await flush();
+  sim.setPage(wikiA, 700, 'evaporation rates');
+  await sim.send({ type: 'parkNote', nextStep: 'Old step' }, wikiA); await flush();
+  sim.activate(yt); await flush(); // away: break departed, nudge scheduled
+  const b = await ob();
+  assert.equal(b.departed, true);
+  const n = (await events()).length;
+  const r = await sim.send({ type: 'wrapUp', tabId: wikiA, nextStep: 'Write the conclusion' }); await flush();
+  assert.equal(r.ok, true);
+  assert.equal(await ob(), null);
+  assert.equal((await events()).length, n, 'no event');
+  assert.equal(sim.alarms.has('nudge:' + b.eventId), false, 'nudge cancelled');
+  const w = await wrapNow();
+  assert.equal(w.threadId, thread.id);
+  assert.equal(w.url, WIKI_A);
+  assert.equal(w.scrollY, 700);
+  assert.equal(w.nextStep, 'Write the conclusion');
+  assert.equal(w.nextStepSource, 'typed');
+  assert.equal(w.shown, false);
+  assert.match(w.dayKey, /^\d{4}-\d{2}-\d{2}$/);
+  assert.equal(r.wrapUp.dayKey, w.dayKey);
+  const crumb = await crumbOf(thread.id);
+  assert.equal(crumb.signal, 'wrap');
+  assert.equal(crumb.nextStep, 'Write the conclusion');
+  assert.equal((await badgeNow()).text, '☾');
+  assert.equal(sim.badge.title, 'Pickup: Climate Essay saved for tomorrow');
+});
+
+await step('F2: dayKey counts the small hours as the night before', async () => {
+  const { dayKey } = await import('../src/sw/wrapup.js');
+  assert.equal(dayKey(new Date(2026, 10, 20, 2, 30).getTime()), '2026-11-19');
+  assert.equal(dayKey(new Date(2026, 10, 20, 4, 30).getTime()), '2026-11-20');
+});
+
+await step('F2: Start here shows once on the first activity the next day, and never twice', async () => {
+  sim.activate(nb); sim.activate(wikiA); await flush();
+  assert.equal(startHereShown().length, 0, 'not the same day');
+  advance(24 * 3600000);
+  sim.activate(nb); await flush();
+  const shown = startHereShown();
+  assert.equal(shown.length, 1);
+  assert.equal(shown[0].id, 'starthere:' + thread.id);
+  assert.equal(shown[0].title, 'Start here: Climate Essay');
+  assert.equal(shown[0].message, 'Next: Write the conclusion');
+  assert.equal((await wrapNow()).shown, true);
+  sim.activate(wikiA); await flush(); sim.blurChrome(); sim.focusChrome(1); await flush();
+  assert.equal(startHereShown().length, 1, 'never twice');
+  assert.equal((await badgeNow()).text, '');
+});
+
+await step('F2: clicking Start here resumes the task with no event, and sends the optional startHere message', async () => {
+  sim.activate(nb); await flush();
+  sim.setPage(wikiA, 0, '');
+  const n = (await events()).length;
+  sim.sent.length = 0;
+  chrome.notifications.onClicked.fire('starthere:' + thread.id); await flush();
+  assert.equal(sim.tabs.get(wikiA).active, true);
+  assert.equal(sim.page.get(wikiA).scrollY, 700, 'scroll restored');
+  assert.equal((await events()).length, n, 'not an experiment event');
+  assert.equal(await ob(), null);
+  const sh = sim.sentOfType('startHere').at(-1);
+  assert.ok(sh, 'startHere sent');
+  assert.equal(sh.tabId, wikiA);
+  assert.equal(sh.threadName, 'Climate Essay');
+  assert.equal(sh.nextStep, 'Write the conclusion');
+  assert.equal(typeof sh.wrappedAt, 'number');
+});
+
+await step('F2: with debug on, Start here comes 60 s after wrap-up (demo path)', async () => {
+  await settle();
+  await setSettings({ debug: true });
+  await sim.send({ type: 'wrapUp', tabId: wikiA }); await flush();
+  const before = startHereShown().length;
+  advance(30000); sim.activate(nb); await flush();
+  assert.equal(startHereShown().length, before);
+  advance(31000); sim.activate(wikiA); await flush();
+  assert.equal(startHereShown().length, before + 1);
+  assert.equal(startHereShown().at(-1).message, 'Next: Write the conclusion', 'kept the existing next step');
+  await setSettings({ debug: false });
+});
+
+await step('F2: a new wrap-up replaces the old one; the wrap-up command works on the active tab', async () => {
+  await settle();
+  await sim.send({ type: 'wrapUp', tabId: wikiA, nextStep: 'First' }); await flush();
+  const first = await wrapNow();
+  advance(1000);
+  chrome.commands.onCommand.fire('wrap-up', sim.tabs.get(wikiA)); await flush(); // Chrome passes the active tab
+  const second = await wrapNow();
+  assert.equal(second.shown, false);
+  assert.ok(second.at > first.at);
+  assert.equal(second.nextStep, 'First', 'the command keeps the step');
+  const r = await sim.send({ type: 'wrapUp', tabId: wikiA, nextStep: 'Second' }); await flush();
+  assert.equal((await wrapNow()).nextStep, 'Second');
+  assert.equal(r.wrapUp.nextStep, 'Second');
+  await chrome.storage.local.set({ wrapUp: null }); await flush();
+});
+
 const total = (await events()).length;
 (quiet || console.log)(`\n${passed} checks passed, ${total} events logged${process.exitCode ? ' — SOME FAILED' : ''}`);
 process.exit(process.exitCode || 0);

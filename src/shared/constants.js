@@ -78,6 +78,11 @@ export const BADGE_FLASH_MS = 2000;
 // Where a breadcrumb's next step came from. Missing means typed (older data).
 export const NEXT_STEP_SOURCE = Object.freeze({ typed: 'typed', selected: 'selected' });
 
+// Wrap up -> Start here (Feature 2).
+export const DAY_STARTS_AT_HOUR = 4;        // before 4 AM still counts as the night before
+export const START_HERE_DEBUG_MS = 60000;   // debug: Start here 60 s after wrap-up (demo)
+export const START_HERE_PREFIX = 'starthere:';
+
 export const CONDITIONS = Object.freeze({ pickup: 'pickup', control: 'control' });
 export const TASK_TYPES = Object.freeze(['writing', 'reading', 'problems']);
 export const DEFAULT_TASK_TYPE = 'writing';

@@ -4,7 +4,7 @@
 
 import * as store from '../shared/store.js';
 import { MSG, CARD_ACTIONS, TO_ENGINE } from '../shared/messages.js';
-import { HIGHLIGHT_MAX, RETURN_VIA } from '../shared/constants.js';
+import { HIGHLIGHT_MAX, RETURN_VIA, START_HERE_PREFIX } from '../shared/constants.js';
 import { isDistractionUrl } from '../shared/sites.js';
 import * as signals from './signals.js';
 import * as threads from './threads.js';
@@ -12,6 +12,7 @@ import * as events from './events.js';
 import * as nudge from './nudge.js';
 import * as badge from './badge.js';
 import * as menus from './menus.js';
+import * as wrapup from './wrapup.js';
 import { getTab, tabUrl, log } from './util.js';
 
 // Every handler: one at a time, and only after thread group ids were checked for
@@ -51,7 +52,11 @@ chrome.storage.onChanged.addListener((changes, area) => {
 chrome.contextMenus.onClicked.addListener(safe('menuClick', menus.onMenuClicked));
 
 // ---------- signals ----------
-chrome.tabs.onActivated.addListener(safe('onActivated', signals.handleActivated));
+// User activity also checks for the next morning's "Start here" (Feature 2).
+chrome.tabs.onActivated.addListener(safe('onActivated', async (info) => {
+  await wrapup.checkStartHere();
+  await signals.handleActivated(info);
+}));
 
 // A focus loss is only a possible interruption if it lasts FOCUS_BLIP_MS. The timer
 // is lost if the worker stops; handleFocusChanged recovers that case on return.
@@ -67,15 +72,26 @@ function scheduleSwitchCheck(at) {
   setTimeout(() => { safe('confirmWindowSwitch', signals.confirmWindowSwitch)(at); }, signals.FOCUS_BLIP_MS);
 }
 chrome.windows.onFocusChanged.addListener(async (windowId) => {
-  const r = await safe('onFocusChanged', signals.handleFocusChanged)(windowId);
+  const r = await safe('onFocusChanged', async (id) => {
+    if (id !== chrome.windows.WINDOW_ID_NONE) await wrapup.checkStartHere();
+    return signals.handleFocusChanged(id);
+  })(windowId);
   if (typeof r === 'number') scheduleFocusCheck(r);
   else if (r && r.switchAt) scheduleSwitchCheck(r.switchAt);
 });
 
-chrome.idle.onStateChanged.addListener(safe('idle', signals.handleIdle));
+chrome.idle.onStateChanged.addListener(safe('idle', async (state) => {
+  if (state === 'active') await wrapup.checkStartHere();
+  await signals.handleIdle(state);
+}));
 
 chrome.commands.onCommand.addListener(safe('command', async (command, tab) => {
   if (command === 'resume-task') { await events.resumeTask(); return; }
+  if (command === 'wrap-up') {
+    if (!tab) [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+    await wrapup.wrapUp(tab, undefined, await store.getSettings());
+    return;
+  }
   if (command !== 'park-task') return;
   if (!tab) [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
   await signals.requestPark(tab);
@@ -83,6 +99,7 @@ chrome.commands.onCommand.addListener(safe('command', async (command, tab) => {
 
 // ---------- tabs & groups ----------
 chrome.tabs.onCreated.addListener(safe('onCreated', async (tab) => {
+  await wrapup.checkStartHere();
   if (tab.groupId != null && tab.groupId !== -1) await threads.onTabGroupChanged(tab);
 }));
 
@@ -111,6 +128,13 @@ chrome.tabGroups.onRemoved.addListener(safe('groupRemoved', threads.onGroupRemov
 chrome.alarms.onAlarm.addListener(safe('alarm', nudge.onAlarm));
 chrome.notifications.onClicked.addListener(safe('notificationClick', async (id) => {
   await chrome.notifications.clear(id);
+  if (id.startsWith(START_HERE_PREFIX)) {
+    const threadId = id.slice(START_HERE_PREFIX.length);
+    const ob = await store.getOpenBreak();
+    if (ob && ob.departed && ob.threadId === threadId) await store.setReturnVia(RETURN_VIA.notification);
+    await wrapup.onStartHereClicked(threadId);
+    return;
+  }
   const ob = await store.getOpenBreak();
   if (ob && ob.eventId === id) {
     if (ob.departed) await store.setReturnVia(RETURN_VIA.notification);
@@ -173,7 +197,7 @@ async function route(msg, sender) {
     case MSG.resumeTask:
       return events.resumeTask(msg.threadId);
     case MSG.wrapUp:
-      return { ok: false, error: 'Wrap up is not built yet (stretch)' };
+      return wrapup.wrapUp(await getTab(msg.tabId), msg.nextStep, settings);
     default:
       return undefined;
   }

@@ -46,12 +46,14 @@ async function render() {
     cell(e.cardShown),
     cell(e.debug),
     cell(name(e.threadId)),
+    cell((e.distractionHosts || []).join(', ')),
+    cell(e.returnVia),
   ])));
 
   const crumbs = Object.values(local.breadcrumbs || {});
   $('crumbs').replaceChildren(...crumbs.map((c) => row([
     cell(name(c.threadId)), cell(c.tabId), cell(c.url), cell(c.scrollY, 'num'),
-    cell(c.highlight), cell(c.nextStep), cell(c.signal), cell(time(c.leftAt)),
+    cell(c.highlight), cell(c.nextStep), cell(c.nextStepSource), cell(c.signal), cell(time(c.leftAt)),
   ])));
 
   $('threads').replaceChildren(...Object.values(threads).map((t) => row([
@@ -59,7 +61,36 @@ async function render() {
   ])));
 
   $('session').textContent = JSON.stringify(session, null, 2);
+  const wu = local.wrapUp;
+  $('wrapUp').textContent = wu ? `${wu.shown ? 'Start here already shown' : `waiting for the first activity after ${wu.dayKey}`}\n` + JSON.stringify(wu, null, 2) : 'none';
 }
+
+const out = (t) => { $('devOut').textContent = `${new Date().toLocaleTimeString()}: ${t}`; };
+async function lastWorkTabId() {
+  const { lastWorkByWindow = {} } = await chrome.storage.session.get('lastWorkByWindow');
+  const all = Object.values(lastWorkByWindow).sort((a, b) => (b.at || 0) - (a.at || 0));
+  return all[0] ? all[0].tabId : null;
+}
+$('wrap').addEventListener('click', async () => {
+  const tabId = await lastWorkTabId();
+  if (tabId == null) { out('no work tab seen yet'); return; }
+  const r = await chrome.runtime.sendMessage({ type: 'wrapUp', tabId, nextStep: $('wrapStep').value || undefined });
+  out(r && r.ok ? `wrapped up (day ${r.wrapUp.dayKey})` : `wrap up failed: ${r && r.error}`);
+});
+// Rewrites wrapUp.dayKey to the day before the current one, so the next activity shows Start here.
+$('tomorrow').addEventListener('click', async () => {
+  const { wrapUp } = await chrome.storage.local.get('wrapUp');
+  if (!wrapUp) { out('wrap up first'); return; }
+  const d = new Date(Date.now() - 4 * 3600000 - 86400000);
+  const p = (n) => String(n).padStart(2, '0');
+  const dayKey = `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+  await chrome.storage.local.set({ wrapUp: { ...wrapUp, dayKey, shown: false } });
+  out(`dayKey set to ${dayKey}; switch to any tab to trigger Start here`);
+});
+$('resumeBtn').addEventListener('click', async () => {
+  const r = await chrome.runtime.sendMessage({ type: 'resumeTask' });
+  out(r && r.ok ? `resumed ${r.threadId}${r.already ? ' (already there: scroll only)' : ''}` : `resume: ${r && r.error}`);
+});
 
 $('clear').addEventListener('click', async () => {
   if (!confirm('Delete all Pickup events, threads, breadcrumbs and the open break? Settings stay.')) return;

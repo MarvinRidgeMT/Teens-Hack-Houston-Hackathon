@@ -21,6 +21,16 @@
   <h1>Pickup inspector <span class="muted">(dev only)</span></h1>
   <p class="muted">Live view of <code>chrome.storage</code>. Updates on every change. <a href="dev-setup.html">Dev setup</a></p>
   <p><button id="clear" type="button">Clear all data (keeps settings)</button> <span id="cleared" class="muted" aria-live="polite"></span></p>
+  <p>
+    <label>Next step for tomorrow <input id="wrapStep" size="40" placeholder="optional"></label>
+    <button id="wrap" type="button">Wrap up (last work tab)</button>
+    <button id="tomorrow" type="button">Pretend it's tomorrow</button>
+    <button id="resumeBtn" type="button">Resume task (like Alt+R)</button>
+    <span id="devOut" class="muted" aria-live="polite"></span>
+  </p>
+
+  <h2>Wrap up (Start here tomorrow)</h2>
+  <pre id="wrapUp"></pre>
 
   <h2>Settings</h2>
   <pre id="settings"></pre>
@@ -30,13 +40,13 @@
 
   <h2>Last 10 events <span id="eventCount" class="muted"></span></h2>
   <div class="wrap"><table>
-    <thead><tr><th>returned</th><th>signal</th><th>condition</th><th>bucket</th><th>away s</th><th>s to first interaction</th><th>card shown</th><th>debug</th><th>task</th></tr></thead>
+    <thead><tr><th>returned</th><th>signal</th><th>condition</th><th>bucket</th><th>away s</th><th>s to first interaction</th><th>card shown</th><th>debug</th><th>task</th><th>distraction hosts</th><th>return via</th></tr></thead>
     <tbody id="events"></tbody>
   </table></div>
 
   <h2>Breadcrumbs</h2>
   <div class="wrap"><table>
-    <thead><tr><th>task</th><th>tab</th><th>url</th><th>scrollY</th><th>highlight</th><th>next step</th><th>signal</th><th>left</th></tr></thead>
+    <thead><tr><th>task</th><th>tab</th><th>url</th><th>scrollY</th><th>highlight</th><th>next step</th><th>source</th><th>signal</th><th>left</th></tr></thead>
     <tbody id="crumbs"></tbody>
   </table></div>
 

@@ -38,7 +38,7 @@ export async function snapshot(tab, settings) {
   return { url, scrollY: 0, highlight: '', live: false };
 }
 
-async function writeBreadcrumb({ thread, tab, snap, signal, leftAt, nextStep, nextStepSource = NEXT_STEP_SOURCE.typed }) {
+export async function writeBreadcrumb({ thread, tab, snap, signal, leftAt, nextStep, nextStepSource = NEXT_STEP_SOURCE.typed }) {
   const prev = await store.getBreadcrumb(thread.id);
   const crumb = {
     threadId: thread.id,
