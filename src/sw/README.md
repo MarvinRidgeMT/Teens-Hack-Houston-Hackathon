@@ -46,7 +46,8 @@ Voice (default off): `voiceEnabled, wakeWord`. Until the setup page has toggles,
   | `awayMs` | exact `returnedAt - leftAt` in ms |
   | `distractionHost` | hostname (no `www.`) of the first distraction tab seen in the break; `null` if none (focus/idle breaks) |
   | `distractionHosts` | unique distraction hostnames seen in the break, in order; never paths or titles |
-  | `returnVia` | `tab` (a normal tab/window activation), `resumeKey` (Alt+R or `resumeTask`), `notification` (clicked the nudge or Start-here notification), `idle` (back at the keyboard while Chrome showed the task). Pickup sets a short session marker (10 s) just before it activates the tab itself; the return reads and clears it |
+  | `plannedBreakMin` | minutes the user planned with the break timer (Pickup panel), else `null`. Separates planned breaks from interruptions |
+  | `returnVia` | `tab` (a normal tab/window activation), `resumeKey` (Alt+R or `resumeTask`), `notification` (clicked the nudge or Start-here notification), `idle` (back at the keyboard while Chrome showed the task), `voice` ("Hey Pickup, I'm back"), `panel` (Resume from the Pickup panel: task list or typed Ask), `timer` (clicked the "Break's over" notification). Pickup sets a short session marker (10 s) just before it activates the tab itself; the return reads and clears it |
 
 ## Wrap up → "Start here" (Feature 2)
 - `wrapUp` saves a breadcrumb with `signal: 'wrap'` (keeps the next step unless a new one is given) and stores `wrapUp = { threadId, tabId, url, scrollY, highlight, nextStep?, nextStepSource?, at, dayKey, shown }` in `chrome.storage.local`. A new wrap-up replaces the old one.

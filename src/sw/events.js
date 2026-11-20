@@ -174,7 +174,9 @@ export async function closeBreakOnReturn(tab, settings, { via = RETURN_VIA.tab }
     awayMs,                                        // exact returnedAt - leftAt
     distractionHost: distractionHosts[0] || null,  // first distraction site seen in the break
     distractionHosts,                              // every distraction host seen, in order, once each
-    returnVia,                                     // 'tab' | 'resumeKey' | 'notification' | 'idle' | 'voice'
+    returnVia,                                     // 'tab' | 'resumeKey' | 'notification' | 'idle' | 'voice' | 'panel' | 'timer'
+    // Additive (Fri, before the Gate): minutes planned with the break timer, else null.
+    plannedBreakMin: Number.isFinite(ob.plannedMin) ? ob.plannedMin : null,
   };
   await store.addEvent(ev);
 

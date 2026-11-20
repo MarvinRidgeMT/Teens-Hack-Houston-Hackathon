@@ -691,6 +691,35 @@ await step('F5: a park break returned by clicking the nudge logs returnVia "noti
   assert.equal(ev.returnVia, 'notification');
 });
 
+// Panel schema (Step 0, before the Gate): plannedBreakMin on every event, two new returnVia values
+await step('Schema: every event has plannedBreakMin, null for an unplanned break', async () => {
+  await settle();
+  sim.activate(yt); await flush();
+  advance(3 * 60000);
+  sim.activate(wikiA); await flush();
+  const ev = await lastEvent();
+  assert.ok('plannedBreakMin' in ev, 'field present');
+  assert.equal(ev.plannedBreakMin, null);
+});
+
+await step('Schema: a break planned for 10 min logs plannedBreakMin 10', async () => {
+  await settle();
+  sim.activate(yt); await flush();
+  const b = await ob();
+  await chrome.storage.local.set({ openBreak: { ...b, plannedMin: 10, endsAt: Date.now() + 600000 } }); await flush();
+  advance(11 * 60000);
+  sim.activate(wikiA); await flush();
+  const ev = await lastEvent();
+  assert.equal(ev.id, b.eventId);
+  assert.equal(ev.plannedBreakMin, 10);
+});
+
+await step('Schema: returnVia has panel and timer values', async () => {
+  const { RETURN_VIA } = await import('../src/shared/constants.js');
+  assert.equal(RETURN_VIA.panel, 'panel');
+  assert.equal(RETURN_VIA.timer, 'timer');
+});
+
 // Feature 4: toolbar badge
 const badgeNow = async () => { await flush(); await sleep(5); await flush(); return { ...sim.badge }; };
 await step('F4: badge shows P (teal) while parked, • (amber) while away, and clears on return', async () => {

@@ -65,3 +65,13 @@ Everything below is **additive**. Code that ignores it keeps working. **The new 
 
 **Sidd (content script)**
 1. Card: `nextStepSource` can also be `'spoken'`. Label it "Your next step (you said this)". So: `typed`/missing → "(you wrote this)", `selected` → "(you picked this)", `spoken` → "(you said this)". Must do: nothing.
+
+## Panel schema (Fri morning, before the Gate): 1 new event field, 2 new `returnVia` values
+
+For the Pickup panel (break timer, task list). Additive: older code that ignores them keeps working.
+
+**Abhinav (stats, CSV):**
+- **New column `plannedBreakMin`**: minutes the user planned with the break timer, or empty for an unplanned break. CSV import must accept older rows without it (treat missing as empty). Stats can keep planned breaks apart from interruptions.
+- **Two new `returnVia` values:** `panel` (Resume from the Pickup panel) and `timer` (clicked "Break's over"). Like `resumeKey`, Pickup did the navigating for both.
+
+**Sidd:** nothing to do.

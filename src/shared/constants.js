@@ -66,6 +66,8 @@ export const RETURN_VIA = Object.freeze({
   notification: 'notification', // clicked the nudge or the Start-here notification
   idle: 'idle',                 // back at the keyboard while Chrome was on the task
   voice: 'voice',               // "Hey Pickup, I'm back" (voice side panel)
+  panel: 'panel',               // Resume from the Pickup panel (task list or typed Ask)
+  timer: 'timer',               // clicked the "Break's over" notification of a planned break
 });
 export const RETURN_VIA_TTL_MS = 10000; // a returnVia marker older than this is ignored
 
