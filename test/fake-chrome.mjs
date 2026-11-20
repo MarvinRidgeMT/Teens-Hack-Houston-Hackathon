@@ -162,6 +162,12 @@ export function makeChrome({ now }) {
       async clear() { return true; },
     },
     commands: { onCommand: evt() },
+    contextMenus: {
+      onClicked: evt(),
+      async removeAll() { menus.clear(); },
+      create(props, cb) { menus.set(props.id, clone(props)); if (cb) setTimeout(cb, 0); return props.id; },
+      async update(id, props) { if (!menus.has(id)) throw new Error('Cannot find menu item with id ' + id); Object.assign(menus.get(id), clone(props)); },
+    },
   };
 
   function focusChrome(id = 1) {

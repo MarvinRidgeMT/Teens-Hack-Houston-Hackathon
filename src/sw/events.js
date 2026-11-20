@@ -9,7 +9,7 @@ import * as store from '../shared/store.js';
 import { MSG } from '../shared/messages.js';
 import {
   CONDITIONS, DEBUG_THRESHOLD_MS, HIGHLIGHT_MAX, LATER_GROUP_TITLE, awayBucket, DEFAULT_TASK_TYPE,
-  NEXT_STEP_CLEARS_ON_RETURN, RETURN_VIA, RETURN_VIA_TTL_MS,
+  NEXT_STEP_CLEARS_ON_RETURN, RETURN_VIA, RETURN_VIA_TTL_MS, NEXT_STEP_SOURCE,
 } from '../shared/constants.js';
 import { isWorkUrl, isDistractionUrl } from '../shared/sites.js';
 import { ensureThreadForTab, tabInThread, threadForTab } from './threads.js';
@@ -38,7 +38,7 @@ export async function snapshot(tab, settings) {
   return { url, scrollY: 0, highlight: '', live: false };
 }
 
-async function writeBreadcrumb({ thread, tab, snap, signal, leftAt, nextStep }) {
+async function writeBreadcrumb({ thread, tab, snap, signal, leftAt, nextStep, nextStepSource = NEXT_STEP_SOURCE.typed }) {
   const prev = await store.getBreadcrumb(thread.id);
   const crumb = {
     threadId: thread.id,
@@ -52,15 +52,28 @@ async function writeBreadcrumb({ thread, tab, snap, signal, leftAt, nextStep }) 
   };
   // The next step is the user's own words: keep it until they write a new one.
   const step = nextStep !== undefined ? nextStep : prev && prev.nextStep;
-  if (step) crumb.nextStep = cap(step, HIGHLIGHT_MAX);
+  if (step) {
+    crumb.nextStep = cap(step, HIGHLIGHT_MAX);
+    crumb.nextStepSource = nextStep !== undefined ? nextStepSource : (prev && prev.nextStepSource) || NEXT_STEP_SOURCE.typed;
+  }
   await store.putBreadcrumb(crumb);
   return crumb;
+}
+
+// Set a task's next step without opening a break (right-click menu). An existing
+// breadcrumb (also an open break's) keeps every other field; with none yet, one is
+// made from the page with signal 'note'.
+export async function noteNextStep(thread, tab, text, source, settings) {
+  const prev = await store.getBreadcrumb(thread.id);
+  if (prev) return store.putBreadcrumb({ ...prev, nextStep: cap(text, HIGHLIGHT_MAX), nextStepSource: source });
+  const snap = await snapshot(tab, settings);
+  return writeBreadcrumb({ thread, tab, snap, signal: 'note', leftAt: Date.now(), nextStep: text, nextStepSource: source });
 }
 
 // Decision 7: what the breadcrumb looks like after a logged return.
 export function crumbAfterReturn(crumb, clearNextStep) {
   if (!clearNextStep || !crumb || !crumb.nextStep) return crumb;
-  const { nextStep, ...rest } = crumb;
+  const { nextStep, nextStepSource, ...rest } = crumb;
   return rest;
 }
 
@@ -182,7 +195,10 @@ export async function closeBreakOnReturn(tab, settings, { via = RETURN_VIA.tab }
       where: { scrollY: crumb ? crumb.scrollY : 0, highlight: crumb ? crumb.highlight : '' },
       tabCount,
     };
-    if (crumb && crumb.nextStep) card.nextStep = crumb.nextStep;
+    if (crumb && crumb.nextStep) {
+      card.nextStep = crumb.nextStep;
+      card.nextStepSource = crumb.nextStepSource || NEXT_STEP_SOURCE.typed; // additive: 'typed' | 'selected'
+    }
     await sendToTab(tab.id, card);
     await store.updateEvent(ev.id, { cardShown: true });
   }

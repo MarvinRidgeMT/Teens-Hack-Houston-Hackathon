@@ -55,7 +55,7 @@ const manifest = JSON.parse(read(path.join(ROOT, 'manifest.json')));
     if (fs.existsSync(path.join(ROOT, r))) pass('manifest', `${r} exists`);
     else fail('manifest', `${r} is referenced in manifest.json but missing (not landed yet?)`);
   }
-  const expected = ['tabs', 'tabGroups', 'idle', 'alarms', 'notifications', 'storage', 'scripting'];
+  const expected = ['tabs', 'tabGroups', 'idle', 'alarms', 'notifications', 'storage', 'scripting', 'contextMenus'];
   const extra = (manifest.permissions || []).filter((p) => !expected.includes(p));
   if (extra.length) warn('manifest', `permissions beyond the plan: ${extra.join(', ')}`);
   if (manifest.host_permissions && manifest.host_permissions.length) fail('manifest', 'host_permissions present: work sites must be optional and requested on the setup page');

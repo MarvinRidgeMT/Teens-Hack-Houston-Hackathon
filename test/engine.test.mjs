@@ -788,6 +788,79 @@ await step('F1: Alt+R with no task history does nothing and flashes ? on the bad
   sim.activate(wikiA); await flush(); await sleep(2200); await flush();
 });
 
+// Feature 3: right-click "Make this my next step"
+const menu = () => sim.menus.get('pickup-next-step');
+const clickMenu = (tabId, selectionText) => chrome.contextMenus.onClicked.fire({ menuItemId: 'pickup-next-step', selectionText }, sim.tabs.get(tabId));
+await step('F3: the menu shows on selections on work sites only, and follows the settings', async () => {
+  chrome.runtime.onInstalled.fire({ reason: 'update' }); await flush();
+  assert.deepEqual(menu().contexts, ['selection']);
+  assert.equal(menu().title, 'Make this my next step');
+  assert.deepEqual(menu().documentUrlPatterns.sort(), ['*://*.docs.google.com/*', '*://*.wikipedia.org/*', '*://docs.google.com/*', '*://wikipedia.org/*']);
+  assert.notEqual(menu().visible, false);
+  await setSettings({ workSites: ['docs.google.com/document'] }); await flush(); await sleep(5); await flush();
+  assert.deepEqual(menu().documentUrlPatterns.sort(), ['*://*.docs.google.com/document*', '*://docs.google.com/document*']);
+  await setSettings({ workSites: [] }); await flush(); await sleep(5); await flush();
+  assert.equal(menu().visible, false);
+  await setSettings({ workSites: ['docs.google.com', 'wikipedia.org'] }); await flush(); await sleep(5); await flush();
+  assert.equal(menu().visible, true);
+});
+
+await step('F3: right-click on a work tab sets the next step (picked), keeps the rest, opens no break, flashes ✓', async () => {
+  await settle();
+  const before = await crumbOf(thread.id);
+  clickMenu(wikiA, '  Find the   2023\n rainfall table  '); await flush();
+  const crumb = await crumbOf(thread.id);
+  assert.equal(crumb.nextStep, 'Find the 2023 rainfall table');
+  assert.equal(crumb.nextStepSource, 'selected');
+  assert.equal(crumb.scrollY, before.scrollY);
+  assert.equal(crumb.leftAt, before.leftAt);
+  assert.equal(await ob(), null);
+  assert.equal(sim.badge.text, '✓');
+  // The card says where the line came from.
+  sim.activate(yt); await flush(); advance(3 * 60000);
+  sim.sent.length = 0;
+  await withRandom(0.1, async () => { sim.activate(wikiA); await flush(); });
+  const card = sim.sentOfType('showCard').at(-1);
+  assert.equal(card.nextStep, 'Find the 2023 rainfall table');
+  assert.equal(card.nextStepSource, 'selected');
+});
+
+await step('F3: an empty selection (Google Docs) changes nothing and flashes !', async () => {
+  await settle();
+  const before = await crumbOf(thread.id);
+  clickMenu(wikiA, '   '); await flush();
+  assert.deepEqual(await crumbOf(thread.id), before);
+  assert.equal(sim.badge.text, '!');
+});
+
+await step('F3: right-click while parked updates the open break\'s breadcrumb; Alt+P text is "typed"', async () => {
+  await settle();
+  await sim.send({ type: 'parkNote', nextStep: 'Typed step' }, wikiA); await flush();
+  assert.equal((await crumbOf(thread.id)).nextStepSource, 'typed');
+  const b = await ob(), before = await crumbOf(thread.id);
+  clickMenu(wikiA, 'Picked step'); await flush();
+  const crumb = await crumbOf(thread.id);
+  assert.equal(crumb.nextStep, 'Picked step');
+  assert.equal(crumb.nextStepSource, 'selected');
+  assert.equal(crumb.signal, 'park');
+  assert.equal(crumb.leftAt, before.leftAt);
+  assert.deepEqual(await ob(), b, 'the break is untouched');
+  sim.activate(yt); await flush(); advance(10); sim.activate(wikiA); await flush();
+});
+
+await step('F3: a menu click on a page the engine knows nothing about makes a breadcrumb (signal note), not a break', async () => {
+  await settle();
+  const t = sim.openTab('https://en.wikipedia.org/wiki/Evaporation'); await flush();
+  clickMenu(t, 'Compare with Drought'); await flush();
+  const all = (await chrome.storage.local.get('breadcrumbs')).breadcrumbs;
+  const crumb = Object.values(all).find((c) => c.url === 'https://en.wikipedia.org/wiki/Evaporation');
+  assert.ok(crumb, 'breadcrumb made');
+  assert.equal(crumb.signal, 'note');
+  assert.equal(crumb.nextStep, 'Compare with Drought');
+  assert.equal(await ob(), null);
+  sim.closeTab(t); await flush();
+});
+
 const total = (await events()).length;
 (quiet || console.log)(`\n${passed} checks passed, ${total} events logged${process.exitCode ? ' — SOME FAILED' : ''}`);
 process.exit(process.exitCode || 0);

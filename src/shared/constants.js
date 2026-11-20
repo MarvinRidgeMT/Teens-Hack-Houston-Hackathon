@@ -75,6 +75,9 @@ export const BADGE = Object.freeze({
 });
 export const BADGE_FLASH_MS = 2000;
 
+// Where a breadcrumb's next step came from. Missing means typed (older data).
+export const NEXT_STEP_SOURCE = Object.freeze({ typed: 'typed', selected: 'selected' });
+
 export const CONDITIONS = Object.freeze({ pickup: 'pickup', control: 'control' });
 export const TASK_TYPES = Object.freeze(['writing', 'reading', 'problems']);
 export const DEFAULT_TASK_TYPE = 'writing';

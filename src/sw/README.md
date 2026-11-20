@@ -43,6 +43,12 @@ Owner: Anish. Files: `manifest.json`, `src/shared/{constants,messages,store,site
   | `distractionHosts` | unique distraction hostnames seen in the break, in order; never paths or titles |
   | `returnVia` | `tab` (a normal tab/window activation), `resumeKey` (Alt+R or `resumeTask`), `notification` (clicked the nudge or Start-here notification), `idle` (back at the keyboard while Chrome showed the task). Pickup sets a short session marker (10 s) just before it activates the tab itself; the return reads and clears it |
 
+## Right-click "Make this my next step" (Feature 3)
+- A context-menu item on **text selections, on work sites only** (match patterns built from `settings.workSites`: host and subdomains, plus the path when the entry has one). It follows settings changes; with no work sites it is hidden.
+- Clicking it makes the selection (whitespace collapsed, max 200 chars) the task's next step. The thread comes from the tab (made if needed). An existing breadcrumb, including an open break's, keeps every other field; with none, one is made with `signal: 'note'` and **no break opens**.
+- Breadcrumb field `nextStepSource`: `'selected'` (picked from the page) or `'typed'` (Alt+P, popup, wrap-up). Missing = typed. `showCard` carries it (additive).
+- The badge flashes `✓`. In Google Docs Chrome usually gets no selection text: nothing is saved, the badge flashes `!` and the console says why.
+
 ## Toolbar badge (Feature 4)
 Drawn by `src/sw/badge.js` from storage on every `openBreak` / `wrapUp` / `threads` write, on install and on startup.
 

@@ -11,7 +11,8 @@
     "alarms",
     "notifications",
     "storage",
-    "scripting"
+    "scripting",
+    "contextMenus"
   ],
   "optional_host_permissions": ["http://*/*", "https://*/*"],
   "background": {
