@@ -98,5 +98,5 @@ One static page in `site/` for judges (preview: `python3 -m http.server -d site 
 ## Site restyle (redesign/site)
 
 `site/` now uses the design system: Paper (light) and Blue hour (dark) follow the visitor's system setting, Inter is self-hosted in `site/assets/fonts/` (OFL), the brand tile is `pk-mark`, and the footer is the Driftbar meadow (SVG hills, frosted "Pickup" wordmark, fog). Fireflies and fog only move when reduced motion is off. The CSS is copied into `site/styles.css`, so `site/` still works on its own with no third-party requests. Same content, anchors and placeholders as before.
-- **Screenshots** are still the old teal look. `<!-- SHOTS: replace with redesign screenshots -->` marks the three places to swap (hero, How it works, demo poster). Keep `site/` under 1.5 MB (it's about 1.3 MB now).
+- **Screenshots** are still the old teal look. `<!-- SHOTS: replace with redesign screenshots -->` marks the four places to swap (social preview image in `<head>`, hero, How it works, demo poster). Keep `site/` under 1.5 MB (it's about 1.3 MB now).
 - **Favicons** (`site/assets/icon*.png`) are still the old teal icon. Swap them when a real logo exists.

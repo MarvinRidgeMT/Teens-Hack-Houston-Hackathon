@@ -148,6 +148,7 @@ main > section.hero { border-top: 0; padding-top: 40px; }
   text-decoration: none; font-weight: 500; font-size: 16px; letter-spacing: -0.01em;
 }
 .btn:hover { text-decoration: none; }
+.btn:focus-visible { border-radius: var(--radius-md); }
 .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 
 /* Chips: facts, not controls */
@@ -186,7 +187,7 @@ main > section.hero { border-top: 0; padding-top: 40px; }
 /* ---------- Privacy ---------- */
 .checks { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); max-width: 64ch; }
 .checks li { padding-left: 34px; position: relative; }
-.checks li::before { content: "✓"; position: absolute; left: 0; top: 2px; width: 22px; height: 22px; border-radius: 50%;
+.checks li::before { content: "✓"; content: "✓" / ""; position: absolute; left: 0; top: 2px; width: 22px; height: 22px; border-radius: 50%;
   display: grid; place-items: center; font-size: 12px; font-weight: 700; line-height: 1; background: var(--state-saved); color: var(--on-state); }
 .limits { margin-top: 26px; max-width: 64ch; padding: 2px 18px; border-radius: var(--radius-lg); background: var(--surface); border: 1px solid var(--border); }
 .limits summary { cursor: pointer; padding: 12px 0; font-weight: 600; letter-spacing: -0.02em; }
