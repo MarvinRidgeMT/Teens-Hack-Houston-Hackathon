@@ -10,6 +10,7 @@ import { MSG } from '../shared/messages.js';
 import {
   CONDITIONS, DEBUG_THRESHOLD_MS, HIGHLIGHT_MAX, LATER_GROUP_TITLE, awayBucket, DEFAULT_TASK_TYPE,
   NEXT_STEP_CLEARS_ON_RETURN, RETURN_VIA, RETURN_VIA_TTL_MS, NEXT_STEP_SOURCE, BREAK_ALARM_PREFIX,
+  NOTE_FIELD_MAX, VIDEO_MIN_SEC, featuresOf,
 } from '../shared/constants.js';
 import { isWorkUrl, isDistractionUrl } from '../shared/sites.js';
 import { ensureThreadForTab, tabInThread, threadForTab } from './threads.js';
@@ -18,6 +19,27 @@ import { scheduleNudge, cancelNudge } from './nudge.js';
 import { newId, getTab, sendToTab, tabUrl, sameDoc, log } from './util.js';
 
 const cap = (s, n) => String(s || '').slice(0, n);
+const note = (s) => cap(String(s || '').replace(/\s+/g, ' ').trim(), NOTE_FIELD_MAX);
+
+// F3: a lecture video worth coming back to, or null. Only finite numbers and a
+// string URL get through; under VIDEO_MIN_SEC is not worth saving.
+export function cleanVideo(v, settings) {
+  if (!v || !featuresOf(settings).videoReplay) return null;
+  const t = Number(v.currentTime);
+  if (typeof v.currentTime !== 'number' || !Number.isFinite(t) || t <= VIDEO_MIN_SEC) return null;
+  const d = Number(v.duration);
+  return { currentTime: t, duration: typeof v.duration === 'number' && Number.isFinite(d) ? d : null, src: cap(v.src, 500) };
+}
+
+// What Resume sends the page: scrollY always; the highlight (F2) and the video (F3)
+// when their features are on. Additive: an old content script reads scrollY only.
+export function restoreMsg(crumb, settings) {
+  const msg = { type: MSG.restoreScroll, scrollY: (crumb && crumb.scrollY) || 0 };
+  const f = featuresOf(settings);
+  if (crumb && f.youWereHere && crumb.highlight) msg.highlight = crumb.highlight;
+  if (crumb && f.videoReplay && crumb.video) msg.video = crumb.video;
+  return msg;
+}
 
 export function thresholdMs(settings) {
   return settings.debug ? DEBUG_THRESHOLD_MS : Number(settings.awayThresholdMs) || 120000;
@@ -29,16 +51,18 @@ export async function snapshot(tab, settings) {
   const url = tabUrl(tab);
   const live = await sendToTab(tab.id, { type: MSG.snapshot }, 1000);
   if (live && live.url) {
-    return { url: live.url, scrollY: Number(live.scrollY) || 0, highlight: cap(live.highlight, HIGHLIGHT_MAX), live: true };
+    return { url: live.url, scrollY: Number(live.scrollY) || 0, highlight: cap(live.highlight, HIGHLIGHT_MAX), video: cleanVideo(live.video, settings), live: true };
   }
   const st = await store.getTabState(tab.id);
   if (st && (st.url === url || !isWorkUrl(url, settings))) {
-    return { url: st.url, scrollY: Number(st.scrollY) || 0, highlight: cap(st.highlight, HIGHLIGHT_MAX), live: false };
+    return { url: st.url, scrollY: Number(st.scrollY) || 0, highlight: cap(st.highlight, HIGHLIGHT_MAX), video: cleanVideo(st.video, settings), live: false };
   }
   return { url, scrollY: 0, highlight: '', live: false };
 }
 
-export async function writeBreadcrumb({ thread, tab, snap, signal, leftAt, nextStep, nextStepSource = NEXT_STEP_SOURCE.typed }) {
+// plan: { stoppedAt, stuckOn } from Alt+P with a next step (F1). Without a plan the
+// stored one stays (like the next step itself), also when a next step is typed elsewhere.
+export async function writeBreadcrumb({ thread, tab, snap, signal, leftAt, nextStep, nextStepSource = NEXT_STEP_SOURCE.typed, plan }) {
   const prev = await store.getBreadcrumb(thread.id);
   const crumb = {
     threadId: thread.id,
@@ -55,7 +79,11 @@ export async function writeBreadcrumb({ thread, tab, snap, signal, leftAt, nextS
   if (step) {
     crumb.nextStep = cap(step, HIGHLIGHT_MAX);
     crumb.nextStepSource = nextStep !== undefined ? nextStepSource : (prev && prev.nextStepSource) || NEXT_STEP_SOURCE.typed;
+    const p = plan !== undefined ? plan : prev || {}; // only Alt+P (park) brings a new plan
+    if (p.stoppedAt) crumb.stoppedAt = note(p.stoppedAt);
+    if (p.stuckOn) crumb.stuckOn = note(p.stuckOn);
   }
+  if (snap.video) crumb.video = snap.video;
   await store.putBreadcrumb(crumb);
   return crumb;
 }
@@ -73,7 +101,7 @@ export async function noteNextStep(thread, tab, text, source, settings) {
 // Decision 7: what the breadcrumb looks like after a logged return.
 export function crumbAfterReturn(crumb, clearNextStep) {
   if (!clearNextStep || !crumb || !crumb.nextStep) return crumb;
-  const { nextStep, nextStepSource, ...rest } = crumb;
+  const { nextStep, nextStepSource, stoppedAt, stuckOn, ...rest } = crumb;
   return rest;
 }
 
@@ -101,13 +129,15 @@ export async function openBreakFor(workTab, signal, leftAt, settings, { departed
 
 // Alt+P with the overlay answered (or popup Park). The break starts when the
 // user actually leaves, so time spent working after parking is not "away".
-export async function park(tab, nextStep, settings, { nextStepSource } = {}) {
+export async function park(tab, nextStep, settings, { nextStepSource, stoppedAt, stuckOn } = {}) {
   const thread = await ensureThreadForTab(tab, settings);
   if (!thread) return null;
   const snap = await snapshot(tab, settings);
   const now = Date.now();
   const step = String(nextStep || '').trim();
-  await writeBreadcrumb({ thread, tab, snap, signal: 'park', leftAt: now, nextStep: step || undefined, nextStepSource: step ? nextStepSource : undefined });
+  // F1: a plan needs a next step; stoppedAt/stuckOn without one are dropped.
+  const plan = step ? { stoppedAt, stuckOn } : undefined;
+  await writeBreadcrumb({ thread, tab, snap, signal: 'park', leftAt: now, nextStep: step || undefined, nextStepSource: step ? nextStepSource : undefined, plan });
   const prev = await store.getOpenBreak();
   if (prev) await cancelNudge(prev.eventId);
   const ob = { eventId: newId('ev'), threadId: thread.id, tabId: tab.id, leftAt: now, signal: 'park', departed: false, windowId: tab.windowId, parkedAt: now };
@@ -197,11 +227,14 @@ export async function closeBreakOnReturn(tab, settings, { via = RETURN_VIA.tab }
       awayMs,
       where: { scrollY: crumb ? crumb.scrollY : 0, highlight: crumb ? crumb.highlight : '' },
       tabCount,
+      features: featuresOf(settings), // additive: which redesign features the card may use
     };
     if (crumb && crumb.nextStep) {
       card.nextStep = crumb.nextStep;
       card.nextStepSource = crumb.nextStepSource || NEXT_STEP_SOURCE.typed; // additive: 'typed' | 'selected'
     }
+    if (crumb && crumb.stoppedAt) card.stoppedAt = crumb.stoppedAt; // additive (F1)
+    if (crumb && crumb.stuckOn) card.stuckOn = crumb.stuckOn;       // additive (F1)
     await sendToTab(tab.id, card);
     await store.updateEvent(ev.id, { cardShown: true });
   }
@@ -247,7 +280,7 @@ export async function resume(threadId) {
   if (thread && thread.groupId != null) {
     try { await chrome.tabGroups.update(thread.groupId, { collapsed: false }); } catch { /* group gone */ }
   }
-  const msg = { type: MSG.restoreScroll, scrollY: crumb.scrollY || 0 };
+  const msg = restoreMsg(crumb, await store.getSettings());
   // A recreated tab has to load before it can scroll. Wait for that outside the
   // serial queue (not awaited), so other handlers are not held for up to 8 s.
   if (created) restoreAfterLoad(tab.id, msg);
@@ -299,7 +332,7 @@ export async function resumeTask(threadId, { via = RETURN_VIA.resumeKey } = {}) 
   if (!ob) {
     const here = await focusedActiveTab();
     if (here && tabInThread(here, thread, crumb) && !isDistractionUrl(tabUrl(here), settings)) {
-      if (crumb) await sendToTab(here.id, { type: MSG.restoreScroll, scrollY: crumb.scrollY || 0 });
+      if (crumb) await sendToTab(here.id, restoreMsg(crumb, settings));
       return { ok: true, threadId: id, already: true };
     }
   }

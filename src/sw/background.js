@@ -170,7 +170,7 @@ async function route(msg, sender) {
     // content script -> SW
     case MSG.state:
       if (sender.frameId > 0) return { ok: true }; // only the top frame's state counts
-      if (tab) await store.setTabState(tab.id, { url: msg.url, scrollY: msg.scrollY, highlight: String(msg.highlight || '').slice(0, HIGHLIGHT_MAX), at: Date.now() });
+      if (tab) await store.setTabState(tab.id, { url: msg.url, scrollY: msg.scrollY, highlight: String(msg.highlight || '').slice(0, HIGHLIGHT_MAX), video: events.cleanVideo(msg.video, settings), at: Date.now() });
       return { ok: true };
     case MSG.firstInteraction:
       await events.recordFirstInteraction(msg.eventId, msg.at);
@@ -185,7 +185,7 @@ async function route(msg, sender) {
       if (!tab) return { ok: false, error: 'no tab' };
       if (msg.taskName && String(msg.taskName).trim()) await threads.startTask(tab.id, msg.taskName);
       const fresh = (await getTab(tab.id)) || tab;
-      const parked = await events.park(fresh, msg.nextStep, settings);
+      const parked = await events.park(fresh, msg.nextStep, settings, { stoppedAt: msg.stoppedAt, stuckOn: msg.stuckOn });
       return parked ? { ok: true } : { ok: false, error: 'this page cannot hold a task' };
     }
 

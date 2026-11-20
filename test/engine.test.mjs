@@ -722,18 +722,18 @@ await step('Schema: returnVia has panel and timer values', async () => {
 
 // Feature 4: toolbar badge
 const badgeNow = async () => { await flush(); await sleep(5); await flush(); return { ...sim.badge }; };
-await step('F4: badge shows P (teal) while parked, • (amber) while away, and clears on return', async () => {
+await step('F4: badge shows P (periwinkle) while parked, • (amber) while away, and clears on return', async () => {
   await settle();
   assert.equal((await badgeNow()).text, '');
   await sim.send({ type: 'parkNote', nextStep: 'Write the intro' }, wikiA); await flush();
   let b = await badgeNow();
   assert.equal(b.text, 'P');
-  assert.equal(b.color, '#0D9488');
+  assert.equal(b.color, '#4347b8');
   assert.equal(b.title, "Pickup: Climate Essay parked: leave when you're ready");
   sim.activate(yt); await flush();
   b = await badgeNow();
   assert.equal(b.text, '•');
-  assert.equal(b.color, '#D97706');
+  assert.equal(b.color, '#b45309');
   assert.equal(b.title, 'Pickup: Climate Essay is waiting');
   advance(3 * 60000);
   sim.activate(wikiA); await flush();

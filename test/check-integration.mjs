@@ -92,6 +92,20 @@ const srcCss = walk(SRC_DIR, ['.css']);
   if (clean) pass('rules', `no network calls, eval or inline scripts in ${srcJs.length} JS / ${srcHtml.length} HTML files`);
 }
 
+// ---------------- fonts: bundled Inter only ----------------
+// The design system names Inter from Google Fonts; the extension must not load it
+// from the network. Any reference to Google's font hosts in src/ (or the manifest) fails.
+{
+  const files = [...walk(SRC_DIR, ['.js', '.mjs', '.html', '.css', '.json']), path.join(ROOT, 'manifest.json')].filter((f) => fs.existsSync(f));
+  let bad = 0;
+  for (const f of files) {
+    for (const host of ['fonts.googleapis.com', 'fonts.gstatic.com']) {
+      if (read(f).includes(host)) { fail('fonts', `${where(f, new RegExp(host.replace(/\./g, '\\.')))} references ${host} (fonts must be bundled in assets/fonts/)`); bad++; }
+    }
+  }
+  if (!bad) pass('fonts', `no Google Fonts references in ${files.length} files (Inter is bundled)`);
+}
+
 // ---------------- voice: on-device speech only ----------------
 // SpeechRecognition defaults to sending audio to a server. Every recogniser in src/
 // must set processLocally = true (and check it stuck) before start().

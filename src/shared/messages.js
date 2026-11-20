@@ -4,19 +4,20 @@
 
 export const MSG = Object.freeze({
   // Service worker -> content script
-  snapshot: 'snapshot',         // reply: { url, scrollY, highlight }
-  showCard: 'showCard',         // { eventId, threadName, awayMs, nextStep?, nextStepSource?, where: { scrollY, highlight }, tabCount }
+  snapshot: 'snapshot',         // reply: { url, scrollY, highlight, video? }  video (F3): { currentTime, duration, src } of a top-frame <video> past 5 s
+  showCard: 'showCard',         // { eventId, threadName, awayMs, nextStep?, nextStepSource?, stoppedAt?, stuckOn?, where: { scrollY, highlight }, tabCount, features }
+                                // features: featuresOf(settings) (constants.js); F4 variant from awayMs only (card-logic.js)
   armTimer: 'armTimer',         // { eventId } sent on every return, both conditions
-  restoreScroll: 'restoreScroll', // { scrollY }
+  restoreScroll: 'restoreScroll', // { scrollY, highlight?, video? }  highlight: F2 "you were here" (find-text.js); video: F3 replay 10 s back, paused
   openOverlay: 'openOverlay',   // { askTaskName: boolean }
   // OPTIONAL (Feature 2, stretch): a content script may ignore it.
-  startHere: 'startHere',       // { threadName, nextStep?, nextStepSource?, wrappedAt }
+  startHere: 'startHere',       // { threadName, nextStep?, nextStepSource?, stoppedAt?, stuckOn?, wrappedAt, features }
 
   // Content script -> service worker
-  state: 'state',               // { url, scrollY, highlight } debounced 2 s
+  state: 'state',               // { url, scrollY, highlight, video? } debounced 2 s
   firstInteraction: 'firstInteraction', // { eventId, at }
   cardAction: 'cardAction',     // { eventId, action: 'resume' | 'notNow' | 'tidy' }
-  parkNote: 'parkNote',         // { nextStep, taskName? }
+  parkNote: 'parkNote',         // { nextStep, taskName?, stoppedAt?, stuckOn? }  F1: each capped at 120; kept only with a next step
 
   // Popup / pages -> service worker (added at kickoff; reply shown after each)
   getTabInfo: 'getTabInfo',     // { tabId } -> { ok, isWork, isDistraction, thread, suggested: [{tabId,url,title}], openBreak }
