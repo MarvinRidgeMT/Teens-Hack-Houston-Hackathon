@@ -65,3 +65,10 @@ Everything below is **additive**. Code that ignores it keeps working. **The new 
 
 **Sidd (content script)**
 1. Card: `nextStepSource` can also be `'spoken'`. Label it "Your next step (you said this)". So: `typed`/missing → "(you wrote this)", `selected` → "(you picked this)", `spoken` → "(you said this)". Must do: nothing.
+
+## Download site (new, Fri, branch `feature/site`)
+
+One static page in `site/` for judges (preview: `python3 -m http.server -d site 8080`). Real screenshots from the extension (`node test/dev/site-shots.mjs`).
+- **The Download button needs two things by Saturday:** a **v1.0 GitHub release with the zip** (it links to `/releases/latest`), and the **repo public** (a private repo's releases and Pages are invisible to judges).
+- **Abhinav:** fill the `PILOT RESULTS` block Saturday 10 AM (real numbers only), the `VIDEO` id and the `DEVPOST` link. The page says "open the dashboard and click Load sample data": that button must exist.
+- **Sidd:** drop the 30-second install GIF at `site/assets/install.gif` and swap it in for `install-poster.jpg` (comment in `index.html`).
