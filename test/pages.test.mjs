@@ -159,6 +159,14 @@ await step('receipt: debug events and last week never count', () => {
   assert.match(r.headline, /longest break 3 m$/);
 });
 
+await step('receipt: n and the n >= 10 check count only comebacks with a first interaction', () => {
+  const evs = [...week(10, 10), ev({ condition: 'control', firstSec: null, returnedAt: NOW - 5 * MIN })];
+  assert.equal(stats.receiptText(evs, NOW).enough, true);
+  assert.match(stats.receiptText(evs, NOW).headline, /^This week: 21 comebacks · .*\(n = 10 \/ 10\)/);
+  const short = [...week(10, 9), ev({ condition: 'control', firstSec: null, returnedAt: NOW - 5 * MIN })];
+  assert.equal(stats.receiptText(short, NOW).enough, false, 'a comeback with no first interaction does not reach 10');
+});
+
 await step('receipt: one comeback, and none at all', () => {
   assert.equal(stats.receiptText(week(1, 0), NOW).headline, 'This week: 1 comeback · longest break 3 m');
   assert.equal(stats.receiptText([], NOW).headline, 'This week: 0 comebacks');
@@ -174,7 +182,7 @@ await step('csv: header has returnVia, plannedBreakMin, nextStepSource and the s
 await step('csv: older events without the new fields export empty cells', () => {
   const old = { id: 'o1', participant: 'p', threadId: 't', signal: 'tab', leftAt: 1000, returnedAt: 200000, firstInteractionAt: null, condition: 'control', awayBucket: '2-5', taskType: 'writing', debug: false };
   const text = csv.toCsv([old], { t: 'Essay' });
-  const [head, row] = text.trim().split('\r\n');
+  const [head, row] = text.replace(/^\ufeff/, '').trim().split('\r\n');
   const cols = head.split(',');
   const cells = row.split(',');
   assert.equal(cells.length, cols.length);
@@ -183,6 +191,7 @@ await step('csv: older events without the new fields export empty cells', () => 
   assert.equal(cells[cols.indexOf('nextStepSource')], '');
   assert.equal(cells[cols.indexOf('task')], 'Essay');
   assert.equal(cells[cols.indexOf('awayMs')], '199000');
+  assert.ok(text.startsWith('\ufeff'), 'UTF-8 BOM so Excel reads non-ASCII task names');
 });
 
 await step('csv: quotes, commas and formula-looking text are made safe', () => {
@@ -205,6 +214,8 @@ await step('sample data: deterministic, labelled, both conditions, some debug an
   assert.ok(a.some((e) => e.condition === 'pickup') && a.some((e) => e.condition === 'control'));
   assert.ok(a.some((e) => e.debug) && a.some((e) => e.firstInteractionAt === null));
   assert.ok(a.some((e) => e.plannedBreakMin != null) && a.some((e) => e.returnVia === 'resumeKey'));
+  const sum = stats.summarize(a);
+  assert.equal(sum.pickup.median, sum.control.median, 'sample data must not suggest a result');
   const names = sample.sampleThreadNames();
   assert.ok(a.every((e) => names[e.threadId]));
 });
@@ -226,8 +237,8 @@ await step('setup: features default on except readableCard; merge keeps unknown 
   for (const v of Object.values(setup.featuresOf(next))) assert.equal(typeof v, 'boolean');
 });
 
-await step('setup: host permissions are https only; match patterns use "/*" paths', () => {
-  assert.deepEqual(setup.originsFor(['docs.google.com/document']), ['https://docs.google.com/*', 'https://*.docs.google.com/*']);
+await step('setup: host permissions for https and http (no "*://"); match patterns use "/*" paths', () => {
+  assert.deepEqual(setup.originsFor(['docs.google.com/document']), ['https://docs.google.com/*', 'https://*.docs.google.com/*', 'http://docs.google.com/*', 'http://*.docs.google.com/*']);
   assert.deepEqual(setup.matchesFor(['youtube.com/watch']), ['*://youtube.com/*', '*://*.youtube.com/*']);
   assert.equal(setup.cleanSite('not a site'), '');
   assert.equal(setup.cleanSite('HTTPS://www.Example.com/'), 'example.com');
@@ -248,7 +259,7 @@ await step('no page copy uses the word "productivity"', async () => {
   const fs = await import('node:fs');
   const path = await import('node:path');
   const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
-  const files = ['src/shared/stats.js', ...fs.readdirSync(path.join(root, 'src/pages')).map((f) => `src/pages/${f}`)];
+  const files = ['src/shared/stats.js', 'src/shared/pk.css', 'src/shared/tokens.css', ...fs.readdirSync(path.join(root, 'src/pages')).map((f) => `src/pages/${f}`)];
   for (const f of files) assert.ok(!/productivity/i.test(fs.readFileSync(path.join(root, f), 'utf8')), f);
 });
 

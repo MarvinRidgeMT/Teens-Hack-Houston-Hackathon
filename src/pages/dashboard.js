@@ -23,7 +23,6 @@ const current = () => (mode === 'sample' ? sample : mine);
 function status(state, text) {
   const s = $('status');
   s.replaceChildren(badge(state), h('span', null, text));
-  s.hidden = false;
 }
 
 // ---------- chips ----------
@@ -35,6 +34,13 @@ function conditionChip(c) {
   const k = CONDITION[c] || { dot: 'pk-dot pk-dot--neutral', text: c || 'Unknown' };
   return h('span', { className: 'pk-chip' }, h('span', { className: k.dot, attrs: { 'aria-hidden': 'true' } }), k.text);
 }
+
+// How the user came back (event.returnVia), in words.
+const VIA = {
+  tab: 'Switched tabs', resumeKey: 'Resume key (Alt+R)', notification: 'Notification', idle: 'Back at the keyboard',
+  voice: 'Voice', panel: 'Pickup panel', timer: 'Break timer',
+};
+const SOURCE = { typed: 'You wrote it', selected: 'You picked it', spoken: 'You said it' };
 
 const dash = (label = 'none') => h('span', { className: 'db-muted' }, '–', h('span', { className: 'pk-sr' }, label));
 const timeText = (at) => (Number.isFinite(at)
@@ -88,13 +94,13 @@ function renderEvents(events, names) {
     if (e.debug) time.append(h('br'), h('span', { className: 'pk-chip' }, h('span', { className: 'pk-dot pk-dot--neutral', attrs: { 'aria-hidden': 'true' } }), 'Testing (left out)'));
     const row = h('tr', { className: e.debug ? 'db-debug' : '' },
       time,
-      h('td', null, names[e.threadId] || dash('task not found')),
+      h('td', null, names[e.threadId] || (e.threadId in names ? 'Untitled task' : dash('task not found'))),
       h('td', null, conditionChip(e.condition)),
       h('td', { className: 'db-nowrap' }, bucket ? `${bucket} min` : dash(), away !== null ? h('span', { className: 'db-muted' }, ` · ${durationText(away)}`) : null),
       h('td', { className: 'num' }, secs === null ? dash('no interaction recorded') : formatSeconds(secs)),
-      h('td', null, e.returnVia || dash()),
+      h('td', null, e.returnVia ? (VIA[e.returnVia] || e.returnVia) : dash()),
       h('td', { className: 'num' }, Number.isFinite(e.plannedBreakMin) ? `${e.plannedBreakMin} min` : dash()),
-      h('td', null, e.nextStepSource || dash()));
+      h('td', null, e.nextStepSource ? (SOURCE[e.nextStepSource] || e.nextStepSource) : dash('not recorded')));
     body.append(row);
   }
 }
@@ -128,7 +134,7 @@ function toggleSample() {
   else {
     sample = { events: sampleEvents(), names: sampleThreadNames(), settings: mine.settings };
     mode = 'sample';
-    $('status').hidden = true;
+    $('status').replaceChildren();
   }
   render();
 }
@@ -183,10 +189,11 @@ $('delete-confirm').addEventListener('keydown', (e) => { if (e.key === 'Escape')
 $('delete-yes').addEventListener('click', async () => {
   if (!hasChrome) { status('none', 'Open the dashboard from Pickup in Chrome to delete data.'); closeConfirm(); return; }
   try {
-    const keep = (await chrome.storage.local.get(KEYS.settings))[KEYS.settings];
-    await chrome.storage.local.clear();
+    // Remove every key except settings; settings are never cleared, even for a moment.
+    const all = await chrome.storage.local.get(null);
+    const drop = Object.keys(all).filter((k) => k !== KEYS.settings);
+    if (drop.length) await chrome.storage.local.remove(drop);
     await chrome.storage.session.clear();
-    if (keep) await chrome.storage.local.set({ [KEYS.settings]: keep });
     mode = 'mine';
     await loadMine();
     render();

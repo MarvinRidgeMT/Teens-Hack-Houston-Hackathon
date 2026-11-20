@@ -37,5 +37,6 @@ function rowFor(e, taskNames) {
 
 export function toCsv(events, taskNames = {}) {
   const rows = (Array.isArray(events) ? events : []).filter((e) => e && typeof e === 'object').map((e) => rowFor(e, taskNames));
-  return [CSV_COLUMNS.join(','), ...rows].join('\r\n') + '\r\n';
+  // The byte-order mark lets Excel read non-ASCII task names as UTF-8.
+  return '\ufeff' + [CSV_COLUMNS.join(','), ...rows].join('\r\n') + '\r\n';
 }

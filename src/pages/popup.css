@@ -9,7 +9,8 @@ body { width: 360px; }
 
 .pp-notice { display: flex; align-items: flex-start; gap: 8px; margin: 0; padding: 10px 12px; background: var(--surface);
   border: 1px solid var(--border); border-radius: 12px; font: 500 var(--fs-label)/var(--lh-label) var(--font-sans); color: var(--ink); }
-.pp-notice[hidden] { display: none; }
+/* Live region: always rendered (so it is announced), collapsed while empty. */
+.pp-notice:empty { padding: 0; border: 0; background: none; margin-bottom: -16px; }
 
 .pp-start { display: flex; gap: 8px; margin: 0 0 8px; }
 .pp-start .pk-btn { flex: none; }

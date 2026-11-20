@@ -20,7 +20,6 @@ function status(state, text, details) {
   const body = h('span', null, text);
   if (details && details.length) body.append(h('ul', null, details.map((d) => h('li', null, d))));
   s.replaceChildren(badge(state), body);
-  s.hidden = false;
 }
 
 // ---------- site lists ----------
@@ -142,17 +141,20 @@ async function finishSave(form, asking) {
     const voice = await send({ type: MSG.setVoiceSettings, voiceEnabled: form.voiceEnabled, wakeWord: form.wakeWord, readAloud: form.readAloud });
 
     const notes = [];
-    const injected = await registerAndInject(next.workSites, notes);
+    let injected = null;
+    let attachError = '';
+    try { injected = await registerAndInject(next.workSites, notes); } catch (e) { attachError = String((e && e.message) || e); }
     fillForm({ ...next, ...(voice && voice.ok ? { voiceEnabled: voice.voiceEnabled, wakeWord: voice.wakeWord, readAloud: voice.readAloud } : {}) });
     const lines = [`${plural(next.workSites.length, 'work site')}, ${plural(next.distractionSites.length, 'distraction site')}.`];
-    lines.push(injected === null ? 'Reload your open work tabs so Pickup can see them.' : `${plural(injected, 'open work tab')} ready without a reload.`);
+    if (!attachError) lines.push(injected === null ? 'Reload your open work tabs so Pickup can see them.' : `${plural(injected, 'open work tab')} ready without a reload.`);
     if (next.debug) lines.push('Debug is on: events are marked as testing.');
     for (const w of next.workSites) {
       const blocked = next.distractionSites.find((d) => urlMatches(`https://${w}`, [d]));
       if (blocked) lines.push(`${w} is also covered by ${blocked} in your distractions, so it still counts as a distraction. Remove ${blocked} there to make it work.`);
     }
     if (voice && !voice.ok) lines.push('Voice settings not saved.');
-    status('saved', 'Saved. Pickup is on.', [...lines, ...notes]);
+    if (attachError) status('nothing', `Settings saved, but Pickup could not attach to your work tabs: ${attachError}`, [...lines, ...notes]);
+    else status('saved', 'Saved. Pickup is on.', [...lines, ...notes]);
   } catch (e) {
     status('nothing', `Nothing saved: ${String((e && e.message) || e)}`);
   } finally {
@@ -161,34 +163,32 @@ async function finishSave(form, asking) {
 }
 
 // Registers Sidd's content script on the work sites and injects it into tabs that
-// are already open. Returns how many tabs got it, or null if injection failed.
+// are already open (skipping tabs that already have it). Returns how many open tabs
+// have it, or null if the tab list could not be read. Throws if registering fails;
+// an existing registration is updated in place, so a failure leaves the old one.
 async function registerAndInject(workSites, notes) {
   const matches = matchesFor(workSites);
-  const existing = await chrome.scripting.getRegisteredContentScripts({ ids: [SCRIPT_ID] });
-  if (existing.length) await chrome.scripting.unregisterContentScripts({ ids: [SCRIPT_ID] });
-  const files = [
-    'src/vendor/motion.js',
-    'src/vendor/anime.umd.min.js',
-    'src/content/card.js',
-    'src/content/overlay.js',
-    'src/content/docs.js',
-    'src/content/content.js',
-  ];
   // The js list stays a literal so test/check-integration.mjs can check each file exists.
-  await chrome.scripting.registerContentScripts([{
+  const script = {
     id: SCRIPT_ID,
     matches,
     js: ['src/vendor/motion.js', 'src/vendor/anime.umd.min.js', 'src/content/card.js', 'src/content/overlay.js', 'src/content/docs.js', 'src/content/content.js'],
     allFrames: true,
     matchOriginAsFallback: true,
     runAt: 'document_idle',
-  }]);
+  };
+  const existing = await chrome.scripting.getRegisteredContentScripts({ ids: [SCRIPT_ID] });
+  if (existing.length) await chrome.scripting.updateContentScripts([script]);
+  else await chrome.scripting.registerContentScripts([script]);
+
   let tabs = [];
   try { tabs = await chrome.tabs.query({ url: matches }); } catch { return null; }
   let n = 0;
   for (const tab of tabs) {
     try {
-      await chrome.scripting.executeScript({ target: { tabId: tab.id, allFrames: true }, files });
+      // content.js sets window.__pickupContentLoaded; don't inject a second copy.
+      const [probe] = await chrome.scripting.executeScript({ target: { tabId: tab.id }, func: () => !!window.__pickupContentLoaded });
+      if (!(probe && probe.result)) await chrome.scripting.executeScript({ target: { tabId: tab.id, allFrames: true }, files: script.js });
       n++;
     } catch (e) {
       notes.push(`Reload "${(tab.title || tab.url || '').slice(0, 50)}": Pickup could not reach it yet.`);

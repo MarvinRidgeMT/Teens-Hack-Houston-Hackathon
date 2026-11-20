@@ -15,7 +15,8 @@ html, body { margin: 0; background: var(--paper); }
 .st-status { display: flex; align-items: flex-start; gap: 8px; margin: 14px 0 0; padding: 10px 12px; max-width: 380px;
   background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
   font: 500 var(--fs-label)/var(--lh-label) var(--font-sans); color: var(--ink); }
-.st-status[hidden] { display: none; }
+/* Live region: always rendered (so it is announced), collapsed while empty. */
+.st-status:empty { padding: 0; border: 0; background: none; margin: 0; }
 .st-status ul { margin: 4px 0 0; padding-left: 16px; font-weight: 400; color: var(--ink-body); }
 
 .st-cols { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 32px 40px; margin: 0; align-content: start; }

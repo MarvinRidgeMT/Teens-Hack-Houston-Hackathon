@@ -32,8 +32,8 @@ export function cleanSite(raw) {
 
 const hostOfSite = (site) => normalizeSite(site).split('/')[0];
 
-// Host permissions to ask for. Only https: optional_host_permissions accepts these
-// (Chrome refuses a "*://" pattern in the permission prompt).
+// Host permissions to ask for, http and https (both are inside the manifest's
+// optional_host_permissions; Chrome refuses a "*://" pattern in the permission prompt).
 export function originsFor(sites) {
   const out = new Set();
   for (const s of sites || []) {
@@ -41,6 +41,8 @@ export function originsFor(sites) {
     if (!host) continue;
     out.add(`https://${host}/*`);
     out.add(`https://*.${host}/*`);
+    out.add(`http://${host}/*`);
+    out.add(`http://*.${host}/*`);
   }
   return [...out];
 }

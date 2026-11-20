@@ -16,7 +16,6 @@ let info = null;       // getTabInfo reply
 function notice(state, text) {
   const n = $('notice');
   n.replaceChildren(badge(state), h('span', null, text));
-  n.hidden = false;
 }
 
 // ---------- task type switch ----------
@@ -141,12 +140,12 @@ function wireTaskActions() {
   $('park').addEventListener('click', async () => {
     const r = await send({ type: MSG.park, tabId: tab.id });
     if (r && r.ok) window.close(); // the overlay opens in the page
-    else notice('nothing', 'Nothing saved: this page cannot hold a task.');
+    else notice('nothing', r && /cannot hold a task/.test(r.error || '') ? 'Nothing saved: this page cannot hold a task.' : 'Nothing saved.');
   });
   $('wrapup').addEventListener('click', async () => {
     const r = await send({ type: MSG.wrapUp, tabId: tab.id });
     if (r && r.ok) notice('wrapped', 'Saved for tomorrow. Pickup shows where to start when you come back.');
-    else notice('nothing', 'Nothing saved: this page cannot hold a task.');
+    else notice('nothing', r && /cannot hold a task/.test(r.error || '') ? 'Nothing saved: this page cannot hold a task.' : 'Nothing saved.');
   });
 }
 

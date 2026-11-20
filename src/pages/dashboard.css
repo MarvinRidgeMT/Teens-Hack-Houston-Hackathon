@@ -16,7 +16,9 @@ html, body { margin: 0; background: var(--paper); }
 .db-banner { background: var(--mist); border-color: var(--periwinkle); }
 .db-banner p { margin: 0; font: 400 var(--fs-body)/var(--lh-body) var(--font-sans); color: var(--ink); }
 .db-banner .pk-btn { margin-left: 6px; vertical-align: middle; }
-.db-status[hidden], .db-banner[hidden], .db-confirm[hidden] { display: none; }
+.db-banner[hidden], .db-confirm[hidden] { display: none; }
+/* Live region: always rendered (so it is announced), collapsed while empty. */
+.db-status:empty { padding: 0; border: 0; background: none; margin-bottom: -24px; }
 
 .db-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
 .db-table { width: 100%; border-collapse: collapse; font: 400 var(--fs-body)/var(--lh-body) var(--font-sans); letter-spacing: var(--ls-body); color: var(--ink); }

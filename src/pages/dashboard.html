@@ -25,7 +25,7 @@
     <div class="db-tools pk-rise" style="--i:1">
       <button class="pk-btn" type="button" id="load-sample">Load sample data</button>
       <button class="pk-btn" type="button" id="export-csv">Export CSV</button>
-      <button class="pk-btn pk-btn--primary" type="button" id="receipt">Save comeback receipt</button>
+      <button class="pk-btn pk-btn--primary" type="button" id="receipt" aria-describedby="sample-banner">Save comeback receipt</button>
       <button class="pk-btn pk-btn--ghost" type="button" id="delete-all">Delete all</button>
       <a class="pk-btn pk-btn--ghost" href="setup.html" id="open-setup">Setup</a>
     </div>
@@ -38,11 +38,11 @@
       </div>
     </div>
 
-    <p class="db-status" id="status" role="status" aria-live="polite" hidden></p>
+    <p class="db-status" id="status" role="status" aria-live="polite"></p>
 
     <div class="db-banner" id="sample-banner" role="note" hidden>
       <span class="pk-badge pk-badge--neutral" aria-hidden="true">?</span>
-      <p><strong>Sample data.</strong> Made-up events that show the layout. Not your data and not a result; nothing was saved. <button class="pk-btn pk-btn--sm" type="button" id="show-mine">Show my data</button></p>
+      <p><strong>Sample data.</strong> Made-up events that show the layout. Not your data and not a result; nothing was saved. The receipt is off while sample data shows. <button class="pk-btn pk-btn--sm" type="button" id="show-mine">Show my data</button></p>
     </div>
 
     <section class="db-section pk-rise" style="--i:2" aria-labelledby="summary-h">
