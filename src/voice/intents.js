@@ -18,6 +18,14 @@ export function splitWake(text) {
   return { wake: true, rest: tidyWords(s.slice(m.index + m[0].length)) };
 }
 
+// Wake-word mode: only a wake phrase that starts what was heard counts, so
+// "can you pick up the kids, park it" is not a command.
+const WAKE_AT_START = /^(?:hey,?\s+)?pick\s?-?up\b/i;
+export function wakeCommand(text) {
+  const s = tidyWords(text);
+  return WAKE_AT_START.test(s) ? splitWake(s) : { wake: false, rest: '' };
+}
+
 // Trim spaces and trailing punctuation the recogniser adds; keep the user's words.
 export function tidyWords(s) {
   return String(s || '').replace(/\s+/g, ' ').replace(/^[\s,.!?:;-]+|[\s,.!?:;-]+$/g, '').trim();
@@ -27,7 +35,8 @@ const NEXT_STEP = /\bnext\s+step\b(?:\s+is\b)?[\s,.:;-]*(.*)$/i;
 
 // Order matters: "park it, next step ..." is park, "I'm done for today" is wrapUp, not today.
 const RULES = [
-  ['stop', /\b(?:stop\s+listening|never\s*mind|cancel)\b|^\s*stop\s*[.!]?\s*$/i],
+  // Only at the start, so "next step is cancel the meeting" stays a next step.
+  ['stop', /^\s*(?:stop\s+listening|never\s*mind|cancel)\b|^\s*stop\s*[.!]?\s*$/i],
   ['park', /\bpark\b|\b(?:i'?m|i\s+am)\s+taking\s+a\s+break\b|\btake\s+a\s+break\b/i],
   ['setNextStep', /^\s*(?:(?:my|the)\s+)?next\s+step\b/i],
   ['wrapUp', /\bwrap(?:\s+it)?\s+up\b|\bwrapping\s+up\b|\b(?:i'?m|i\s+am)\s+done\s+for\s+(?:today|the\s+day|now)\b/i],

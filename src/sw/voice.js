@@ -109,6 +109,17 @@ async function activeTab() {
   } catch { return null; }
 }
 
+const ofTask = (t, thread, crumb, settings) => t && tabInThread(t, thread, crumb) && !isDistractionUrl(tabUrl(t), settings);
+async function taskTab(thread, crumb, settings) {
+  const here = await activeTab();
+  if (ofTask(here, thread, crumb, settings)) return here;
+  if (crumb && crumb.tabId != null) {
+    try { const t = await chrome.tabs.get(crumb.tabId); if (ofTask(t, thread, crumb, settings)) return t; } catch { /* closed */ }
+  }
+  const all = await chrome.tabs.query({});
+  return all.find((t) => ofTask(t, thread, crumb, settings)) || null;
+}
+
 const words = (args) => String((args && args.nextStep) || '').trim().slice(0, 200);
 
 // ---------- voiceCommand ----------
@@ -152,7 +163,7 @@ export async function handleVoiceCommand(msg, settings) {
       const w = words(args);
       state.words = w;
       if (w && crumb) {
-        await store.putBreadcrumb({ ...crumb, nextStep: w, nextStepSource: NEXT_STEP_SOURCE.spoken });
+        await events.noteNextStep(thread, null, w, NEXT_STEP_SOURCE.spoken, settings); // keeps every other field
         data.saved = w;
       } else if (w) state.task = null;
       break;
@@ -160,13 +171,12 @@ export async function handleVoiceCommand(msg, settings) {
 
     case 'wrapUp':
       if (thread) {
-        // The task's own tab: the active one if it belongs to the task, else the
-        // tab the task was left on (you may be saying it from YouTube).
+        // Only a tab of this task: the active one, else the one it was left on,
+        // else any tab of it (you may be saying it from YouTube). Never another
+        // page, or tomorrow's Start here would point at the wrong task.
         const w = words(args);
-        const here = await activeTab();
-        let tab = here && tabInThread(here, thread, crumb) && !isDistractionUrl(tabUrl(here), settings) ? here : null;
-        if (!tab && crumb && crumb.tabId != null) { try { tab = await chrome.tabs.get(crumb.tabId); } catch { tab = null; } }
-        const r = await wrapup.wrapUp(tab || here, w, settings, { nextStepSource: w ? NEXT_STEP_SOURCE.spoken : undefined });
+        const tab = await taskTab(thread, crumb, settings);
+        const r = tab ? await wrapup.wrapUp(tab, w, settings, { nextStepSource: w ? NEXT_STEP_SOURCE.spoken : undefined }) : null;
         state.ok = !!(r && r.ok);
         state.words = state.ok ? w : '';
         if (state.ok) state.task = { name: ((await store.getThread(r.wrapUp.threadId)) || thread).name };

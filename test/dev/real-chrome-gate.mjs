@@ -210,7 +210,10 @@ async function bringFront() {
   mark('osascript: activate Chrome for Testing');
   activatePid(proc.pid, CFT_BUNDLE);
   const ok = await waitFor(async () => (await focusedWindow()).focused, 5000, 200);
-  if (!ok) mark(`bringFront failed; frontmost app: ${frontmostApp()}`);
+  if (!ok) {
+    mark(`bringFront failed; frontmost app: ${frontmostApp()}; windows: ${JSON.stringify(await ctl(`return (await chrome.windows.getAll()).map((w) => [w.id, w.type, w.state, w.focused])`).catch((e) => String(e)))}`);
+    try { execFileSync('screencapture', ['-x', path.join(SCRATCH, `bringfront-fail-${Date.now()}.png`)]); } catch { /* no screen-recording permission */ }
+  }
   return ok;
 }
 function toFinder() { mark('osascript: activate Finder'); activateApp('com.apple.finder'); }

@@ -6,7 +6,7 @@
 // - No audio and no transcripts are kept. Only a dictated next step is stored, by the engine.
 
 import { MSG } from '../shared/messages.js';
-import { parse, splitWake, tidyWords } from './intents.js';
+import { parse, splitWake, tidyWords, wakeCommand } from './intents.js';
 import { createRecognizer, onDeviceStatus, micState } from './recognizer.js';
 
 const HOLD_MS = 300;            // pressed longer than this = hold-to-talk, else a click
@@ -140,14 +140,16 @@ async function handleUtterance(raw) {
   const w = splitWake(said);
   const command = w.wake && WAKE_AT_START.test(said) ? w.rest : said;
   if (!command) { showReply("I didn't catch that."); return; }
-  const { intent, args } = parse(command);
-  if (intent === 'stop') await setWake(false);
+  if (S.busy) return; // one command at a time: a second one while answering is dropped
   S.busy = true;
-  const r = await sendEngine({ type: MSG.voiceCommand, intent, args });
-  S.busy = false;
-  const say = (r && r.say) || "Pickup didn't answer. Try again.";
-  showReply(say);
-  await speak(say);
+  try {
+    const { intent, args } = parse(command);
+    if (intent === 'stop') await setWake(false);
+    const r = await sendEngine({ type: MSG.voiceCommand, intent, args });
+    const say = (r && r.say) || "Pickup didn't answer. Try again.";
+    showReply(say);
+    await speak(say);
+  } finally { S.busy = false; }
 }
 
 function showReply(text) { $('reply').textContent = text; }
@@ -243,7 +245,7 @@ function wakeSession() {
       const res = e.results[i];
       const text = res[0].transcript;
       const awaiting = S.wake.awaitUntil > Date.now();
-      const w = splitWake(text);
+      const w = wakeCommand(text); // only "hey pickup" at the start counts
       if (!res.isFinal) { if (w.wake || awaiting) $('heard').textContent = tidyWords(text); continue; }
       if (awaiting && !w.wake) { S.wake.awaitUntil = 0; handleUtterance(text); continue; }
       if (!w.wake) continue; // not for us: ignored and not kept
@@ -304,9 +306,16 @@ function wire() {
     const t = e.target;
     if (t !== mic && t.closest && t.closest('input, button, summary, a, textarea, select')) return;
     e.preventDefault();
+    S.spaceTalk = true;
     pressStart();
   });
-  document.addEventListener('keyup', (e) => { if (e.code === 'Space') { e.preventDefault(); pressEnd(); } });
+  // Only end a Space push-to-talk; Space on a checkbox or button keeps its normal job.
+  document.addEventListener('keyup', (e) => {
+    if (e.code !== 'Space' || !S.spaceTalk) return;
+    S.spaceTalk = false;
+    e.preventDefault();
+    pressEnd();
+  });
   // A keyboard "click" on the mic button (Enter) = one-shot.
   mic.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); if (S.mode === 'talk') cancelTalk(); else startTalk({ oneShot: true }); } });
 

@@ -78,6 +78,19 @@ Debug on: 10 s threshold, 30 s nudge. Force card on.
 - Added Xe and Xf (window switches) for review item 4.
 - Other apps taking focus (RobloxPlayer, once Claude) made focus-dependent steps flaky. Each step now starts with Chrome in front and no open break, records the frontmost app at every focus loss, and retries. A step is marked inconclusive only when another app took focus.
 
+## Runs 8–12, 2026-11-19/20 (night): tonight's features, then the voice merge
+
+| Run | Build | Result | What happened |
+|---|---|---|---|
+| 8 | Features 1–5 | 6 pass, 17 fail | Invalid: the voice agent's Chrome for Testing was open too, and activating "Chrome for Testing" by bundle id focused that one. Driver now focuses its own browser by pid |
+| 9 | Features 1–5 | **22 pass, 1 fail**, 1 not run (Docs) | Every Gate step and every older extra passed, plus N1 (Alt+R, `returnVia: resumeKey`, `chrome://extensions/shortcuts` shows ⌥P / ⌥R), N3 (menu item exists), N4 (badge P → • → empty), N5 (event fields), N2d (debug Start here at 60 s). **N2 failed: a real engine bug.** In debug mode "Pretend it's tomorrow" did nothing, because debug ignored `dayKey`. Fixed in `checkStartHere` with a failing check first |
+| 10 | review fixes | stopped | Stopped at Anish's request |
+| 11, 12 | **voice merged** (785c4cd) | 12 and 13 pass; every focus-needing step from 10 on failed | Steps 1–9, N3 and N5 passed. After the Finder step, Chrome came back on its own (10 s into a 15 s pause), then the driver could never get a focused Chrome window again, though Chrome for Testing was the frontmost app. The Mac had user input 1 s before I checked, so I think someone was using it during the run. **Inconclusive, not counted.** Run on its own, Xa passed. Needs one clean full run with hands off the Mac |
+
+Driver fixes tonight (not engine bugs): focus by pid (run 8); the frontmost-app probe had an AppleScript syntax error and always said `?` (fixed after run 11); on a focus failure the driver now logs every window's type/state/focused and saves a screenshot in its scratch dir.
+
+**Still to verify in real Chrome:** N2 (wrap-up → pretend tomorrow → Start here → resume, no event) on the fixed engine, and the voice panel with a real microphone (`test/VOICE_SPIKE.md`, 9 manual steps).
+
 ## Engine bugs found in real Chrome
 
 None so far. Every focus loss the engine acted on traces to a real `WINDOW_ID_NONE` in the timeline. With another app frontmost, the engine opened a `focus` break after 1 s and discarded short absences (< 10 s), which is correct.

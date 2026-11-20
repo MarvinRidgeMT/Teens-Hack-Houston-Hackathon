@@ -146,7 +146,7 @@ function onResult(e) {
     if (!L.firstInterimAt.has(key)) L.firstInterimAt.set(key, now);
     L.results++;
     const conf = res.isFinal ? ` conf=${res[0].confidence.toFixed(2)}` : '';
-    log(`${res.isFinal ? 'FINAL  ' : 'interim'} [${i}] "${text}"${conf}`);
+    log(`${res.isFinal ? 'FINAL  ' : 'interim'} [${i}] ${text.length} chars${conf}`); // lengths only: no transcripts are kept
     $('caption').textContent = text;
     const m = text.match(WAKE);
     if (m && !L.wakeSeen.has(key)) {
@@ -154,8 +154,8 @@ function onResult(e) {
       const rest = text.slice(m.index + m[0].length).replace(/^[\s,.!?]+/, '');
       const sinceSpeech = L.speechStartAt ? Math.round(now - L.speechStartAt) : -1;
       const sinceFirst = Math.round(now - L.firstInterimAt.get(key));
-      log(`WAKE "${m[0]}" heard (${res.isFinal ? 'final' : 'interim'}); ${sinceSpeech} ms after onspeechstart, ${sinceFirst} ms after first text of this utterance; rest: "${rest}"; frontmost? hasFocus=${document.hasFocus()} visibility=${document.visibilityState}`);
-      $('wake').textContent = `Wake word heard: "${m[0]}" -> "${rest}"`;
+      log(`WAKE "${m[0]}" heard (${res.isFinal ? 'final' : 'interim'}); ${sinceSpeech} ms after onspeechstart, ${sinceFirst} ms after first text of this utterance; rest: ${rest.length} chars; frontmost? hasFocus=${document.hasFocus()} visibility=${document.visibilityState}`);
+      $('wake').textContent = `Wake word heard: "${m[0]}" -> "${rest}"`; // on screen only, not stored
     }
   }
 }

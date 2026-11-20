@@ -4,7 +4,7 @@
 
 import assert from 'node:assert/strict';
 import { makeChrome } from './fake-chrome.mjs';
-import { parse, splitWake, tidyWords } from '../src/voice/intents.js';
+import { parse, splitWake, tidyWords, wakeCommand } from '../src/voice/intents.js';
 
 const realNow = Date.now.bind(Date);
 let offset = 0;
@@ -59,6 +59,18 @@ await step('splitWake: hey pickup / hey pick up / pick up, and the rest is the c
   assert.equal(splitWake('the pickup truck').wake, true); // known false positive, only while wake listening is on
   assert.equal(splitWake('where was I').wake, false);
   assert.equal(tidyWords('  find a source.  '), 'find a source');
+});
+await step('wakeCommand: the wake phrase must start what was heard (wake-word mode)', async () => {
+  assert.deepEqual(wakeCommand('Hey Pickup, park it'), { wake: true, rest: 'park it' });
+  assert.deepEqual(wakeCommand('  pick up.'), { wake: true, rest: '' });
+  assert.deepEqual(wakeCommand('can you pick up the kids, park it'), { wake: false, rest: '' });
+  assert.deepEqual(wakeCommand("then I'll pick up"), { wake: false, rest: '' });
+});
+await step('parse: "cancel" / "never mind" inside a next step is not stop', async () => {
+  assert.deepEqual(parse('my next step is cancel the meeting'), { intent: 'setNextStep', args: { nextStep: 'cancel the meeting' } });
+  assert.deepEqual(parse('park it, next step never mind the intro'), { intent: 'park', args: { nextStep: 'never mind the intro' } });
+  assert.equal(parse('never mind').intent, 'stop');
+  assert.equal(parse('cancel').intent, 'stop');
 });
 
 // ---------------- wording (pure) ----------------
@@ -311,6 +323,17 @@ await step('voice: a spoken next step reaches the card as nextStepSource spoken'
   assert.equal(card.nextStepSource, 'spoken');
   await sim.send({ type: 'parkNote', nextStep: 'typed one' }, doc); await flush();
   assert.equal((await crumbs())[thread.id].nextStepSource, 'typed', 'a typed step replaces the spoken label');
+});
+
+await step('voice: wrap up with the task tab closed, from another work page, saves nothing', async () => {
+  await store.setWrapUp(null);
+  const wiki = sim.openTab('https://en.wikipedia.org/wiki/Gardening'); await flush();
+  sim.closeTab(doc); await flush();
+  sim.activate(wiki); await flush();
+  const r = await voice('wrapUp');
+  await flush();
+  assert.equal(r.say, "I couldn't save Drought Essay. Go to your work tab first.");
+  assert.equal(await store.getWrapUp(), null, 'no wrap-up saved for the wrong page');
 });
 
 await step('Alt+V (toggle-voice) opens the side panel in that window', async () => {
