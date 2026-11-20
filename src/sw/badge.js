@@ -26,7 +26,7 @@ export async function badgeState() {
       return { text: `${Math.ceil(left / 60000)}m`, color: BADGE.timer.color, title: `Pickup: back to ${name} at ${at}` };
     }
     return ob.departed
-      ? { text: BADGE.away.text, color: BADGE.away.color, title: `Pickup: ${name} is waiting` }
+      ? { text: BADGE.away.text, color: BADGE.away.color, title: `Pickup: away from ${name} · Alt+R takes you back` }
       : { text: BADGE.parked.text, color: BADGE.parked.color, title: `Pickup: ${name} parked: leave when you're ready` };
   }
   const wu = await store.getWrapUp();

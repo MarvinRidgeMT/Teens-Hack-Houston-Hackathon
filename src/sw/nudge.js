@@ -37,8 +37,8 @@ export async function onAlarm(alarm) {
   await chrome.notifications.create(eventId, {
     type: 'basic',
     iconUrl: chrome.runtime.getURL('assets/icon128.png'),
-    title: `${thread.name} is waiting.`,
-    message: `Next: ${crumb.nextStep}`,
+    title: `Your next step for ${thread.name}`,
+    message: `Next: ${crumb.nextStep} · Alt+R takes you back`,
     priority: 0,
   });
   await store.setOpenBreak({ ...ob, nudged: true });

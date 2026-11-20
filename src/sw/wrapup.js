@@ -77,7 +77,7 @@ export async function checkStartHere() {
     type: 'basic',
     iconUrl: chrome.runtime.getURL('assets/icon128.png'),
     title: `Start here: ${thread.name}`,
-    message: step.nextStep ? `Next: ${step.nextStep}` : 'Pick up where you stopped yesterday',
+    message: step.nextStep ? `Next: ${step.nextStep} · Alt+R takes you back` : 'Pick up where you stopped yesterday · Alt+R takes you back',
     priority: 0,
   });
   log('start here shown', thread.name);

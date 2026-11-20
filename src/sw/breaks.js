@@ -96,7 +96,7 @@ export async function onAlarm(alarm) {
     type: 'basic',
     iconUrl: chrome.runtime.getURL('assets/icon128.png'),
     title: `Break's over: ${thread ? thread.name : 'your task'}`,
-    message: crumb && crumb.nextStep ? `Next: ${crumb.nextStep}` : 'Pick up where you left off',
+    message: crumb && crumb.nextStep ? `Next: ${crumb.nextStep} · Alt+R takes you back` : 'Pick up where you left off · Alt+R takes you back',
     priority: 1,
   });
   await store.setOpenBreak({ ...ob, breakOverShown: true });
