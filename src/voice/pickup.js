@@ -3,6 +3,7 @@
 // page only formats recorded facts (task names, times, counts, the user's own words).
 
 import { MSG } from '../shared/messages.js';
+import { featuresOf } from '../shared/constants.js';
 import { runCommand } from './panel.js';
 
 const $ = (id) => document.getElementById(id);
@@ -91,6 +92,8 @@ async function renderTimer(ob, threads, settings) {
 // ---------- task list ----------
 const editing = new Set(); // threadIds with the next-step field open
 
+// Status chips: a dot in the state colour plus the words (colour is never the only signal).
+const DOT = { timer: 'pk-dot--parked', away: 'pk-dot--away', parked: 'pk-dot--parked', wrapped: 'pk-dot--wrapped' };
 function statusChip(row) {
   if (row.endsAt && row.endsAt > Date.now()) return { kind: 'timer', text: `Break · back at ${clock(row.endsAt)}` };
   if (row.isOpenBreak) return { kind: 'away', text: `Away ${mins(Date.now() - row.awaySince)} min` };
@@ -98,6 +101,7 @@ function statusChip(row) {
   if (row.isWrapped) return { kind: 'wrapped', text: 'Saved for tomorrow' };
   return null;
 }
+function keyHint(btn, key) { const k = el('span', 'pk-kbd', key); k.setAttribute('aria-hidden', 'true'); btn.append(' ', k); }
 
 function el(tag, cls, text) {
   const e = document.createElement(tag);
@@ -106,29 +110,38 @@ function el(tag, cls, text) {
   return e;
 }
 
-function taskRow(row) {
+function taskRow(row, i = 0) {
   const li = el('li', 'task');
+  li.style.setProperty('--i', String(i));
+  if (row.isOpenBreak || row.isParked) li.dataset.active = '';
   const head = el('div', 'task-head');
   head.append(el('p', 'task-name', row.name));
   const chip = statusChip(row);
-  if (chip) { const c = el('span', 'status-chip', chip.text); c.dataset.kind = chip.kind; head.append(c); }
+  if (chip) {
+    const c = el('span', 'status-chip pk-chip');
+    c.dataset.kind = chip.kind;
+    const dot = el('span', `pk-dot ${DOT[chip.kind]}`);
+    dot.setAttribute('aria-hidden', 'true');
+    c.append(dot, document.createTextNode(chip.text));
+    head.append(c);
+  }
   li.append(head);
   if (row.nextStep) {
-    const p = el('p', 'task-step');
-    p.append(el('span', 'src', `Next step (${SOURCE_LABEL[row.nextStepSource] || SOURCE_LABEL.typed}): `), document.createTextNode(row.nextStep));
+    const p = el('p', 'task-step pk-step');
+    p.append(el('small', 'src', `Next step (${SOURCE_LABEL[row.nextStepSource] || SOURCE_LABEL.typed}): `), document.createTextNode(row.nextStep));
     li.append(p);
   }
   const meta = [];
   if (row.leftAt) meta.push(`last here ${ago(row.leftAt)}`);
   if (row.tabCount) meta.push(`${row.tabCount} tab${row.tabCount === 1 ? '' : 's'} open`);
-  if (meta.length) li.append(el('p', 'task-meta', meta.join(' · ')));
+  if (meta.length) li.append(el('p', 'task-meta pk-meta', meta.join(' · ')));
 
   const actions = el('div', 'row');
-  const resume = el('button', 'pill small primary', 'Resume');
+  const resume = el('button', 'pk-btn pk-btn--sm pk-btn--primary', 'Resume');
   resume.type = 'button';
   resume.setAttribute('aria-label', `Resume ${row.name}`);
   resume.addEventListener('click', async () => { await send({ type: MSG.resumeTask, threadId: row.threadId, via: 'panel' }); refreshAll(); });
-  const edit = el('button', 'pill small', row.nextStep ? 'Edit next step' : 'Add next step');
+  const edit = el('button', 'pk-btn pk-btn--sm', row.nextStep ? 'Edit next step' : 'Add next step');
   edit.type = 'button';
   edit.setAttribute('aria-expanded', String(editing.has(row.threadId)));
   edit.setAttribute('aria-label', `${row.nextStep ? 'Edit' : 'Add'} next step for ${row.name}`);
@@ -141,11 +154,12 @@ function taskRow(row) {
     const id = `step-${row.threadId}`;
     const label = el('label', 'sr-only', `Next step for ${row.name}`);
     label.htmlFor = id;
-    const input = el('input', 'field');
+    const input = el('input', 'field pk-input');
     input.id = id; input.type = 'text'; input.maxLength = 200; input.value = row.nextStep || '';
     input.placeholder = 'Your next step, in your words';
-    const save = el('button', 'pill small primary', 'Save');
+    const save = el('button', 'pk-btn pk-btn--sm pk-btn--primary', 'Save');
     save.type = 'submit';
+    keyHint(save, 'Enter');
     form.append(label, input, save);
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -165,7 +179,7 @@ let lastRows = [];
 function renderTasks(rows, focusThread) {
   lastRows = rows || [];
   const ul = $('tasks');
-  ul.replaceChildren(...lastRows.map(taskRow));
+  ul.replaceChildren(...lastRows.map((r, i) => taskRow(r, i)));
   $('tasksEmpty').hidden = lastRows.length > 0;
   if (focusThread) {
     const input = document.getElementById(`step-${focusThread}`);
@@ -201,6 +215,9 @@ async function refreshAll(focusThread) {
   ]);
   // Don't redraw under someone typing a next step.
   if (!editing.size || focusThread) renderTasks(Array.isArray(rows) ? rows : [], focusThread);
+  // F5 "Readable card" setting: larger text, 1.5 line height, extra spacing.
+  if (featuresOf(settings).readableCard) document.documentElement.dataset.readable = '';
+  else delete document.documentElement.dataset.readable;
   await renderTimer(openBreak, threads, settings);
   renderToday(today && today.data && today.data.today);
 }
