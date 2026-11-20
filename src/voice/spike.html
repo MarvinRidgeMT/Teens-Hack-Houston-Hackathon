@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pickup voice spike</title>
+  <link rel="stylesheet" href="spike.css">
+</head>
+<body>
+  <!-- Phase 0 go/no-go spike only. Not the voice feature. Owner: Anish. -->
+  <h1>Pickup voice spike</h1>
+  <p id="where" class="where">Checking where this page runs...</p>
+  <p class="note">Audio is processed on this device only. Recognition never starts unless <code>processLocally = true</code> is set and sticks.</p>
+
+  <section aria-labelledby="h-open">
+    <h2 id="h-open">0. Panel and microphone</h2>
+    <div class="row">
+      <button id="btnOpenPanel" type="button">Open as side panel</button>
+      <button id="btnOpenTab" type="button">Open as tab</button>
+    </div>
+    <div class="row">
+      <button id="btnMicState" type="button">Mic permission state</button>
+      <button id="btnMicHere" type="button">Ask for mic here</button>
+      <button id="btnEnableTab" type="button">Open "Enable voice" tab</button>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-avail">
+    <h2 id="h-avail">1. On-device recognition</h2>
+    <div class="row">
+      <button id="btnAvailable" type="button">available()</button>
+      <button id="btnInstall" type="button">install()</button>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-listen">
+    <h2 id="h-listen">3. Listen</h2>
+    <div class="row">
+      <button id="btnStart" type="button">Start listening</button>
+      <button id="btnStop" type="button">Stop</button>
+      <label><input id="chkRestart" type="checkbox" checked> Restart on end</label>
+    </div>
+    <p id="status" class="status" aria-live="polite">Not listening</p>
+    <p id="caption" class="caption" aria-live="off"></p>
+    <p id="wake" class="wake" aria-live="assertive"></p>
+  </section>
+
+  <section aria-labelledby="h-tts">
+    <h2 id="h-tts">4. Voices</h2>
+    <div class="row">
+      <button id="btnVoices" type="button">List voices</button>
+      <button id="btnSpeak" type="button">Speak test sentence</button>
+      <label><input id="chkPause" type="checkbox" checked> Pause listening while speaking</label>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-log">
+    <h2 id="h-log">Log</h2>
+    <div class="row">
+      <button id="btnCopy" type="button">Copy log</button>
+      <button id="btnClear" type="button">Clear log</button>
+    </div>
+    <pre id="log" class="log" tabindex="0"></pre>
+  </section>
+
+  <script src="spike.js" type="module"></script>
+</body>
+</html>

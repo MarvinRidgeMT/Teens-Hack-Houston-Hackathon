@@ -12,7 +12,9 @@
     "notifications",
     "storage",
     "scripting",
-    "contextMenus"
+    "contextMenus",
+    "sidePanel",
+    "tts"
   ],
   "optional_host_permissions": ["http://*/*", "https://*/*"],
   "background": {
@@ -30,6 +32,7 @@
     }
   },
   "options_page": "src/pages/setup.html",
+  "side_panel": { "default_path": "src/voice/panel.html" },
   "icons": {
     "16": "assets/icon16.png",
     "32": "assets/icon32.png",
@@ -47,6 +50,10 @@
     },
     "wrap-up": {
       "description": "Wrap up for today (Pickup shows where to start tomorrow)"
+    },
+    "toggle-voice": {
+      "suggested_key": { "default": "Alt+V" },
+      "description": "Talk to Pickup"
     }
   }
 }

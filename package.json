@@ -3,5 +3,5 @@
   "private": true,
   "type": "module",
   "description": "Chrome extension. No build step: load this folder unpacked. package.json exists only so `npm test` runs the engine checks.",
-  "scripts": { "test": "node test/engine.test.mjs" }
+  "scripts": { "test": "node test/engine.test.mjs && node test/voice.test.mjs" }
 }

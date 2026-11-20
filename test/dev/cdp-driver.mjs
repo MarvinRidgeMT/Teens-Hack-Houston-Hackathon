@@ -84,7 +84,7 @@ export class CDP {
   close() { try { this.ws.close(); } catch { /* already closed */ } }
 }
 
-export async function launch({ profile, ext, restore = false }) {
+export async function launch({ profile, ext, restore = false, extraArgs = [] }) {
   fs.mkdirSync(profile, { recursive: true });
   const portFile = path.join(profile, 'DevToolsActivePort');
   fs.rmSync(portFile, { force: true });
@@ -97,6 +97,7 @@ export async function launch({ profile, ext, restore = false }) {
     '--no-default-browser-check',
     '--disable-search-engine-choice-screen',
   ];
+  args.push(...extraArgs);
   if (restore) args.push('--restore-last-session');
   else args.push('about:blank');
   const proc = spawn(CFT, args, { stdio: 'ignore' });

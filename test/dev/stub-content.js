@@ -74,7 +74,7 @@
       line(`Task: ${msg.threadName}`),
       line(`Away: ${Math.round(msg.awayMs / 1000)} s`),
     );
-    if (msg.nextStep) card.append(line(`Your next step (${msg.nextStepSource === 'selected' ? 'you picked this' : 'you wrote this'}): ${msg.nextStep}`));
+    if (msg.nextStep) card.append(line(`Your next step (${msg.nextStepSource === 'selected' ? 'you picked this' : msg.nextStepSource === 'spoken' ? 'you said this' : 'you wrote this'}): ${msg.nextStep}`));
     if (msg.where && msg.where.highlight) card.append(line(`Where: "${msg.where.highlight}"`));
     card.append(line(`Scroll: ${msg.where ? msg.where.scrollY : 0} · Tabs: ${msg.tabCount}`));
     const row = document.createElement('div');

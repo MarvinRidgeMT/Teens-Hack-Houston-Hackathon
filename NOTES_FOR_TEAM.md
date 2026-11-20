@@ -45,9 +45,23 @@ Everything below is **additive**. Code that ignores it keeps working. **The new 
   - `awayMs`: exact milliseconds away (`returnedAt - leftAt`).
   - `distractionHost`: the first distraction site seen in the break, e.g. `youtube.com` (no `www.`). `null` for focus and idle breaks that never touched one.
   - `distractionHosts`: every distraction host seen in the break, in order, once each. Hostnames only, never paths or titles.
-  - `returnVia`: how the user came back: `tab` (normal), `resumeKey` (Alt+R), `notification` (clicked the nudge or Start here) or `idle` (back at the keyboard). Pickup did the navigating for `resumeKey` and `notification`, so stats can keep those returns apart.
+  - `returnVia`: how the user came back: `tab` (normal), `resumeKey` (Alt+R), `notification` (clicked the nudge or Start here), `idle` (back at the keyboard) or `voice` ("Hey Pickup, I'm back"). Pickup did the navigating for `resumeKey` and `notification`, so stats can keep those returns apart.
 - **`resumeTask { threadId? }` → `{ ok, threadId }`** (Feature 1). Same as the new **Alt+R** key: jumps back to the task (focus window, tab, group, scroll). Without `threadId` the engine picks the task. A popup "Back to task" button can send it and then `window.close()`. `ok: false` means there's no task yet.
 - **Badge** (Feature 4): the toolbar icon now shows `P` (parked), `•` (task waiting), `☾` (saved for tomorrow) with a tooltip. Nothing to do; just don't set the badge from the popup.
 - **`wrapUp { tabId, nextStep? }` now works** → `{ ok, wrapUp }` (Feature 2). A popup "Wrap up for today" button with an optional next-step box. It closes any open break without logging it (not an interruption), and the next morning the user gets one "Start here" notification. There's also a `wrap-up` command with no default key.
 - With **debug** on, Start here fires 60 s after wrap-up, for filming the demo ("Next morning" title card).
 - If you show a breadcrumb's next step, `nextStepSource: 'selected'` means picked from the page (right-click), `'typed'` or missing means typed.
+
+## Voice (new tonight, merged into main; optional)
+
+"Hey Pickup, where was I?" in a side panel. Audio is recognised on the device only (`processLocally = true`); Pickup keeps no audio and no transcripts. Default off. Details: `src/sw/README.md` → Voice, results: `test/VOICE_SPIKE.md`.
+
+**Abhinav (popup, setup, stats)**
+1. Popup: add a "Talk to Pickup" button that calls `chrome.sidePanel.open({ windowId })` straight from the click (no `await` before it). Alt+V does the same.
+2. Setup page: two toggles, `voiceEnabled` and `wakeWord` (default off). Write them with `{ type: 'setVoiceSettings', voiceEnabled, wakeWord }`; the reply has the stored values.
+3. First-time voice setup is `src/voice/enable.html` (mic prompt + on-device model download). Link to it from the setup page. A side panel can't show the mic prompt itself.
+4. Stats and CSV: events can have `returnVia: 'voice'`; breadcrumbs can have `nextStepSource: 'spoken'`. Show both as columns.
+5. Video idea: a 15 s voice moment ("Hey Pickup, I'm back" → the essay comes back).
+
+**Sidd (content script)**
+1. Card: `nextStepSource` can also be `'spoken'`. Label it "Your next step (you said this)". So: `typed`/missing → "(you wrote this)", `selected` → "(you picked this)", `spoken` → "(you said this)". Must do: nothing.

@@ -5,7 +5,7 @@
 export const MSG = Object.freeze({
   // Service worker -> content script
   snapshot: 'snapshot',         // reply: { url, scrollY, highlight }
-  showCard: 'showCard',         // { eventId, threadName, awayMs, nextStep?, where: { scrollY, highlight }, tabCount }
+  showCard: 'showCard',         // { eventId, threadName, awayMs, nextStep?, nextStepSource?, where: { scrollY, highlight }, tabCount }
   armTimer: 'armTimer',         // { eventId } sent on every return, both conditions
   restoreScroll: 'restoreScroll', // { scrollY }
   openOverlay: 'openOverlay',   // { askTaskName: boolean }
@@ -27,6 +27,8 @@ export const MSG = Object.freeze({
   wrapUp: 'wrapUp',             // { tabId, nextStep? } -> { ok, wrapUp }  save for tomorrow (Feature 2)
   setTaskType: 'setTaskType',   // { threadId, taskType } -> { ok }
   resumeTask: 'resumeTask',     // { threadId? } -> { ok, threadId }  same as Alt+R (Feature 1)
+  voiceCommand: 'voiceCommand', // { intent, args } -> { ok, say, data }   voice side panel
+  setVoiceSettings: 'setVoiceSettings', // { voiceEnabled?, wakeWord? } -> { ok, voiceEnabled, wakeWord }
 });
 
 // Types the service worker answers (content script + popup/pages -> SW).
@@ -34,6 +36,7 @@ export const TO_ENGINE = Object.freeze([
   MSG.state, MSG.firstInteraction, MSG.cardAction, MSG.parkNote,
   MSG.getTabInfo, MSG.startTask, MSG.removeFromThread, MSG.keepInThread,
   MSG.setTaskType, MSG.park, MSG.wrapUp, MSG.resumeTask,
+  MSG.voiceCommand, MSG.setVoiceSettings,
 ]);
 
 // Optional SW -> content types: a missing handler is fine (check-integration WARNs).

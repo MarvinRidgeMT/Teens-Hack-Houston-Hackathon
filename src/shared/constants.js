@@ -37,6 +37,8 @@ export const DEFAULT_SETTINGS = Object.freeze({
   nudgeDelayMin: 5,
   debug: false,            // testing only: 10 s threshold, events tagged debug:true
   forceCard: false,        // testing only (needs debug): every return shows the card
+  voiceEnabled: false,     // voice side panel may use the mic (push-to-talk)
+  wakeWord: false,         // listen for "Hey Pickup" while the panel is open
 });
 
 export const DEBUG_THRESHOLD_MS = 10000;
@@ -63,6 +65,7 @@ export const RETURN_VIA = Object.freeze({
   resumeKey: 'resumeKey',       // Alt+R / popup resumeTask
   notification: 'notification', // clicked the nudge or the Start-here notification
   idle: 'idle',                 // back at the keyboard while Chrome was on the task
+  voice: 'voice',               // "Hey Pickup, I'm back" (voice side panel)
 });
 export const RETURN_VIA_TTL_MS = 10000; // a returnVia marker older than this is ignored
 
@@ -77,7 +80,7 @@ export const BADGE = Object.freeze({
 export const BADGE_FLASH_MS = 2000;
 
 // Where a breadcrumb's next step came from. Missing means typed (older data).
-export const NEXT_STEP_SOURCE = Object.freeze({ typed: 'typed', selected: 'selected' });
+export const NEXT_STEP_SOURCE = Object.freeze({ typed: 'typed', selected: 'selected', spoken: 'spoken' });
 
 // Wrap up -> Start here (Feature 2).
 export const DAY_STARTS_AT_HOUR = 4;        // before 4 AM still counts as the night before

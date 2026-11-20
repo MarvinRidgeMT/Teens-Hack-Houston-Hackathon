@@ -168,6 +168,7 @@ export function makeChrome({ now }) {
       create(props, cb) { menus.set(props.id, clone(props)); if (cb) setTimeout(cb, 0); return props.id; },
       async update(id, props) { if (!menus.has(id)) throw new Error('Cannot find menu item with id ' + id); Object.assign(menus.get(id), clone(props)); },
     },
+    sidePanel: { opened: [], async open(o) { c.sidePanel.opened.push(clone(o)); } },
   };
 
   function focusChrome(id = 1) {

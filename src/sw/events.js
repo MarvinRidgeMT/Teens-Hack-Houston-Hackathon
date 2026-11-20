@@ -101,13 +101,13 @@ export async function openBreakFor(workTab, signal, leftAt, settings, { departed
 
 // Alt+P with the overlay answered (or popup Park). The break starts when the
 // user actually leaves, so time spent working after parking is not "away".
-export async function park(tab, nextStep, settings) {
+export async function park(tab, nextStep, settings, { nextStepSource } = {}) {
   const thread = await ensureThreadForTab(tab, settings);
   if (!thread) return null;
   const snap = await snapshot(tab, settings);
   const now = Date.now();
   const step = String(nextStep || '').trim();
-  await writeBreadcrumb({ thread, tab, snap, signal: 'park', leftAt: now, nextStep: step || undefined });
+  await writeBreadcrumb({ thread, tab, snap, signal: 'park', leftAt: now, nextStep: step || undefined, nextStepSource: step ? nextStepSource : undefined });
   const prev = await store.getOpenBreak();
   if (prev) await cancelNudge(prev.eventId);
   const ob = { eventId: newId('ev'), threadId: thread.id, tabId: tab.id, leftAt: now, signal: 'park', departed: false, windowId: tab.windowId, parkedAt: now };
@@ -174,7 +174,7 @@ export async function closeBreakOnReturn(tab, settings, { via = RETURN_VIA.tab }
     awayMs,                                        // exact returnedAt - leftAt
     distractionHost: distractionHosts[0] || null,  // first distraction site seen in the break
     distractionHosts,                              // every distraction host seen, in order, once each
-    returnVia,                                     // 'tab' | 'resumeKey' | 'notification' | 'idle'
+    returnVia,                                     // 'tab' | 'resumeKey' | 'notification' | 'idle' | 'voice'
   };
   await store.addEvent(ev);
 
@@ -268,7 +268,7 @@ export async function pickResumeTarget() {
   return thread ? thread.id : null;
 }
 
-export async function resumeTask(threadId) {
+export async function resumeTask(threadId, { via = RETURN_VIA.resumeKey } = {}) {
   const id = threadId || (await pickResumeTarget());
   const thread = id && (await store.getThread(id));
   if (!thread) {
@@ -288,7 +288,7 @@ export async function resumeTask(threadId) {
     }
   }
   // The return that closes the break then reads this marker (event.returnVia).
-  if (ob && ob.departed && ob.threadId === id) await store.setReturnVia(RETURN_VIA.resumeKey);
+  if (ob && ob.departed && ob.threadId === id) await store.setReturnVia(via);
   if (crumb) {
     const r = await resume(id);
     return { ...r, threadId: id };

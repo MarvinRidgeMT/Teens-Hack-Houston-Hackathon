@@ -17,14 +17,14 @@ export function dayKey(t) {
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
 }
 
-export async function wrapUp(tab, nextStep, settings) {
+export async function wrapUp(tab, nextStep, settings, { nextStepSource } = {}) {
   if (!tab) return { ok: false, error: 'no tab' };
   const thread = await ensureThreadForTab(tab, settings);
   if (!thread) return { ok: false, error: 'this page cannot hold a task' };
   const now = Date.now();
   const step = String(nextStep || '').trim();
   const snap = await snapshot(tab, settings);
-  const crumb = await writeBreadcrumb({ thread, tab, snap, signal: 'wrap', leftAt: now, nextStep: step || undefined });
+  const crumb = await writeBreadcrumb({ thread, tab, snap, signal: 'wrap', leftAt: now, nextStep: step || undefined, nextStepSource: step ? nextStepSource : undefined });
   const ob = await store.getOpenBreak();
   if (ob) {
     // Not an interruption: the break goes away unlogged, with its nudge.
