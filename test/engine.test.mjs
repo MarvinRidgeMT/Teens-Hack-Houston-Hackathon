@@ -724,6 +724,70 @@ await step('F4: flashBadge shows a confirmation for ~2 s, then the real state co
   sim.activate(yt); await flush(); advance(10); sim.activate(wikiA); await flush(); // discard the short break
 });
 
+// Feature 1: Resume from anywhere (Alt+R)
+await step('F1: Alt+R from YouTube during a break goes back to the task and logs returnVia "resumeKey"', async () => {
+  await settle();
+  sim.setPage(wikiA, 1500, '');
+  sim.activate(yt); await flush();
+  const b = await ob();
+  assert.equal(b && b.departed, true);
+  advance(3 * 60000);
+  sim.setPage(wikiA, 0, '');
+  sim.command('resume-task'); await flush();
+  assert.equal(sim.tabs.get(wikiA).active, true);
+  assert.equal(await ob(), null);
+  const ev = await lastEvent();
+  assert.equal(ev.id, b.eventId);
+  assert.equal(ev.returnVia, 'resumeKey');
+  assert.ok(['pickup', 'control'].includes(ev.condition), 'the coin flip still decides the card');
+  assert.equal(sim.page.get(wikiA).scrollY, 1500, 'scroll restored');
+});
+
+await step('F1: resumeTask while parked answers { ok, threadId } and logs nothing', async () => {
+  await settle();
+  await sim.send({ type: 'parkNote', nextStep: 'Write the intro' }, wikiA); await flush();
+  const n = (await events()).length;
+  const r = await sim.send({ type: 'resumeTask' });
+  await flush();
+  assert.equal(r.ok, true);
+  assert.equal(r.threadId, thread.id);
+  assert.equal((await events()).length, n);
+  const b = await ob();
+  assert.equal(b && b.departed, false, 'still parked');
+  sim.activate(yt); await flush(); advance(10); sim.activate(wikiA); await flush();
+});
+
+await step('F1: Alt+R already on the task with no break only restores the scroll', async () => {
+  await settle();
+  const crumb = await crumbOf(thread.id);
+  sim.setPage(wikiA, 0, '');
+  const n = (await events()).length;
+  sim.sent.length = 0;
+  sim.command('resume-task'); await flush();
+  const rs = sim.sentOfType('restoreScroll');
+  assert.equal(rs.length, 1);
+  assert.equal(rs[0].tabId, wikiA);
+  assert.equal(rs[0].scrollY, crumb.scrollY);
+  assert.equal((await events()).length, n);
+  assert.equal(await ob(), null);
+});
+
+await step('F1: Alt+R with no task history does nothing and flashes ? on the badge', async () => {
+  await settle();
+  const local = await chrome.storage.local.get(null), session = await chrome.storage.session.get(null);
+  await chrome.storage.local.clear(); await chrome.storage.session.clear();
+  await chrome.storage.local.set({ settings: local.settings });
+  sim.activate(yt); await flush();
+  const r = await sim.send({ type: 'resumeTask' });
+  await flush();
+  assert.equal(r.ok, false);
+  assert.equal(sim.badge.text, '?');
+  assert.equal(sim.tabs.get(yt).active, true, 'nothing moved');
+  await chrome.storage.local.clear();
+  await chrome.storage.local.set(local); await chrome.storage.session.set(session);
+  sim.activate(wikiA); await flush(); await sleep(2200); await flush();
+});
+
 const total = (await events()).length;
 (quiet || console.log)(`\n${passed} checks passed, ${total} events logged${process.exitCode ? ' — SOME FAILED' : ''}`);
 process.exit(process.exitCode || 0);

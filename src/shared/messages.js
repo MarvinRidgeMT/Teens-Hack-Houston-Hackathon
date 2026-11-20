@@ -24,13 +24,14 @@ export const MSG = Object.freeze({
   park: 'park',                 // { tabId } -> { ok }   same as Alt+P
   wrapUp: 'wrapUp',             // { tabId } -> { ok }   stretch: Tomorrow start
   setTaskType: 'setTaskType',   // { threadId, taskType } -> { ok }
+  resumeTask: 'resumeTask',     // { threadId? } -> { ok, threadId }  same as Alt+R (Feature 1)
 });
 
 // Types the service worker answers (content script + popup/pages -> SW).
 export const TO_ENGINE = Object.freeze([
   MSG.state, MSG.firstInteraction, MSG.cardAction, MSG.parkNote,
   MSG.getTabInfo, MSG.startTask, MSG.removeFromThread, MSG.keepInThread,
-  MSG.setTaskType, MSG.park, MSG.wrapUp,
+  MSG.setTaskType, MSG.park, MSG.wrapUp, MSG.resumeTask,
 ]);
 
 // Types the content script receives (SW -> content).

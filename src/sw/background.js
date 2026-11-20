@@ -70,6 +70,7 @@ chrome.windows.onFocusChanged.addListener(async (windowId) => {
 chrome.idle.onStateChanged.addListener(safe('idle', signals.handleIdle));
 
 chrome.commands.onCommand.addListener(safe('command', async (command, tab) => {
+  if (command === 'resume-task') { await events.resumeTask(); return; }
   if (command !== 'park-task') return;
   if (!tab) [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
   await signals.requestPark(tab);
@@ -164,6 +165,8 @@ async function route(msg, sender) {
       return threads.setTaskType(msg.threadId, msg.taskType);
     case MSG.park:
       return signals.requestPark(await getTab(msg.tabId));
+    case MSG.resumeTask:
+      return events.resumeTask(msg.threadId);
     case MSG.wrapUp:
       return { ok: false, error: 'Wrap up is not built yet (stretch)' };
     default:

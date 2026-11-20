@@ -39,6 +39,10 @@
     "park-task": {
       "suggested_key": { "default": "Alt+P" },
       "description": "Park this task with an optional next step"
+    },
+    "resume-task": {
+      "suggested_key": { "default": "Alt+R" },
+      "description": "Jump back to your task"
     }
   }
 }

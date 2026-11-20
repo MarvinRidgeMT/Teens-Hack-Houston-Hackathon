@@ -18,6 +18,13 @@ Owner: Anish. Files: `manifest.json`, `src/shared/{constants,messages,store,site
 | `setTaskType` | `{ threadId, taskType }` | `{ ok }` |
 | `park` | `{ tabId }` | `{ ok }`: opens the overlay in the page, so call `window.close()` on the popup afterwards |
 | `wrapUp` | `{ tabId }` | not built yet (stretch) |
+| `resumeTask` | `{ threadId? }` | `{ ok, threadId }`: same as Alt+R. Without `threadId` the engine picks the open break's task, else the most recent breadcrumb, else the last work tab's task. `ok: false` when there is none (the badge flashes `?`) |
+
+## Keyboard commands (manifest)
+| command | suggested key | what it does |
+|---|---|---|
+| `park-task` | Alt+P | open the park overlay |
+| `resume-task` | Alt+R (Option+R on a Mac) | jump back to the task (`resumeTask` above). If you're already on it with nothing open, it only restores the scroll. A return made this way is a normal event (coin flip, card or not) with `returnVia: 'resumeKey'` |
 
 ## Settings the engine reads (setup page writes them)
 `participant, workSites[], distractionSites[], awayThresholdMs (120000), nudgeDelayMin (5), debug, forceCard`.

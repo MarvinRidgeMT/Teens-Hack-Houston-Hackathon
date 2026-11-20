@@ -36,3 +36,4 @@ Everything below is **additive**. Code that ignores it keeps working. **The new 
   - `distractionHost`: the first distraction site seen in the break, e.g. `youtube.com` (no `www.`). `null` for focus and idle breaks that never touched one.
   - `distractionHosts`: every distraction host seen in the break, in order, once each. Hostnames only, never paths or titles.
   - `returnVia`: how the user came back: `tab` (normal), `resumeKey` (Alt+R), `notification` (clicked the nudge or Start here) or `idle` (back at the keyboard). Pickup did the navigating for `resumeKey` and `notification`, so stats can keep those returns apart.
+- **`resumeTask { threadId? }` → `{ ok, threadId }`** (Feature 1). Same as the new **Alt+R** key: jumps back to the task (focus window, tab, group, scroll). Without `threadId` the engine picks the task. A popup "Back to task" button can send it and then `window.close()`. `ok: false` means there's no task yet.

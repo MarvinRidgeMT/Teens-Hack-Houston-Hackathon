@@ -12,7 +12,8 @@ import {
   NEXT_STEP_CLEARS_ON_RETURN, RETURN_VIA, RETURN_VIA_TTL_MS,
 } from '../shared/constants.js';
 import { isWorkUrl, isDistractionUrl } from '../shared/sites.js';
-import { ensureThreadForTab, tabInThread } from './threads.js';
+import { ensureThreadForTab, tabInThread, threadForTab } from './threads.js';
+import { flashBadge } from './badge.js';
 import { scheduleNudge, cancelNudge } from './nudge.js';
 import { newId, getTab, sendToTab, tabUrl, sameDoc, log } from './util.js';
 
@@ -233,6 +234,63 @@ export async function resume(threadId) {
   if (created) restoreAfterLoad(tab.id, msg);
   else await sendToTab(tab.id, msg);
   return { ok: true, tabId: tab.id };
+}
+
+// ---- Resume from anywhere (Alt+R / popup resumeTask) ----
+// Target: the open break's thread (parked or away), else the breadcrumb left most
+// recently, else the thread of the last work tab. Returns a thread id or null.
+export async function pickResumeTarget() {
+  const ob = await store.getOpenBreak();
+  if (ob) return ob.threadId;
+  const threads = await store.getThreads();
+  const crumbs = Object.values(await store.getBreadcrumbs()).filter((c) => threads[c.threadId]);
+  crumbs.sort((a, b) => (b.leftAt || 0) - (a.leftAt || 0));
+  if (crumbs[0]) return crumbs[0].threadId;
+  const lw = await store.getAnyLastWork();
+  const tab = lw && (await getTab(lw.tabId));
+  const thread = tab && (await threadForTab(tab));
+  return thread ? thread.id : null;
+}
+
+export async function resumeTask(threadId) {
+  const id = threadId || (await pickResumeTarget());
+  const thread = id && (await store.getThread(id));
+  if (!thread) {
+    await flashBadge('?');
+    log('resume: no task to go back to');
+    return { ok: false, error: 'no task to go back to' };
+  }
+  const crumb = await store.getBreadcrumb(id);
+  const ob = await store.getOpenBreak();
+  const settings = await store.getSettings();
+  // Already looking at the task with nothing open: just put the scroll back. No event.
+  if (!ob) {
+    const here = await focusedActiveTab();
+    if (here && tabInThread(here, thread, crumb) && !isDistractionUrl(tabUrl(here), settings)) {
+      if (crumb) await sendToTab(here.id, { type: MSG.restoreScroll, scrollY: crumb.scrollY || 0 });
+      return { ok: true, threadId: id, already: true };
+    }
+  }
+  // The return that closes the break then reads this marker (event.returnVia).
+  if (ob && ob.departed && ob.threadId === id) await store.setReturnVia(RETURN_VIA.resumeKey);
+  if (crumb) {
+    const r = await resume(id);
+    return { ...r, threadId: id };
+  }
+  // No breadcrumb yet (a task that never had a break): go to its last work tab.
+  const lw = await store.getAnyLastWork();
+  const tab = lw && (await getTab(lw.tabId));
+  if (!tab) { await flashBadge('?'); return { ok: false, error: 'no task to go back to' }; }
+  await chrome.windows.update(tab.windowId, { focused: true });
+  await chrome.tabs.update(tab.id, { active: true });
+  return { ok: true, threadId: id, tabId: tab.id };
+}
+
+async function focusedActiveTab() {
+  let win;
+  try { win = await chrome.windows.getLastFocused({ windowTypes: ['normal'] }); } catch { return null; }
+  if (!win || !win.focused) return null;
+  try { const [t] = await chrome.tabs.query({ active: true, windowId: win.id }); return t || null; } catch { return null; }
 }
 
 async function getGroup(groupId) {
