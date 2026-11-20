@@ -94,3 +94,29 @@ One static page in `site/` for judges (preview: `python3 -m http.server -d site 
 - **The Download button needs two things by Saturday:** a **v1.0 GitHub release with the zip** (it links to `/releases/latest`), and the **repo public** (a private repo's releases and Pages are invisible to judges).
 - **Abhinav:** fill the `PILOT RESULTS` block Saturday 10 AM (real numbers only), the `VIDEO` id and the `DEVPOST` link. The page says "open the dashboard and click Load sample data": that button must exist.
 - **Sidd:** drop the 30-second install GIF at `site/assets/install.gif` and swap it in for `install-poster.jpg` (comment in `index.html`).
+
+## Pages (redesign/pages)
+
+Built by Claude Code on `redesign/pages` from the design-system templates, for Abhinav to review before merge. Files: `src/pages/` (popup, setup, dashboard, plus `ui.js`, `format.js`, `setup-logic.js`, `csv.js`, `sample-data.js`, `receipt.js`), `src/shared/stats.js`, `test/pages.test.mjs` (`node test/pages.test.mjs`). Every page loads `../shared/tokens.css` then `../shared/pk.css`. No network, no inline scripts, events are only read.
+
+**Stable element IDs** (Gate steps and the site rely on them):
+- Popup: `#task-card`, `#task-name`, `#resume`, `#park`, `#wrapup`, `#task-type-current`, `#start-form`, `#start-name`, `#start-btn`, `#task-type`, `#suggested` (Keep / Remove per row), `#threads`, `#notice`, `#open-panel`, `#open-dashboard`, `#open-setup`.
+- Setup: `#participant`, `#work-list`, `#work-add-input`, `#work-add`, `#distraction-list`, `#distraction-add-input`, `#distraction-add`, `#away-min`, `#nudge-min`, `#voice-enabled`, `#wake-word`, `#read-aloud`, `#feat-readyNote` … `#feat-receipt`, `#debug`, `#force-card`, `#save`, `#status`, `#youtube-note`.
+- Dashboard: `#load-sample`, `#sample-banner`, `#show-mine`, `#export-csv`, `#receipt`, `#delete-all`, `#delete-confirm`, `#delete-yes`, `#delete-cancel`, `#summary`, `#buckets`, `#events`, `#events-body`, `#events-empty`, `#status`.
+
+**What to know**
+- Popup on open sends only `getTabInfo` and `listThreads`. Start task → `startTask { tabId, name, taskType }`; suggested tabs → `keepInThread` / `removeFromThread`; Resume → `resumeTask { threadId }`; Park → `park` (shows the engine's "cannot hold a task" reply); Wrap up → `wrapUp { tabId }`; "Open Pickup panel" calls `chrome.sidePanel.open` straight from the click.
+- Setup "Save and start": `chrome.permissions.request` is the first call in the click handler (https origins for each work site and its subdomains), then settings are merged (unknown keys kept), voice goes through `setVoiceSettings`, the content script is registered as id `pickup-content` (`allFrames`, `matchOriginAsFallback`, Sidd's file order from `origin/sid/content`'s dev setup), and open work tabs get `executeScript`.
+- `settings.features = { readyNote, youWereHere, videoReplay, adaptiveCard, readableCard, receipt }`, booleans, `readableCard` off by default, the rest on. A missing flag means its default (`featuresOf()` in `src/pages/setup-logic.js`). The dashboard hides the receipt button when `receipt` is false; the other flags are for the engine and content lanes to read.
+- Stats: debug events are left out of every number (`counted()` in `stats.js`) and marked "Testing (left out)" in the table. Quartiles use linear interpolation (Excel QUARTILE.INC). "With the card" = `condition: 'pickup'` (as assigned, including `cardShown: false`). The receipt's n is comebacks with a measured first interaction; under 10 in either condition it says "Not enough comebacks yet for a comparison." "This week" starts Monday 00:00 local.
+- Sample data is never written to storage: it shows in memory under the "Sample data" banner, and both conditions share the same made-up times, so it never looks like a result. The receipt is disabled while sample data shows.
+- Delete all (after a confirm step) clears `chrome.storage.local` and `chrome.storage.session` and writes `settings` back. The registered content script and granted site access stay.
+
+**For Anish (engine), no change made here**
+1. Events have no `nextStepSource` field, so the dashboard and CSV column `nextStepSource` is empty. If the team wants it, the engine could copy the breadcrumb's `nextStepSource` onto the event at return (additive; the schema is frozen, so it needs the team's OK).
+2. A work entry such as `youtube.com/watch` still counts as a distraction while `youtube.com` is on the distraction list (`isWorkTab`: distraction wins). Setup now says so after Save. For F3 lecture-video resume, either let a work entry with a path win over a host-only distraction entry, or keep telling people to remove `youtube.com` from distractions.
+3. After Delete all, a pending `nudge:` or `breakend:` alarm can still fire with no `openBreak`. Worth one check that it does nothing.
+
+**For Sidd**: nothing to change. Setup registers your six files in your dev-setup order. Before testing, click "Unregister stub" on the dev setup page (setup cannot name the dev stub id: check-integration FAILs any `src/` file that does).
+
+**check-integration on this branch**: 7 FAILs, all expected until `sid/content` is merged: `[content] no .js files in src/content`, and `[pages] registered script … does not exist` for `src/vendor/motion.js`, `src/vendor/anime.umd.min.js`, `src/content/card.js`, `overlay.js`, `docs.js`, `content.js`.
