@@ -9,3 +9,4 @@ pickup-real-chrome/
 results*.json
 # Claude Code local state and agent worktrees
 .claude/
+build/
