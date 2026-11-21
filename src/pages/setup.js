@@ -4,9 +4,8 @@
 // to the work sites, registers the content script and injects it into open work tabs.
 // Voice settings live in the side panel (it owns them); this page only links there.
 
-import { MSG } from '../shared/messages.js';
 import { DEFAULT_SETTINGS, KEYS } from '../shared/constants.js';
-import { $, h, send, hasChrome, getLocal, button, badge } from './ui.js';
+import { $, h, hasChrome, getLocal, button, badge } from './ui.js';
 import { FEATURE_DEFAULTS, featuresOf, cleanSite, siteInputError, originsFor, matchesFor, mergeSettings, validate } from './setup-logic.js';
 import { plural } from './format.js';
 import { fillShortcuts } from '../shared/shortcuts.js';

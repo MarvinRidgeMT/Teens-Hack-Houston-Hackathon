@@ -75,7 +75,8 @@
           <fieldset class="st-group">
             <legend class="st-gt">Timing</legend>
             <label class="st-inline" for="away-min">Count it as a break after <input class="pk-input st-num" type="number" id="away-min" inputmode="numeric" min="1" max="60" step="1"> minutes</label>
-            <label class="st-inline" for="nudge-min">Remind me after <input class="pk-input st-num" type="number" id="nudge-min" inputmode="numeric" min="1" max="120" step="1"> minutes away (only if I wrote a next step)</label>
+            <label class="st-inline" for="nudge-min">Remind me after <input class="pk-input st-num" type="number" id="nudge-min" inputmode="numeric" min="1" max="120" step="1" aria-describedby="nudge-help"> minutes away</label>
+            <p class="pk-meta" id="nudge-help">Only if I wrote a next step. One reminder per break at most.</p>
           </fieldset>
           <fieldset class="st-group">
             <legend class="st-gt">Extras</legend>
@@ -111,6 +112,7 @@
           <label class="st-check"><input type="checkbox" id="force-card"><span>Force card: every return shows the card (needs debug)</span></label>
         </details>
       </form>
+      <p class="st-copy">Made at Teens Hack Houston.</p>
     </div>
 
     <footer class="st-meadow" aria-hidden="true">
