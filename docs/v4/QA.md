@@ -14,17 +14,17 @@ Shots: `docs/v4/after/playground-1440.png`, `playground-375.png`.
 2. Contrast after thinning the glass was unproven over the new, deeper lights. → `web/scripts/contrast.mjs` now also measures text on glass over light-lilac and light-blush: plum ≥ 10.8:1, plum-2 ≥ 6.36:1. All pass.
 3. Playground bug: its light volumes were forced to `position: relative`, so nothing sat behind the glass. → fixed. After: the crystal tile visibly carries the mint light through it; the nav picks up lilac.
 
-## Round 3 — real laptop + story (≈10:35–10:40)
+## Round 3 — real laptop + story (≈10:33–10:36)
 1. Aluminium rendered dark grey: metal reflects only the environment and the studio was too dim. → brighter Lightformers (overhead, back softbox, front card, floor bounce), lighter base colour, exposure 1.2.
 2. Return scene card too small to read with the whole-laptop fit. → `close: true` pose skips the fit (base may crop) and the canvas fades at the bottom.
 3. Site copy said "drought statistic" while the real captured card says "the 2023 rainfall number". → copy matches the capture everywhere.
 
-## Round 4 — QA tooling (≈10:40–10:50)
+## Round 4 — QA tooling (≈10:37–10:43)
 - axe 0 violations (motion and reduced). Overflow: none at 320/375/430/768/1024/1440/1920 after fixing the device base (−7% margin) and feature-panel min-width.
 - Lighthouse (gzip server, CfT headless, SwiftShader): mobile FCP 2.1 s, LCP 4.0 s, CLS 0, TBT ≈2.2–2.6 s (one 3.3 s "unattributable" task that starts before any script — software raster); desktop FCP 0.5 s, LCP 1.4 s, CLS 0. A11y/Best practices/SEO 100. Changes that got here: build-time prerender + hydration, hero text never hidden by the intro, mobile poster `srcset` + `fetchpriority`.
 - Story frame timing on a GPU: 58–60 fps, p95 16.8 ms (fps.md).
 
-## Round 5 — finish review "fix-then-ship" (≈11:30–11:50), all applied
+## Round 5 — finish review "fix-then-ship" (≈10:55–11:04), all applied
 1. Phones showed the v3 card on the laptop poster → poster re-rendered in Blender with the V4 screen.
 2. Park scene: the fading task chip crossed the screen → it exits left before the camera turns.
 3. Laptop finish → darker keys (env 0.35), second rim light, lavender-plum contact shadow at 0.34.
