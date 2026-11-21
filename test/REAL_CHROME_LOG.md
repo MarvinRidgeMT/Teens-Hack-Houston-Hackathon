@@ -201,3 +201,9 @@ Branch `redesign/v4` (V4 extension restyle: calm pastel tokens, v4 badge colours
 
 **Laptop reloads:**
 - (none yet)
+
+## Run 18: main after the V4 merge (Sat Nov 21)
+
+`main` at `8a675d9` (V4 merged in PR #4, plus the site-only story framing fix). Chrome for Testing 157.0.8103.78, visible run, isolated profile.
+- **23 pass, 0 fail, 1 skipped** (Docs row: needs a Google login). Return after 32 s with card, task, next step and highlight; Resume restored scroll 0 → 1713 (saved 1758, within the step's tolerance; run 17 was 1197 of 1200); first interaction 0.3 s after return; Tidy into "Later"; focus loss; worker stop; Chrome restart recovery; Alt+R via the resumeTask message; badge `P` → `•` → empty.
+- Same caveat as run 17: this harness drives `test/dev/stub-content.js`; Sidd's real card and overlay were exercised headless (`site-shots.mjs`, `palette-shots.mjs`).
