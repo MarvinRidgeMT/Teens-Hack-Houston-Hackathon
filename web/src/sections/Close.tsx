@@ -72,7 +72,7 @@ export function FinalCta() {
         <span className="atmo__light atmo__light--mint" style={{ width: '40vw', height: '40vw', right: '-4vw', bottom: '-20%' }} />
         <span className="atmo__light atmo__light--blush" style={{ width: '26vw', height: '26vw', left: '40vw', bottom: '-10%' }} />
       </div>
-      <div className="wrap">
+      <div className="wrap final__wrap">
         <LiquidGlass variant="crystal" radius="48px 48px 48px 28px" interactive className="final__panel">
           <h2 id="final-title" className="display final__title">Come back to <span className="soft">what matters.</span></h2>
           <p className="lede final__lede">Pickup keeps your place, so an interruption costs you a key press, not your train of thought.</p>
@@ -81,6 +81,11 @@ export function FinalCta() {
             <GlassButton href="#return-card" tone="pearl" size="lg">Try the card again</GlassButton>
           </div>
         </LiquidGlass>
+        <figure className="final__capy">
+          <img src="assets/capybara.svg" alt="Pickup's capybara, holding a bookmark so you don't lose your place"
+            width={150} height={121} loading="lazy" decoding="async" />
+          <figcaption>Our capybara keeps your place.</figcaption>
+        </figure>
       </div>
     </section>
   );

@@ -93,6 +93,7 @@ To build the release zip: `scripts/make-release.sh` (writes `pickup-v1.0.1.zip` 
 - **Pickup's voice** (on the device, nothing downloaded): **Kokoro-82M** v1.0 int8 ONNX, voice `af_heart` (Apache-2.0), run by **kokoro-js** (Apache-2.0) with **transformers.js** (Apache-2.0) and **ONNX Runtime Web** (MIT); its phonemizer includes **espeak-ng** (GPL-3.0-or-later). See `src/voice/vendor/NOTICE.txt` and `src/voice/model/SOURCE.md`.
 - Website: **three.js** (MIT), React Three Fiber and drei (MIT), React (MIT), **Lenis** (MIT), **Motion** (MIT), **Lucide** icons (ISC), and **GSAP** under GreenSock's "Standard 'no charge' license" (https://gsap.com/standard-license), as stated in its package.
 - The 3D laptop on the website was built from scratch in Blender by a script in this repo (`web/three-src/laptop/build_laptop.py`); no downloaded model, texture or HDRI is used, and it is released CC0 (`docs/v4/LAPTOP.md`). The screens on it are real screenshots of Pickup.
+- Capybara mascot: original illustration made for Pickup.
 
 ## Licence
 
