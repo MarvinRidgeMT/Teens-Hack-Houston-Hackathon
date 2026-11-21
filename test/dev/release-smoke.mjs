@@ -19,6 +19,7 @@ import http from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { launch, sleep, activatePid, CFT_BUNDLE } from './cdp-driver.mjs';
+import { keyLabel } from '../../src/shared/shortcuts.js'; // keys are shown in words since v1.0.1 ("Control Shift P")
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const ZIP = path.resolve(process.argv[2] || path.join(REPO, 'pickup-v1.0.0.zip'));
@@ -147,8 +148,8 @@ async function main() {
 
   await step('setup page shows the same keys', async () => {
     const s = await sendSW({ type: 'getShortcuts' });
-    const shown = await waitFor(() => evalIn(setupSid, `(() => { const t = [...document.querySelectorAll('.st-keys [data-shortcut]')].map((e) => e.textContent); return t.every(Boolean) ? t : null; })()`));
-    check(JSON.stringify(shown) === JSON.stringify([s.park, s.resume, s.panel]), `setup shows ${JSON.stringify(shown)}`);
+    const shown = await waitFor(() => evalIn(setupSid, `(() => { const t = [...document.querySelectorAll('.st-keys [data-shortcut]')].map((e) => e.getAttribute('aria-label') || e.textContent); return t.every(Boolean) ? t : null; })()`));
+    check(JSON.stringify(shown) === JSON.stringify([s.park, s.resume, s.panel].map(keyLabel)), `setup shows ${JSON.stringify(shown)}`);
     return shown.join(' / ');
   });
 
@@ -161,7 +162,7 @@ async function main() {
       return true; })()`);
     await click(setupSid, '#save');
     const st = await waitFor(async () => { const s = (await local()).settings; return s && s.workSites && s.workSites.includes('essay.test') ? s : null; }, 8000);
-    check(st, 'settings not saved; status: ' + await evalIn(setupSid, `document.body.innerText.match(/(Saved|Nothing saved)[^\\n]*/)?.[0] || ''`));
+    check(st, 'settings not saved; status: ' + await evalIn(setupSid, `JSON.stringify({ status: document.getElementById('status').textContent, errs: [...document.querySelectorAll('.st-err')].map((e) => e.textContent), at: (() => { const r = document.getElementById('save').getBoundingClientRect(); const el = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2); return el && (el.id || el.className); })() })`));
     const reg = await ctl(`return (await chrome.scripting.getRegisteredContentScripts()).map((s) => s.id + ':' + s.js.length);`);
     check(reg.length === 1, 'registered: ' + JSON.stringify(reg));
     return `settings saved; content script ${reg[0]} files`;
@@ -245,8 +246,8 @@ async function main() {
     const s = await sendSW({ type: 'getShortcuts' });
     const { targetId } = await cdp.send('Target.createTarget', { url: `chrome-extension://${extId}/src/pages/popup.html` });
     const pSid = await attachTo((t) => t.targetId === targetId, 'popup');
-    const shown = await waitFor(() => evalIn(pSid, `(() => { const t = ['resume', 'park', 'panel'].map((k) => document.querySelector('[data-shortcut="' + k + '"]')?.textContent || ''); return t.every(Boolean) ? t : null; })()`));
-    check(JSON.stringify(shown) === JSON.stringify([s.resume, s.park, s.panel]), `popup shows ${JSON.stringify(shown)}`);
+    const shown = await waitFor(() => evalIn(pSid, `(() => { const t = ['resume', 'park', 'panel'].map((k) => (((e) => e && (e.getAttribute('aria-label') || e.textContent))(document.querySelector('[data-shortcut="' + k + '"]')) || '')); return t.every(Boolean) ? t : null; })()`));
+    check(JSON.stringify(shown) === JSON.stringify([s.resume, s.park, s.panel].map(keyLabel)), `popup shows ${JSON.stringify(shown)}`);
     await shot(pSid, '4-popup');
     return shown.join(' / ');
   });

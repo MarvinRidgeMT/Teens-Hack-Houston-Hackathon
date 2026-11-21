@@ -16,6 +16,7 @@ import http from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { launch, sleep, activatePid, CFT_BUNDLE } from './cdp-driver.mjs';
+import { keyLabel } from '../../src/shared/shortcuts.js'; // keys are shown in words since v1.0.1 ("Control Shift P")
 import { spawn } from 'node:child_process';
 import { CFT } from './cdp-driver.mjs';
 import crypto from 'node:crypto';
@@ -201,8 +202,8 @@ async function main() {
 
   await step('setup page shows the same keys', async () => {
     const s = await sendSW({ type: 'getShortcuts' });
-    const shown = await waitFor(() => evalIn(setupSid, `(() => { const t = [...document.querySelectorAll('.st-keys [data-shortcut]')].map((e) => e.textContent); return t.every(Boolean) ? t : null; })()`));
-    check(JSON.stringify(shown) === JSON.stringify([s.park, s.resume, s.panel]), `setup shows ${JSON.stringify(shown)}`);
+    const shown = await waitFor(() => evalIn(setupSid, `(() => { const t = [...document.querySelectorAll('.st-keys [data-shortcut]')].map((e) => e.getAttribute('aria-label') || e.textContent); return t.every(Boolean) ? t : null; })()`));
+    check(JSON.stringify(shown) === JSON.stringify([s.park, s.resume, s.panel].map(keyLabel)), `setup shows ${JSON.stringify(shown)}`);
     return shown.join(' / ');
   });
 
@@ -316,8 +317,8 @@ async function main() {
     const s = await sendSW({ type: 'getShortcuts' });
     const { targetId } = await cdp.send('Target.createTarget', { url: `chrome-extension://${extId}/src/pages/popup.html` });
     const pSid = await attachTo((t) => t.targetId === targetId, 'popup');
-    const shown = await waitFor(() => evalIn(pSid, `(() => { const t = ['resume', 'park', 'panel'].map((k) => document.querySelector('[data-shortcut="' + k + '"]')?.textContent || ''); return t.every(Boolean) ? t : null; })()`));
-    check(JSON.stringify(shown) === JSON.stringify([s.resume, s.park, s.panel]), `popup shows ${JSON.stringify(shown)}`);
+    const shown = await waitFor(() => evalIn(pSid, `(() => { const t = ['resume', 'park', 'panel'].map((k) => (((e) => e && (e.getAttribute('aria-label') || e.textContent))(document.querySelector('[data-shortcut="' + k + '"]')) || '')); return t.every(Boolean) ? t : null; })()`));
+    check(JSON.stringify(shown) === JSON.stringify([s.resume, s.park, s.panel].map(keyLabel)), `popup shows ${JSON.stringify(shown)}`);
     await shot(pSid, '8-popup');
     return shown.join(' / ');
   });
