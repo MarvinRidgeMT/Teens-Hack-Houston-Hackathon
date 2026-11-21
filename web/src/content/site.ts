@@ -4,6 +4,9 @@
 export const LINKS = {
   // Works once the repo is public and a v1.0 release with the zip exists (it is private today).
   download: 'https://github.com/MarvinRidgeMT/Teens-Hack-Houston-Hackathon/releases/latest',
+  // Flip to true once the repo is public and the v1.0 release has the zip. Until then the page says so
+  // instead of sending visitors to a 404.
+  downloadLive: false,
   repo: 'https://github.com/MarvinRidgeMT/Teens-Hack-Houston-Hackathon',
   // DEVPOST: set the submission URL here when it exists; null shows "Devpost (coming)".
   devpost: null as string | null,

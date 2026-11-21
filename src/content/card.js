@@ -38,8 +38,8 @@
       --pk-accent-ink: #121126;
       --pk-accent-glow: rgba(201, 255, 56, .30);
       --pk-radius: 20px;
-      --pk-font: "Geist", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      --pk-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      --pk-font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --pk-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
       --pk-ease-out: cubic-bezier(.23, 1, .32, 1);
     }
   `;
@@ -135,11 +135,6 @@
         0 30px 60px -20px rgba(0,0,0,.55), 0 10px 24px -8px rgba(0,0,0,.35);
       padding: 18px 20px 16px; transform-origin: top right; overflow: hidden;
     }
-    .card::before {
-      content: ""; position: absolute; inset: -40% -30% auto auto; width: 70%; height: 80%;
-      background: radial-gradient(closest-side, var(--pk-accent-glow), transparent 70%);
-      opacity: .35; pointer-events: none;
-    }
     /* The facts line sits under the heading (no kicker above it), in the text face. */
     .meta { position: relative; display: flex; align-items: center; gap: 8px; margin-top: 6px;
       font-size: 13px; color: var(--pk-muted); }
@@ -175,7 +170,7 @@
     button:hover { background: rgba(255,255,255,.1); box-shadow: 0 0 0 1px var(--pk-line-strong) inset; }
     button.primary { grid-column: 1 / -1; padding: 12px 16px; font-size: 16px; font-weight: 600;
       background: var(--pk-accent); color: var(--pk-accent-ink);
-      box-shadow: 0 0 0 1px rgba(255,255,255,.25) inset, 0 6px 18px -6px var(--pk-accent-glow); }
+      box-shadow: 0 0 0 1px rgba(255,255,255,.25) inset, 0 6px 14px -6px rgba(0,0,0,.45); }
     button.primary:hover { background: var(--pk-accent-hi); }
     button .arrow { display: inline-grid; }
     button:focus-visible { outline: 2px solid var(--pk-accent); outline-offset: 3px; }

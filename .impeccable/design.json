@@ -1,0 +1,836 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-21T06:26:44.815897+00:00",
+  "title": "Design System: Pickup",
+  "extensions": {
+    "colorMeta": {
+      "violet": {
+        "role": "primary",
+        "displayName": "Electric Violet",
+        "canonical": "#6038ff",
+        "purpose": "Hero field, install close, light-page primary, extension accent; white text only.",
+        "tonalRamp": [
+          "#180f3e",
+          "#24126e",
+          "#2d0ea9",
+          "#3304ec",
+          "#5932f6",
+          "#8f77ee",
+          "#bfb3ef",
+          "#eeecf9"
+        ]
+      },
+      "violet-deep": {
+        "role": "primary",
+        "displayName": "Deep Violet",
+        "canonical": "#4a22e6",
+        "purpose": "Violet hover, install step tiles, extension resume and links.",
+        "tonalRamp": [
+          "#1b1439",
+          "#2a1b65",
+          "#371e9a",
+          "#411cd4",
+          "#6646e2",
+          "#9683e2",
+          "#c3b9e9",
+          "#efedf7"
+        ]
+      },
+      "violet-light": {
+        "role": "primary",
+        "displayName": "Light Violet",
+        "canonical": "#a58cff",
+        "purpose": "Dark-theme accent and links on midnight.",
+        "tonalRamp": [
+          "#190f3e",
+          "#26126e",
+          "#300ea9",
+          "#3604ec",
+          "#5d32f6",
+          "#9177ee",
+          "#c0b3ef",
+          "#efecf9"
+        ]
+      },
+      "lavender": {
+        "role": "neutral",
+        "displayName": "Lavender",
+        "canonical": "#ece7ff",
+        "purpose": "Sunken surfaces, resume tint, body copy on violet.",
+        "tonalRamp": [
+          "#190f3e",
+          "#25126e",
+          "#2e0ea9",
+          "#3404ec",
+          "#5b32f6",
+          "#9077ee",
+          "#c0b3ef",
+          "#eeecf9"
+        ]
+      },
+      "on-violet-soft": {
+        "role": "neutral",
+        "displayName": "Soft Lavender",
+        "canonical": "#e4ddff",
+        "purpose": "Secondary text on violet.",
+        "tonalRamp": [
+          "#180f3e",
+          "#25126e",
+          "#2e0ea9",
+          "#3404ec",
+          "#5a32f6",
+          "#8f77ee",
+          "#c0b3ef",
+          "#eeecf9"
+        ]
+      },
+      "lime": {
+        "role": "secondary",
+        "displayName": "Highlighter Lime",
+        "canonical": "#c9ff38",
+        "purpose": "Your place and resume; primary on dark and violet; focus on dark.",
+        "tonalRamp": [
+          "#313e0f",
+          "#556e12",
+          "#7fa90e",
+          "#adec04",
+          "#c1f632",
+          "#ceee77",
+          "#dfefb3",
+          "#f5f9ec"
+        ]
+      },
+      "lime-hover": {
+        "role": "secondary",
+        "displayName": "Lime Hover",
+        "canonical": "#dbff75",
+        "purpose": "Hover for lime buttons.",
+        "tonalRamp": [
+          "#323e0f",
+          "#566e12",
+          "#81a90e",
+          "#afec04",
+          "#c3f632",
+          "#cfee77",
+          "#dfefb3",
+          "#f5f9ec"
+        ]
+      },
+      "cyan": {
+        "role": "secondary",
+        "displayName": "Highlighter Cyan",
+        "canonical": "#42ddf4",
+        "purpose": "Tabs, groups, for-later.",
+        "tonalRamp": [
+          "#11363b",
+          "#175e69",
+          "#178fa1",
+          "#11c4df",
+          "#3dd4eb",
+          "#7ddae8",
+          "#b7e5ec",
+          "#edf6f8"
+        ]
+      },
+      "pink": {
+        "role": "secondary",
+        "displayName": "Highlighter Pink",
+        "canonical": "#ff5cb8",
+        "purpose": "Interruptions and drift.",
+        "tonalRamp": [
+          "#3e0f29",
+          "#6e1246",
+          "#a90e66",
+          "#ec0487",
+          "#f632a0",
+          "#ee77ba",
+          "#efb3d5",
+          "#f9ecf3"
+        ]
+      },
+      "yellow": {
+        "role": "secondary",
+        "displayName": "Highlighter Yellow",
+        "canonical": "#ffe15a",
+        "purpose": "Next steps and notes.",
+        "tonalRamp": [
+          "#3e350f",
+          "#6e5d12",
+          "#a98d0e",
+          "#ecc204",
+          "#f6d232",
+          "#eed877",
+          "#efe4b3",
+          "#f9f6ec"
+        ]
+      },
+      "midnight": {
+        "role": "neutral",
+        "displayName": "Midnight",
+        "canonical": "#121126",
+        "purpose": "Ink on light and on fills; calm bands; dark paper.",
+        "tonalRamp": [
+          "#1e1d2f",
+          "#302e51",
+          "#413e79",
+          "#504ca4",
+          "#726fb9",
+          "#9e9cc9",
+          "#c7c6dc",
+          "#f0f0f5"
+        ]
+      },
+      "midnight-2": {
+        "role": "neutral",
+        "displayName": "Midnight 2",
+        "canonical": "#1c1b38",
+        "purpose": "Raised surfaces inside midnight; dark surface.",
+        "tonalRamp": [
+          "#1f1e2e",
+          "#313050",
+          "#434177",
+          "#524fa0",
+          "#7472b6",
+          "#9f9ec7",
+          "#c7c7db",
+          "#f0f0f4"
+        ]
+      },
+      "midnight-3": {
+        "role": "neutral",
+        "displayName": "Midnight 3",
+        "canonical": "#272550",
+        "purpose": "Inputs and hover inside midnight.",
+        "tonalRamp": [
+          "#1e1e2f",
+          "#302f51",
+          "#423f78",
+          "#514da2",
+          "#7370b8",
+          "#9f9dc8",
+          "#c7c6dc",
+          "#f0f0f5"
+        ]
+      },
+      "card-ground": {
+        "role": "neutral",
+        "displayName": "Card Ground",
+        "canonical": "#15142b",
+        "purpose": "Return card and park overlay.",
+        "tonalRamp": [
+          "#1e1e2f",
+          "#302f51",
+          "#423f78",
+          "#514ea2",
+          "#7370b8",
+          "#9f9dc8",
+          "#c7c6dc",
+          "#f0f0f5"
+        ]
+      },
+      "off-white": {
+        "role": "neutral",
+        "displayName": "Off-white",
+        "canonical": "#f7f6fb",
+        "purpose": "Light page and Paper theme.",
+        "tonalRamp": [
+          "#211d2f",
+          "#352e52",
+          "#4a3e7a",
+          "#5d4ba4",
+          "#7d6eb9",
+          "#a59cc9",
+          "#cac6dd",
+          "#f1f0f5"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "White",
+        "canonical": "#ffffff",
+        "purpose": "Cards, fields, text on violet.",
+        "tonalRamp": [
+          "#262626",
+          "#404040",
+          "#5c5c5c",
+          "#787878",
+          "#949494",
+          "#b2b2b2",
+          "#d1d1d1",
+          "#f2f2f2"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Ink 2",
+        "canonical": "#4d4b66",
+        "purpose": "Secondary text on light.",
+        "tonalRamp": [
+          "#23232a",
+          "#3a3947",
+          "#525068",
+          "#69668a",
+          "#8785a3",
+          "#aba9bc",
+          "#cdcdd6",
+          "#f1f1f3"
+        ]
+      },
+      "lavender-text": {
+        "role": "neutral",
+        "displayName": "Lavender Text",
+        "canonical": "#c8c2f0",
+        "purpose": "Secondary text on midnight.",
+        "tonalRamp": [
+          "#1c1834",
+          "#2b245c",
+          "#392d8b",
+          "#4432be",
+          "#6859cf",
+          "#988ed7",
+          "#c4bfe3",
+          "#efeef6"
+        ]
+      },
+      "border-strong": {
+        "role": "neutral",
+        "displayName": "Border Strong",
+        "canonical": "#8a87a3",
+        "purpose": "Control borders at 3:1.",
+        "tonalRamp": [
+          "#242329",
+          "#3b3a46",
+          "#545266",
+          "#6c6987",
+          "#8a87a1",
+          "#acabba",
+          "#cecdd5",
+          "#f2f1f3"
+        ]
+      },
+      "teal-deep": {
+        "role": "tertiary",
+        "displayName": "Deep Teal",
+        "canonical": "#0b7285",
+        "purpose": "Saved state.",
+        "tonalRamp": [
+          "#12343a",
+          "#195b67",
+          "#1a899e",
+          "#16bbda",
+          "#41cde7",
+          "#80d5e5",
+          "#b8e2ea",
+          "#edf6f8"
+        ]
+      },
+      "danger": {
+        "role": "tertiary",
+        "displayName": "Danger",
+        "canonical": "#c21f3a",
+        "purpose": "Delete all only.",
+        "tonalRamp": [
+          "#37151b",
+          "#611e29",
+          "#942436",
+          "#cc2440",
+          "#db4d65",
+          "#de8796",
+          "#e7bcc3",
+          "#f7eeef"
+        ]
+      },
+      "blue-hour-ink": {
+        "role": "neutral",
+        "displayName": "Blue Hour Ink",
+        "canonical": "#f1effc",
+        "purpose": "Dark-theme text.",
+        "tonalRamp": [
+          "#1b1636",
+          "#2a205f",
+          "#372791",
+          "#4129c7",
+          "#6651d7",
+          "#968adb",
+          "#c3bde5",
+          "#efeef7"
+        ]
+      },
+      "blue-hour-body": {
+        "role": "neutral",
+        "displayName": "Blue Hour Body",
+        "canonical": "#b9b4da",
+        "purpose": "Dark-theme secondary text.",
+        "tonalRamp": [
+          "#201e2e",
+          "#34304f",
+          "#484176",
+          "#5b519f",
+          "#7b73b5",
+          "#a49ec7",
+          "#cac7db",
+          "#f1f0f4"
+        ]
+      },
+      "blue-hour-border-strong": {
+        "role": "neutral",
+        "displayName": "Blue Hour Border",
+        "canonical": "#77739b",
+        "purpose": "Dark-theme control borders.",
+        "tonalRamp": [
+          "#23222a",
+          "#3a3847",
+          "#514f69",
+          "#68658b",
+          "#8784a4",
+          "#aba9bc",
+          "#cdccd6",
+          "#f1f1f3"
+        ]
+      },
+      "blue-hour-accent-tint": {
+        "role": "neutral",
+        "displayName": "Blue Hour Tint",
+        "canonical": "#2d2860",
+        "purpose": "Dark-theme accent tint and next-step wells.",
+        "tonalRamp": [
+          "#1e1d30",
+          "#302d53",
+          "#423c7c",
+          "#5148a8",
+          "#736cbc",
+          "#9e9acb",
+          "#c7c5dd",
+          "#f0f0f5"
+        ]
+      },
+      "blue-hour-saved": {
+        "role": "tertiary",
+        "displayName": "Light Teal",
+        "canonical": "#5fd6e3",
+        "purpose": "Dark-theme saved state.",
+        "tonalRamp": [
+          "#163437",
+          "#1f5a60",
+          "#258892",
+          "#26b9c9",
+          "#4fcbd8",
+          "#89d4dc",
+          "#bce2e6",
+          "#eef6f7"
+        ]
+      },
+      "blue-hour-danger": {
+        "role": "tertiary",
+        "displayName": "Danger (dark)",
+        "canonical": "#ff6b81",
+        "purpose": "Dark-theme Delete all.",
+        "tonalRamp": [
+          "#3e0f16",
+          "#6e121f",
+          "#a90e25",
+          "#ec0426",
+          "#f6324f",
+          "#ee7789",
+          "#efb3bc",
+          "#f9ecee"
+        ]
+      },
+      "calm-accent": {
+        "role": "primary",
+        "displayName": "Calm Violet",
+        "canonical": "#5a4fb0",
+        "purpose": "Calm mode accent (light).",
+        "tonalRamp": [
+          "#1f1d2f",
+          "#322e51",
+          "#453e79",
+          "#564ca4",
+          "#776fb9",
+          "#a19cc9",
+          "#c8c6dc",
+          "#f0f0f5"
+        ]
+      },
+      "calm-resume": {
+        "role": "primary",
+        "displayName": "Calm Resume",
+        "canonical": "#4f468f",
+        "purpose": "Calm mode resume (light).",
+        "tonalRamp": [
+          "#201e2e",
+          "#343050",
+          "#484176",
+          "#5a50a0",
+          "#7b72b5",
+          "#a39ec7",
+          "#c9c7db",
+          "#f1f0f4"
+        ]
+      },
+      "calm-spark": {
+        "role": "secondary",
+        "displayName": "Calm Lime",
+        "canonical": "#dcef9e",
+        "purpose": "Calm mode spark fill (light).",
+        "tonalRamp": [
+          "#2f3715",
+          "#51611f",
+          "#799324",
+          "#a4cb25",
+          "#b9da4e",
+          "#c9dd88",
+          "#dce6bc",
+          "#f5f7ee"
+        ]
+      },
+      "calm-accent-dark": {
+        "role": "primary",
+        "displayName": "Calm Violet (dark)",
+        "canonical": "#b3a9e6",
+        "purpose": "Calm mode accent and resume (dark).",
+        "tonalRamp": [
+          "#1e1933",
+          "#2f2659",
+          "#3f3186",
+          "#4d38b8",
+          "#705eca",
+          "#9c92d3",
+          "#c6c1e1",
+          "#f0eff6"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero statement only, white on violet, lines rise from masks."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section heads and walkthrough step titles."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Feature tiles, feature rows, privacy items."
+      },
+      "lede": {
+        "displayName": "Lede",
+        "purpose": "One sentence under a headline, 36-46ch."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Site copy."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Captions and fine print, sentence case Inter."
+      },
+      "ext-task": {
+        "displayName": "Task name",
+        "purpose": "Extension task name on a thin lime stroke."
+      },
+      "ext-heading": {
+        "displayName": "Extension heading",
+        "purpose": "Card and section headings in the extension."
+      },
+      "ext-body": {
+        "displayName": "Extension body",
+        "purpose": "Extension copy; Readable raises it to 18/27."
+      },
+      "ext-caption": {
+        "displayName": "Extension caption",
+        "purpose": "Meta lines and table captions."
+      },
+      "keycap": {
+        "displayName": "Keycap",
+        "purpose": "The only home of mono, with code."
+      }
+    },
+    "shadows": [
+      {
+        "name": "hairline",
+        "value": "0 1px 2px rgba(18, 17, 38, 0.08)",
+        "purpose": "Resting lift for small items."
+      },
+      {
+        "name": "floating",
+        "value": "0 2px 6px rgba(18, 17, 38, 0.08), 0 20px 48px rgba(18, 17, 38, 0.14)",
+        "purpose": "Demo browser and feature screenshots (dark: black at .4/.5)."
+      },
+      {
+        "name": "overlay",
+        "value": "0 30px 80px rgba(0, 0, 0, 0.32)",
+        "purpose": "Park prompt and return card mock in the try-it demo."
+      },
+      {
+        "name": "return-card",
+        "value": "inset 0 0 0 1px rgba(241,239,252,.12), 0 30px 60px -20px rgba(0,0,0,.55), 0 10px 24px -8px rgba(0,0,0,.35)",
+        "purpose": "The real return card and park overlay."
+      },
+      {
+        "name": "ext-card-dark",
+        "value": "0 1px 2px rgba(0, 0, 0, 0.45), 0 18px 44px rgba(0, 0, 0, 0.55)",
+        "purpose": "Extension card in Blue hour."
+      }
+    ],
+    "motion": [
+      {
+        "name": "dur-micro",
+        "value": "160ms",
+        "purpose": "Site hover and colour changes."
+      },
+      {
+        "name": "dur-ui",
+        "value": "280ms",
+        "purpose": "Nav background, sheet, disclosure icons."
+      },
+      {
+        "name": "dur-story",
+        "value": "700ms",
+        "purpose": "Highlighter stroke drawing under the live step."
+      },
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Site default easing."
+      },
+      {
+        "name": "ease-in-out",
+        "value": "cubic-bezier(0.65, 0, 0.35, 1)",
+        "purpose": "Site symmetric moves."
+      },
+      {
+        "name": "press-spring",
+        "value": "spring stiffness 520, damping 30, scale 0.97",
+        "purpose": "Motion whileTap on site buttons."
+      },
+      {
+        "name": "opening",
+        "value": "GSAP timeline expo.out: lines yPercent 110 over 1.1s stagger 0.09; stroke 0.9s power3.inOut at 0.75s; rest 0.8s stagger 0.08 at 0.6s",
+        "purpose": "Hero opening; skipped under reduced motion."
+      },
+      {
+        "name": "intro-3d",
+        "value": "1600ms wall clock",
+        "purpose": "Laptop lid and yaw intro, independent of frame rate."
+      },
+      {
+        "name": "story-scrub",
+        "value": "ScrollTrigger scrub, walk top 85% to top 25%",
+        "purpose": "Band shifts violet to midnight."
+      },
+      {
+        "name": "lenis",
+        "value": "lerp 0.12 on gsap.ticker, anchors offset -88",
+        "purpose": "Wheel smoothing sharing ScrollTrigger frame; off under reduced motion."
+      },
+      {
+        "name": "ext-duration",
+        "value": "120ms / 220ms / 420ms, stagger 40ms",
+        "purpose": "Extension fast, base, slow."
+      },
+      {
+        "name": "ext-ease-out",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Extension default."
+      },
+      {
+        "name": "ext-ease-spring",
+        "value": "cubic-bezier(0.34, 1.56, 0.64, 1)",
+        "purpose": "Extension press and segmented control."
+      },
+      {
+        "name": "calm-mode",
+        "value": "data-calm",
+        "purpose": "Lower-saturation colours and no decorative motion in the extension."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "narrow-cta",
+        "value": "380px"
+      },
+      {
+        "name": "tablet",
+        "value": "760px"
+      },
+      {
+        "name": "stage",
+        "value": "900px"
+      },
+      {
+        "name": "split",
+        "value": "1000px"
+      },
+      {
+        "name": "wide-list",
+        "value": "1100px"
+      },
+      {
+        "name": "wrap",
+        "value": "1240px"
+      }
+    ],
+    "stage3d": {
+      "model": "procedural primitives, no downloaded asset",
+      "screen": "canvas texture of real extension screenshots per step (leave, drift, card, resume)",
+      "lighting": "Lightformer environment, ACES filmic, exposure 1.05, neutral ContactShadows",
+      "loading": "React.lazy chunk behind a CSS flat-laptop Suspense fallback",
+      "gating": "min-width 900px, WebGL, no Save-Data; context loss falls back to CSS",
+      "sleep": "frameloop never when off screen (IntersectionObserver, 200px margin)",
+      "a11y": "canvas aria-hidden, sr-only live region describes each screen"
+    }
+  },
+  "components": [
+    {
+      "name": "Primary Button (light page)",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "One primary per region; violet with white text on light pages.",
+      "html": "<button class=\"ds-btn-primary\">Download for Chrome</button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 24px;border-radius:16px;corner-shape:squircle;border:1.5px solid transparent;background:#6038ff;color:#fff;font:600 1rem/1 Inter,system-ui,sans-serif;letter-spacing:-0.01em;cursor:pointer;transition:background-color 160ms cubic-bezier(0.16,1,0.3,1),transform 160ms cubic-bezier(0.16,1,0.3,1)}.ds-btn-primary:hover{background:#4a22e6}.ds-btn-primary:active{transform:scale(.97)}.ds-btn-primary:focus-visible{outline:2px solid #6038ff;outline-offset:3px}"
+    },
+    {
+      "name": "Primary Button (on violet / midnight)",
+      "kind": "button",
+      "refersTo": "button-primary-on-dark",
+      "description": "Lime with midnight text inside the story, install close and nav.",
+      "html": "<div class=\"ds-violet-field\"><button class=\"ds-btn-lime\">Download for Chrome</button> <button class=\"ds-btn-on-violet\">Watch the demo</button></div>",
+      "css": ".ds-violet-field{background:#6038ff;padding:24px;border-radius:20px;display:flex;gap:12px;flex-wrap:wrap}.ds-btn-lime,.ds-btn-on-violet{display:inline-flex;align-items:center;min-height:52px;padding:0 24px;border-radius:16px;corner-shape:squircle;font:600 1rem/1 Inter,system-ui,sans-serif;letter-spacing:-0.01em;cursor:pointer;border:1.5px solid transparent;transition:background-color 160ms cubic-bezier(0.16,1,0.3,1),border-color 160ms}.ds-btn-lime{background:#c9ff38;color:#121126}.ds-btn-lime:hover{background:#dbff75}.ds-btn-on-violet{background:transparent;color:#fff;border-color:rgba(255,255,255,.55)}.ds-btn-on-violet:hover{background:rgba(255,255,255,.1);border-color:#fff}.ds-btn-lime:focus-visible,.ds-btn-on-violet:focus-visible{outline:2px solid #c9ff38;outline-offset:3px}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "White with a strong border; border darkens to ink on hover.",
+      "html": "<button class=\"ds-btn-secondary\">Try it yourself</button>",
+      "css": ".ds-btn-secondary{display:inline-flex;align-items:center;min-height:52px;padding:0 24px;border-radius:16px;corner-shape:squircle;background:#fff;color:#121126;border:1.5px solid #8a87a3;font:600 1rem/1 Inter,system-ui,sans-serif;cursor:pointer;transition:border-color 160ms cubic-bezier(0.16,1,0.3,1)}.ds-btn-secondary:hover{border-color:#121126}.ds-btn-secondary:focus-visible{outline:2px solid #6038ff;outline-offset:3px}"
+    },
+    {
+      "name": "Highlighter Stroke",
+      "kind": "custom",
+      "refersTo": "display",
+      "description": "The signature: a flat function-coloured band behind display words, midnight text on it.",
+      "html": "<h2 class=\"ds-hl-head\">Undo <mark class=\"ds-hl\">the interruption,</mark> not the mistake.</h2>",
+      "css": ".ds-hl-head{margin:0;font:720 56px/0.95 \"Bricolage Grotesque Variable\",\"Bricolage Grotesque\",Inter,sans-serif;letter-spacing:-0.03em;color:#fff;background:#6038ff;padding:24px;border-radius:20px}.ds-hl{color:#121126;background:linear-gradient(#c9ff38,#c9ff38) no-repeat 0 62%/100% 84%;padding:0 .08em;margin:0 -.04em;border-radius:.08em;-webkit-box-decoration-break:clone;box-decoration-break:clone}"
+    },
+    {
+      "name": "Keycap",
+      "kind": "custom",
+      "refersTo": "keycap",
+      "description": "Shortcuts drawn as real keys; mono only lives here.",
+      "html": "<span class=\"ds-keys\" role=\"img\" aria-label=\"Alt + P\"><kbd class=\"ds-kbd\">Alt</kbd><span class=\"ds-plus\">+</span><kbd class=\"ds-kbd\">P</kbd></span>",
+      "css": ".ds-keys{display:inline-flex;align-items:center;gap:4px}.ds-plus{font-size:.8em;opacity:.7}.ds-kbd{display:inline-grid;place-items:center;min-width:1.9em;height:1.75em;padding:0 .45em;font:600 .78rem/1 ui-monospace,\"SF Mono\",Menlo,monospace;color:#121126;background:#fff;border:1px solid #8a87a3;border-bottom-width:2px;border-radius:7px}"
+    },
+    {
+      "name": "Navigation Pill",
+      "kind": "nav",
+      "refersTo": "nav-cta",
+      "description": "Floating translucent midnight bar with lime Download.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-brand\" href=\"#\"><span class=\"ds-mark\"></span>Pickup</a><a class=\"ds-nav-link\" href=\"#\">How it works</a><a class=\"ds-nav-link\" href=\"#\">Privacy</a><a class=\"ds-nav-cta\" href=\"#\">Download</a></nav>",
+      "css": ".ds-nav{display:flex;align-items:center;gap:2px;padding:8px 8px 8px 18px;border-radius:20px;corner-shape:squircle;background:rgba(18,17,38,.9);border:1px solid rgba(255,255,255,.14);color:#fff}.ds-nav-brand{display:inline-flex;align-items:center;gap:10px;margin-right:auto;color:#fff;text-decoration:none;font:650 1.125rem/1 \"Bricolage Grotesque Variable\",\"Bricolage Grotesque\",Inter,sans-serif;letter-spacing:-.02em}.ds-mark{position:relative;width:26px;height:26px;border-radius:28%;background:#c9ff38}.ds-mark::after{content:\"\";position:absolute;left:14%;right:14%;bottom:15%;height:19%;border-radius:999px;background:#121126}.ds-nav-link{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border-radius:12px;color:rgba(255,255,255,.86);text-decoration:none;font:500 .9375rem Inter,sans-serif}.ds-nav-link:hover{color:#fff;background:rgba(255,255,255,.1)}.ds-nav-cta{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border-radius:13px;background:#c9ff38;color:#121126;text-decoration:none;font:650 .9375rem Inter,sans-serif}.ds-nav-cta:hover{background:#dbff75}.ds-nav a:focus-visible{outline:2px solid #c9ff38;outline-offset:3px}"
+    },
+    {
+      "name": "Feature Tile",
+      "kind": "card",
+      "refersTo": "feature-tile-cyan",
+      "description": "A highlighter fill at 32px radius; demo sits on the tile, not in a nested card.",
+      "html": "<article class=\"ds-tile\"><h3 class=\"ds-tile-h\">Tidy the tabs</h3><p>Pickup groups the tabs that belong to your task and parks the rest for later.</p><div class=\"ds-tile-demo\"><button class=\"ds-tile-btn\">Tidy tabs</button></div></article>",
+      "css": ".ds-tile{display:grid;gap:16px;padding:32px;border-radius:32px;corner-shape:squircle;background:#42ddf4;color:#121126;font:400 1.0625rem/1.6 Inter,sans-serif}.ds-tile p{margin:0;max-width:42ch}.ds-tile-h{margin:0;font:650 1.75rem/1.1 \"Bricolage Grotesque Variable\",\"Bricolage Grotesque\",Inter,sans-serif;letter-spacing:-.025em}.ds-tile-demo{padding-top:16px;border-top:1px solid rgba(18,17,38,.18)}.ds-tile-btn{min-height:44px;padding:0 16px;border-radius:16px;background:#fff;color:#121126;border:1.5px solid #8a87a3;font:600 .9375rem Inter,sans-serif;cursor:pointer}.ds-tile-btn:hover{border-color:#121126}.ds-tile-btn:focus-visible{outline:2px solid #6038ff;outline-offset:3px}"
+    },
+    {
+      "name": "Return Card",
+      "kind": "card",
+      "refersTo": "return-card",
+      "description": "The product: midnight card, task on a lime stroke, full-width lime Resume.",
+      "html": "<section class=\"ds-rcard\"><h2 class=\"ds-rcard-h\">Welcome back to <span class=\"ds-thread\">Climate Essay</span></h2><p class=\"ds-rcard-meta\"><i class=\"ds-dot\"></i>Pickup &middot; away 14 min</p><div class=\"ds-rcard-next\"><p class=\"ds-rcard-label\"><b>Your next step</b> &middot; you wrote this</p><p>Find a source for the drought statistic</p></div><button class=\"ds-resume\">Resume <kbd>Enter</kbd></button><button class=\"ds-quiet\">Not now <kbd>Esc</kbd></button></section>",
+      "css": ".ds-rcard{display:grid;gap:12px;max-width:440px;padding:18px 20px 16px;border-radius:20px;background:#15142b;color:#f4f2ff;font:400 16px/1.45 Inter,sans-serif;box-shadow:inset 0 0 0 1px rgba(241,239,252,.12),0 30px 60px -20px rgba(0,0,0,.55),0 10px 24px -8px rgba(0,0,0,.35)}.ds-rcard p{margin:0}.ds-rcard-h{margin:0;font:600 22px/1.25 Inter,sans-serif;letter-spacing:-.02em}.ds-thread{color:#121126;background:linear-gradient(#c9ff38,#c9ff38) no-repeat 0 62%/100% 88%;padding:0 .12em;border-radius:.14em}.ds-rcard-meta{display:flex;align-items:center;gap:8px;font-size:13px;color:#b9b4da}.ds-dot{width:7px;height:7px;border-radius:50%;background:#c9ff38}.ds-rcard-next{padding:12px 14px;border-radius:14px;background:rgba(165,140,255,.10);box-shadow:inset 0 0 0 1px rgba(241,239,252,.12)}.ds-rcard-label{font-size:12.5px;color:#b9b4da}.ds-rcard-label b{color:#cfc4ff}.ds-resume,.ds-quiet{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;cursor:pointer;font:600 16px Inter,sans-serif}.ds-resume{padding:12px 16px;background:#c9ff38;color:#121126}.ds-resume:hover{background:#dbff75}.ds-quiet{padding:10px 16px;font-weight:500;font-size:15px;color:#f4f2ff;background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(241,239,252,.12)}.ds-quiet:hover{background:rgba(255,255,255,.1)}.ds-resume:focus-visible,.ds-quiet:focus-visible{outline:2px solid #c9ff38;outline-offset:3px}.ds-rcard kbd{font:500 11px/1 ui-monospace,Menlo,monospace;padding:3px 5px;border-radius:5px;box-shadow:inset 0 0 0 1px rgba(18,17,38,.24)}"
+    },
+    {
+      "name": "Extension Button and Chip",
+      "kind": "chip",
+      "refersTo": "ext-button-primary",
+      "description": "Calm rendition: one violet primary, quiet buttons, fact chips with state dots.",
+      "html": "<div class=\"ds-ext\"><button class=\"ds-ext-btn ds-ext-btn--primary\">Park this task</button><button class=\"ds-ext-btn\">Open dashboard</button><span class=\"ds-chip\"><i class=\"ds-chip-dot\"></i>Saved</span></div>",
+      "css": ".ds-ext{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:16px;background:#f7f6fb;border-radius:16px}.ds-ext-btn{display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:10px;corner-shape:squircle;border:1px solid #8a87a3;background:#fff;color:#121126;font:600 13px/1 Inter,sans-serif;letter-spacing:-.01em;cursor:pointer;transition:transform 120ms cubic-bezier(0.22,1,0.36,1)}.ds-ext-btn:hover{transform:translateY(-1px);border-color:#121126}.ds-ext-btn:active{transform:scale(.96)}.ds-ext-btn--primary{background:#6038ff;border-color:#6038ff;color:#fff}.ds-ext-btn--primary:hover{background:#4a22e6;border-color:#4a22e6}.ds-ext-btn:focus-visible{outline:2px solid #4a22e6;outline-offset:2px}.ds-chip{display:inline-flex;align-items:center;gap:6px;min-height:26px;padding:0 10px;border:1px solid rgba(18,17,38,.12);border-radius:999px;background:#fff;font:500 11px/14px Inter,sans-serif;color:#121126}.ds-chip-dot{width:6px;height:6px;border-radius:50%;background:#0b7285;box-shadow:0 0 0 2.5px rgba(18,17,38,.12)}"
+    },
+    {
+      "name": "Extension Field",
+      "kind": "input",
+      "refersTo": "ext-input",
+      "description": "White field, strong border, focus ring in the resume colour.",
+      "html": "<label class=\"ds-ext-label\" for=\"ds-f\">Your next step <span>optional</span></label><input id=\"ds-f\" class=\"ds-ext-input\" placeholder=\"Find a source for the drought statistic\">",
+      "css": ".ds-ext-label{display:block;margin-bottom:6px;font:500 13px/18px Inter,sans-serif;color:#121126}.ds-ext-label span{color:#4d4b66;font-weight:400}.ds-ext-input{width:100%;min-height:38px;padding:0 12px;border-radius:8px;border:1px solid #8a87a3;background:#fff;color:#121126;font:400 14px/20px Inter,sans-serif}.ds-ext-input::placeholder{color:#4d4b66}.ds-ext-input:focus-visible{outline:2px solid #4a22e6;outline-offset:2px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Energy Outside, Calm Inside",
+    "overview": "Pickup is one brand in two renditions. The website is the loud one: the noisy, colourful world of interruptions, rendered as an electric violet field, midnight bands, poster-scale Bricolage Grotesque and a set of highlighter fills. The extension is the calm one: paper and white surfaces by day, midnight \"Blue hour\" by night, Inter doing almost all the work, one violet primary per view. The single object that crosses between them is the product itself, the return card, a midnight panel with the task name on a lime highlighter stroke. On the website it appears on the screen of a procedural 3D laptop; in the browser it appears for real.\n\nThe highlighter is the signature. A flat band of lime (or cyan, pink, yellow) sits behind display words, drawn left to right when it becomes relevant. It always means something: lime is your place, cyan is tabs, pink is interruptions, yellow is notes. Text on a highlighter is midnight; text on violet is white. Depth is restrained: hairline borders, neutral shadows, one soft lift for floating things, a 3D model only where the product needs a stage.\n\nDensity follows the rendition. The site breathes (sections 112 to 160px apart, a 1240px wrap, 5/7 split grids); the extension is compact and tool-like (14px body, 4px to 40px spacing, 360px popup). Both share the brand primitives in `design/tokens.json` `brand`, the same keycap drawing, the same brand tile, and the same accessibility floors.",
+    "keyCharacteristics": [
+      "Violet owns the first viewport and the close; midnight owns the walkthrough, privacy and the product surfaces.",
+      "Four highlighter colours, each tied to one function, used as fills under midnight text, never as text on light grounds.",
+      "Bricolage Grotesque for display and task names, Inter for everything read, mono only inside keycaps and code.",
+      "Keycaps drawn as real keys (heavier bottom border) wherever a shortcut is named.",
+      "Neutral shadows only; no tinted halos.",
+      "Every motion has a still rendition; the 3D never gates first paint."
+    ],
+    "rules": [
+      {
+        "name": "The White-on-Violet Rule",
+        "body": "Text on violet is white (or soft lavender for secondary copy). Lime, cyan, pink and yellow are fills under midnight text; they are never text on light grounds. Midnight on violet is 3.1:1 and is not used.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Highlighter Per Idea Rule",
+        "body": "Lime = your place / resume, cyan = tabs, pink = interruptions, yellow = notes. A colour that appears for decoration, unrelated to its function, is wrong.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Primary Per View Rule",
+        "body": "The extension shows one violet primary button per view; everything else is quiet or ghost. On the site, the lime primary appears once per dark or violet region.",
+        "section": "colors"
+      },
+      {
+        "name": "The Mono Is for Keys Rule",
+        "body": "Monospace appears inside keycaps, code and the numbered step discs only. Labels, metadata and facts lines use Inter.",
+        "section": "typography"
+      },
+      {
+        "name": "The Text-Face Label Rule",
+        "body": "Small labels are sentence case Inter at 12 to 13px. Nothing sits above a heading to announce it; the facts line goes under the heading.",
+        "section": "typography"
+      },
+      {
+        "name": "The Neutral Shadow Rule",
+        "body": "Shadows are black or midnight at low alpha. Coloured halos, tinted glows and blurred colour blooms are not part of the system.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Calm-Surface Exception",
+        "body": "On Paper and Blue hour extension pages (popup, panel, dashboard, setup) the Resume button is the violet primary, because lime fails as a fill-under-white on light grounds and each calm view keeps one violet primary. Lime marks your place there as the thin stroke under the task name. On midnight grounds (the return card, the website's dark regions) Resume is the lime pill.",
+        "section": "colors"
+      }
+    ],
+    "dos": [
+      "**Do** put white text on violet and midnight text on lime, cyan, pink and yellow.",
+      "**Do** tie each highlighter colour to its function: lime place/resume, cyan tabs, pink interruptions, yellow notes.",
+      "**Do** draw the highlighter as a flat band behind display words (`0 62% / 100% 84%`), drawn in when the idea becomes live.",
+      "**Do** show shortcuts as drawn keycaps with one accessible label for the combo.",
+      "**Do** keep text at 4.5:1 and controls and borders at 3:1; use a violet focus ring on light surfaces and a lime ring on dark and violet regions (2px, 2 to 3px offset).",
+      "**Do** give every interactive target at least 44px on the site and keep every demo operable by keyboard.",
+      "**Do** give every motion a still rendition and keep the page complete without the 3D.",
+      "**Do** use real screenshots of the extension wherever the product is shown."
+    ],
+    "donts": [
+      "**Don't** put a kicker or eyebrow above a heading; facts go under it in the text face.",
+      "**Don't** use gradient text.",
+      "**Don't** mark state with a coloured side stripe on cards, rows or callouts.",
+      "**Don't** use coloured glows or tinted shadows; shadows are neutral.",
+      "**Don't** use mono for labels or metadata; it belongs to keycaps and code.",
+      "**Don't** set lime, cyan, pink or yellow as text on a light ground, or midnight text on violet.",
+      "**Don't** add a second primary button to an extension view, or use red for anything but Delete all.",
+      "**Don't** let the 3D block first paint or keep rendering off screen."
+    ]
+  }
+}

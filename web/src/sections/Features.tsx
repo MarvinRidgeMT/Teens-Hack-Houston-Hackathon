@@ -19,7 +19,6 @@ function ParkDemo({ reduced }: { reduced: boolean }) {
       className="demo demo--park"
       onKeyDown={(e) => { if (e.altKey && e.code === 'KeyP') { e.preventDefault(); start(); } }}
     >
-      <div className="demo__keys" aria-hidden="true"><kbd className="keycap keycap--xl">Alt</kbd><span>+</span><kbd className="keycap keycap--xl">P</kbd></div>
       <AnimatePresence mode="popLayout" initial={false}>
         {open ? (
           <motion.form key="form" className="mini-park" initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={t}
@@ -35,7 +34,7 @@ function ParkDemo({ reduced }: { reduced: boolean }) {
           </motion.p>
         ) : (
           <motion.div key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <Button variant="secondary" onClick={start}>Press Alt+P</Button>
+            <Button variant="secondary" onClick={start}>Open the park prompt</Button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -135,7 +134,7 @@ function AltRDemo({ reduced }: { reduced: boolean }) {
         </ul>
       </LayoutGroup>
       <div className="demo__actions">
-        <Button variant="secondary" disabled={back} onClick={() => setBack(true)}>Press Alt+R</Button>
+        <Button variant="secondary" disabled={back} onClick={() => setBack(true)}>Jump back</Button>
         {back && <Button variant="ghost" onClick={() => setBack(false)}>Reset</Button>}
       </div>
       <p className="demo__fine" role="status">{back ? "You're on your task's tab again, from anywhere in Chrome." : 'You are in the group chat tab.'}</p>
@@ -176,40 +175,39 @@ export function Features({ reduced }: { reduced: boolean }) {
           </figure>
         </article>
 
-        <div className="feat-pair">
-          <article className="feat-tile feat-tile--yellow">
-            <h3 className="h3">Park with <Keys keys={['Alt', 'P']} /></h3>
-            <p>Before you go, leave yourself one line. Or don't: Pickup saves your place either way.</p>
+        {/* An editorial gallery: unequal spans, and each piece built its own way. */}
+        <div className="gallery">
+          <article className="feat-tile feat-tile--yellow g-park">
+            <h3 className="h3">Park before you go <Keys keys={['Alt', 'P']} /></h3>
+            <p>Leave yourself one line. Or don't: Pickup saves your place either way.</p>
             <ParkDemo reduced={reduced} />
           </article>
-          <article className="feat-tile feat-tile--cyan">
+          <article className="feat-tile feat-tile--cyan g-tabs">
             <h3 className="h3">Tab groups and Tidy</h3>
-            <p>Each task is a named Chrome tab group. Tabs you opened on a break go into a collapsed "Later" group.</p>
+            <p>Each task is a named Chrome tab group. Tabs you opened on a break go into a collapsed "Later" group, and nothing is closed.</p>
             <TabsDemo reduced={reduced} />
           </article>
-        </div>
-
-        <div className="feat-pair feat-pair--second">
-          <article className="feat-tile feat-tile--pink">
-            <h3 className="h3">Drift nudge</h3>
-            <p>One quiet reminder per break, and only if you left yourself a next step.</p>
+          <article className="feat-tile feat-tile--pink feat-band g-drift">
+            <div className="feat-band__copy">
+              <h3 className="h2 feat-band__title">Drift nudge</h3>
+              <p>One quiet reminder per break, and only if you left yourself a next step. It never blocks a site.</p>
+            </div>
             <DriftDemo reduced={reduced} />
           </article>
-          <article className="feat-tile feat-tile--lime">
-            <h3 className="h3">Back with <Keys keys={['Alt', 'R']} /></h3>
-            <p>From any tab in Chrome, one shortcut puts you back on the task.</p>
+          <article className="feat-tile feat-tile--lime g-altr">
+            <h3 className="h3">Back to the task <Keys keys={['Alt', 'R']} /></h3>
+            <p>From any tab in Chrome.</p>
             <AltRDemo reduced={reduced} />
           </article>
+          <ul className="feat-list g-list">
+            {MORE.map((f) => (
+              <li key={f.title} className="feat-row">
+                <h3 className="feat-row__title">{f.title} {'keys' in f && <Keys keys={f.keys} />}</h3>
+                <p>{f.body}</p>
+              </li>
+            ))}
+          </ul>
         </div>
-
-        <ul className="feat-list">
-          {MORE.map((f) => (
-            <li key={f.title} className="feat-row">
-              <h3 className="feat-row__title">{f.title} {'keys' in f && <Keys keys={f.keys} />}</h3>
-              <p>{f.body}</p>
-            </li>
-          ))}
-        </ul>
       </div>
     </section>
   );

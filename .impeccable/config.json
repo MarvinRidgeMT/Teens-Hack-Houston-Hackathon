@@ -71,6 +71,12 @@
         ],
         "createdAt": "2026-11-21T06:23:26.648Z",
         "reason": "False positive from the static scan: the flagged .pk-chip status pill gets its vertical inset from min-height 26px (6px above and below 14px text), which the HTML-only scan cannot see; predates this session"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "georgia",
+        "createdAt": "2026-11-21T06:27:12.594Z",
+        "reason": "Claude triage: .essay is the mock third-party article inside the .browser demo frame; serif signals 'someone else's page', not site type"
       }
     ]
   }

@@ -42,3 +42,5 @@ html, body { margin: 0; background: var(--paper); }
 /* The only red in Pickup: the Delete-all action (token danger). */
 #delete-all, #delete-yes { color: var(--danger); }
 #delete-yes { border-color: var(--danger); }
+
+.db-info { flex: none; color: var(--accent); }

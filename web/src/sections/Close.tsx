@@ -42,10 +42,20 @@ export function Install() {
         <div>
           <SectionHead id="install-title" title={<>Your next task <Mark>is waiting.</Mark></>} lede="Pickup makes it easier to find your way back. It installs in about a minute." />
           <div className="install__ctas">
-            <ButtonLink href={LINKS.download} variant="primary" icon={<ArrowDownToLine size={18} aria-hidden="true" />}>Download the zip</ButtonLink>
+            {LINKS.downloadLive ? (
+              <ButtonLink href={LINKS.download} variant="primary" icon={<ArrowDownToLine size={18} aria-hidden="true" />}>Download the zip</ButtonLink>
+            ) : (
+              <span className="btn btn--primary btn--pending" role="note">
+                <ArrowDownToLine size={18} aria-hidden="true" />
+                <span>Download goes live with the v1.0 release</span>
+              </span>
+            )}
             <ButtonLink href="#demo" variant="on-violet" icon={<Play size={16} aria-hidden="true" />}>Watch the demo</ButtonLink>
           </div>
-          <p className="install__fine">Chrome 123 or newer, on a laptop or desktop. Loaded unpacked from our GitHub release; not on the Chrome Web Store. Free, no account.</p>
+          <p className="install__fine">
+            Chrome 123 or newer, on a laptop or desktop. Pickup loads unpacked from a zip and is not on the Chrome Web Store. Free, no account.
+            {!LINKS.downloadLive && ' The zip will be on our GitHub release page once the repo is public; it is not there yet.'}
+          </p>
         </div>
         <div>
           <ol className="install__steps">

@@ -61,7 +61,7 @@ export async function drawReceipt(events, now = Date.now()) {
   ctx.fillStyle = C.paper;
   ctx.fillRect(0, 0, W, H);
   ctx.save();
-  ctx.shadowColor = 'rgba(74, 34, 230, 0.12)';
+  ctx.shadowColor = 'rgba(18, 17, 38, 0.10)';
   ctx.shadowBlur = 32;
   ctx.shadowOffsetY = 12;
   roundRect(ctx, 48, 48, W - 96, H - 96, 32);

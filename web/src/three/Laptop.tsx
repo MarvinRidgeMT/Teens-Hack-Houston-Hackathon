@@ -124,7 +124,7 @@ export function Laptop() {
   const fade = useRef(1);
 
   const aluminium = useMemo(
-    () => new THREE.MeshPhysicalMaterial({ color: '#dcdee5', metalness: 1, roughness: 0.34, clearcoat: 0.15, clearcoatRoughness: 0.5, envMapIntensity: 1.15 }),
+    () => new THREE.MeshPhysicalMaterial({ color: '#d6d9e0', metalness: 0.72, roughness: 0.36, clearcoat: 0.15, clearcoatRoughness: 0.5, envMapIntensity: 1.1 }),
     [],
   );
   const darkGlass = useMemo(() => new THREE.MeshPhysicalMaterial({ color: '#08080c', roughness: 0.08, metalness: 0.1, clearcoat: 1 }), []);

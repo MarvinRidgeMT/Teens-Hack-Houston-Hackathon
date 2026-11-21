@@ -58,7 +58,7 @@ function Rig({ reduced }: { reduced: boolean }) {
     <group ref={group} position={[0, -0.35, 0]}>
       <Laptop />
       {/* grounding: a soft neutral shadow right under the base; it moves with the laptop */}
-      <ContactShadows position={[0, -0.046, 0.25]} opacity={0.5} scale={[4.2, 3.2]} blur={1.8} far={0.9} resolution={512} color="#000000" />
+      <ContactShadows position={[0, -0.046, 0.25]} opacity={0.42} scale={[3.5, 2.6]} blur={2.6} far={0.7} resolution={512} color="#000000" />
     </group>
   );
 }
@@ -100,6 +100,10 @@ export default function LaptopScene({ reduced, onFail }: { reduced: boolean; onF
           {/* overhead softbox behind the laptop: the deck and palm rest reflect it, so they read as silver aluminium */}
           <Lightformer form="rect" intensity={4} position={[0, 6, -6]} scale={[14, 6, 1]} rotation={[Math.PI / 4, 0, 0]} />
           <Lightformer form="rect" intensity={2.2} position={[0, 7, 1]} scale={[12, 8, 1]} rotation={[Math.PI / 2, 0, 0]} />
+          {/* broad front and side softboxes: the deck stays silver at every story pose, not only the hero */}
+          <Lightformer form="rect" intensity={2.4} position={[0, 2, 7]} scale={[14, 5, 1]} />
+          <Lightformer form="rect" intensity={1.6} position={[-7, 2, 2]} scale={[6, 6, 1]} rotation={[0, Math.PI / 2, 0]} />
+          <Lightformer form="rect" intensity={1.6} position={[7, 2, 2]} scale={[6, 6, 1]} rotation={[0, -Math.PI / 2, 0]} />
           {/* floor bounce so the aluminium reads silver, not grey */}
           <Lightformer form="rect" intensity={1.6} position={[0, -3, 2]} scale={[10, 4, 1]} rotation={[Math.PI / 2.4, 0, 0]} />
           {/* violet rim */}

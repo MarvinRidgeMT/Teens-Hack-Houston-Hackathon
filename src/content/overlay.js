@@ -29,8 +29,8 @@
       box-shadow: 0 0 0 1px var(--pk-line) inset, 0 1px 0 0 rgba(255,255,255,.06) inset, 0 30px 60px -20px rgba(0,0,0,.55);
       padding: 12px 12px 10px 16px; transition: box-shadow .2s var(--pk-ease-out); }
     .bar:focus-within { box-shadow: 0 0 0 1px var(--pk-accent) inset, 0 0 0 4px rgba(201,255,56,.16), 0 30px 60px -20px rgba(0,0,0,.55); }
-    .top { display: flex; align-items: center; gap: 8px; font-family: var(--pk-mono); font-size: 11.5px;
-      letter-spacing: .06em; text-transform: uppercase; color: var(--pk-muted); }
+    /* The input's label, in the text face (no mono caps). */
+    .top { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: var(--pk-muted); }
     .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--pk-accent); }
     .step { margin-left: auto; color: var(--pk-faint); }
     .row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
@@ -51,7 +51,7 @@
       font-size: 14px; white-space: nowrap; max-width: 100%; }
     .check { width: 22px; height: 22px; border-radius: 50%; background: var(--pk-accent); display: grid; place-items: center; flex: none; }
     .check path { stroke: var(--pk-accent-ink); }
-    .pill .what { font-family: var(--pk-mono); font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--pk-accent); }
+    .pill .what { font-weight: 600; color: var(--pk-accent); }
     .pill .name { overflow: hidden; text-overflow: ellipsis; color: var(--pk-ink); }
   `;
 
