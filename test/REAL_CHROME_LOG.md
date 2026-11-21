@@ -188,3 +188,9 @@ A pilot laptop gets this when it pulls and reloads the extension; note each lapt
 
 **Pilot laptop reloads:**
 - (none yet)
+
+## Run 17: redesign/v4 (Sat Nov 21, late morning)
+
+Branch `redesign/v4` (V4 extension restyle: calm pastel tokens, v4 badge colours, restyled card/overlay CSS; no behaviour change). Chrome for Testing 157.0.8103.78, visible run, isolated profile.
+- **Gate B: 23 pass, 0 fail, 1 skipped** (Docs row: needs a Google login). Return after 31 s, card with task, next step and highlight; Resume restores scroll (0 → 1197, saved 1200); first interaction 0.3 s after return; Tidy into "Later"; focus loss; worker stop; Chrome restart recovery; Alt+R via the resumeTask message (CDP can't press browser shortcuts); badge `P` → `•` → empty with unchanged tooltips.
+- **Which content script:** this harness drives `test/dev/stub-content.js` by design (its dev setup unticks "real content scripts"). Sidd's real `card.js`/`overlay.js` from this branch were exercised separately, headless (Gate A): `PANEL_REF=redesign/v4 CONTENT_REF=redesign/v4 PICKUP_HEADLESS=1 node test/dev/site-shots.mjs` (park overlay with a typed next step, parked pill, panel, return card, Resume with scroll restore: "event pickup tab scroll now 135"), and `palette-shots.mjs` (card and overlay on Sidd's preview page, plus a loud dark page). A real-script run of *this* gate is not available without changing the harness.
