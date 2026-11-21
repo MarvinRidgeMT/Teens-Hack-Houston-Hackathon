@@ -10,7 +10,7 @@ export const STORY_POSES: Pose[] = [
   { x: 0.05, y: 0, yaw: -0.3, pitch: 0.04, cam: [0.2, 2.5, 9.0], look: [0, 0.85, 0] },     // working
   { x: 0.08, y: -0.05, yaw: -0.42, pitch: 0.06, cam: [0.4, 2.9, 10.2], look: [0, 0.8, 0] }, // interrupted: steps back
   { x: 0.04, y: 0, yaw: -0.18, pitch: 0.03, cam: [0.1, 2.4, 8.4], look: [0, 0.95, -0.4] },   // park
-  { x: 0, y: 0, yaw: 0, pitch: 0, cam: [0, 1.62, 5.0], look: [0, 1.12, -1.0], close: true },  // return: up to the screen (base may crop)
+  { x: 0, y: 0, yaw: 0, pitch: 0, cam: [0, 1.68, 5.35], look: [0, 1.12, -1.0], close: true },  // return: up to the screen (base may crop)
   { x: 0.03, y: 0, yaw: -0.12, pitch: 0.02, cam: [0.1, 2.3, 8.2], look: [0, 0.95, -0.4] },   // resume: settles
 ];
 
