@@ -53,6 +53,15 @@
         ],
         "createdAt": "2026-11-21T04:18:14.331Z",
         "reason": "False positive from the static scan: full-bleed bands use calc((100% - var(--wrap)) / 2) side padding, 16px at 375px; rendered-page detect reports no cramped-padding"
+      },
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "files": [
+          "web/src/styles/tokens.css"
+        ],
+        "createdAt": "2026-11-21T06:10:29.851Z",
+        "reason": "Team rule (PRODUCT.md, handoff/CLAUDE_CODE_PROMPT_PALETTE.md): the bundled Inter stays; the site uses it for body text so it matches the extension, with Bricolage Grotesque as the display face"
       }
     ]
   }

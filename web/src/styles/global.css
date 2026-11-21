@@ -189,7 +189,7 @@ code { font-family: var(--font-mono); font-size: 0.88em; padding: 2px 6px; borde
 }
 
 /* The CSS laptop: first paint, fallback, mobile */
-.flat-laptop { margin: 0 auto; width: min(86%, 820px); filter: drop-shadow(0 30px 50px rgba(10, 4, 50, 0.45)); }
+.flat-laptop { margin: 0 auto; width: min(86%, 820px); filter: drop-shadow(0 30px 50px rgba(0, 0, 0, 0.35)); }
 .flat-laptop__lid { padding: 2.2% 2.2% 3.2%; border-radius: 22px 22px 6px 6px; background: linear-gradient(#e4e6ec, #c9ccd5); }
 .flat-laptop__screen { position: relative; overflow: hidden; border-radius: 10px; background: #0b0b10; padding: 1.2%; }
 .flat-laptop__img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border-radius: 4px; background: #fff; }
@@ -249,7 +249,7 @@ code { font-family: var(--font-mono); font-size: 0.88em; padding: 2px 6px; borde
 .try__steps li::before { content: counter(s); position: absolute; left: 16px; top: 16px; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center;
   font: 700 0.8125rem/1 var(--font-mono); background: var(--surface-sunk); color: var(--text); }
 .try__steps li > span:first-child { font-weight: 600; }
-.try__steps li.is-now { border-color: var(--violet); box-shadow: 0 0 0 1px var(--violet); }
+.try__steps li.is-now { border-color: var(--violet); outline: 1px solid var(--violet); outline-offset: -2px; }
 .try__steps li.is-now::before { background: var(--violet); color: #fff; }
 .try__steps li.is-done::before { content: "✓"; background: var(--lime); color: var(--midnight); }
 .try__steps .btn { justify-self: start; min-height: 46px; }
