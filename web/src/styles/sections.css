@@ -151,3 +151,6 @@
   .ev-method__row { grid-template-columns: minmax(0, 1fr); gap: 4px; }
   .install__cta .gbtn, .final__ctas .gbtn { width: 100%; white-space: normal; }
 }
+.fpanel, .fpanel > * { min-width: 0; }
+.fpanel .h3, .flist__title { overflow-wrap: anywhere; }
+@media (max-width: 380px) { .fpanel { padding: 20px 16px; } .park__row input { font-size: 15px; } }
