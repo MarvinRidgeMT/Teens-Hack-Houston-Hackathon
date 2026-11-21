@@ -146,9 +146,12 @@ function chime() {
 
 // ---------- one ask (typed or spoken) -> engine -> reply ----------
 // typed: true from the Ask box or a chip (returnVia 'panel'); false for speech ('voice').
+// The transcript labels show only once something has been asked (until then, just the hint).
+const setHeard = (text) => { $('heard').textContent = text; $('heard').closest('.talk')?.removeAttribute('data-empty'); };
+
 export async function runCommand(raw, { typed = false } = {}) {
   const said = tidyWords(raw);
-  $('heard').textContent = said || (typed ? ' ' : '(nothing heard)');
+  setHeard(said || (typed ? ' ' : '(nothing heard)'));
   const w = splitWake(said);
   const command = w.wake && WAKE_AT_START.test(said) ? w.rest : said;
   if (!command) { showReply(typed ? 'Type a question, like "where was I?"' : "I didn't catch that."); return null; }
@@ -184,7 +187,7 @@ function startTalk({ oneShot }) {
       if (res.isFinal) S.talk.finals.push(res[0].transcript); else interim += res[0].transcript;
     }
     S.talk.interim = interim;
-    $('heard').textContent = tidyWords([...S.talk.finals, interim].join(' ')) || ' ';
+    setHeard(tidyWords([...S.talk.finals, interim].join(' ')) || ' ');
     if (S.talk.oneShot && S.talk.finals.length) stopRec(); // one thing said: done
   };
   rec.onerror = (e) => {
@@ -262,7 +265,7 @@ function wakeSession() {
       const text = res[0].transcript;
       const awaiting = S.wake.awaitUntil > Date.now();
       const w = wakeCommand(text); // only "hey pickup" at the start counts
-      if (!res.isFinal) { if (w.wake || awaiting) $('heard').textContent = tidyWords(text); continue; }
+      if (!res.isFinal) { if (w.wake || awaiting) setHeard(tidyWords(text)); continue; }
       if (awaiting && !w.wake) { S.wake.awaitUntil = 0; handleUtterance(text); continue; }
       if (!w.wake) continue; // not for us: ignored and not kept
       if (w.rest) { S.wake.awaitUntil = 0; handleUtterance(w.rest); } else {

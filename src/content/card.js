@@ -140,8 +140,9 @@
       background: radial-gradient(closest-side, var(--pk-accent-glow), transparent 70%);
       opacity: .35; pointer-events: none;
     }
-    .meta { position: relative; display: flex; align-items: center; gap: 8px;
-      font-family: var(--pk-mono); font-size: 12px; letter-spacing: .04em; text-transform: uppercase; color: var(--pk-muted); }
+    /* The facts line sits under the heading (no kicker above it), in the text face. */
+    .meta { position: relative; display: flex; align-items: center; gap: 8px; margin-top: 6px;
+      font-size: 13px; color: var(--pk-muted); }
     .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--pk-accent); }
     @media (prefers-reduced-motion: no-preference) {
       .dot { animation: pk-pulse 2.4s var(--pk-ease-out) infinite; }
@@ -149,19 +150,17 @@
     }
     .sep { color: var(--pk-faint); }
     .away { color: var(--pk-ink); font-variant-numeric: tabular-nums; }
-    h2 { position: relative; margin: 10px 0 0; font-size: 22px; line-height: 1.25; font-weight: 600;
+    h2 { position: relative; margin: 2px 0 0; font-size: 22px; line-height: 1.25; font-weight: 600;
       letter-spacing: -.02em; overflow-wrap: anywhere; }
     h2 .thread { color: var(--pk-accent-ink); background: linear-gradient(var(--pk-accent), var(--pk-accent)) no-repeat 0 62% / 100% 88%;
       padding: 0 .12em; margin: 0 -.04em; border-radius: .14em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
     .next { position: relative; margin-top: 14px; padding: 12px 14px; background: var(--pk-panel);
       border-radius: 14px; box-shadow: 0 0 0 1px var(--pk-line) inset; }
-    .label { margin: 0 0 4px; font-family: var(--pk-mono); font-size: 11.5px; letter-spacing: .06em;
-      text-transform: uppercase; color: var(--pk-muted); }
+    .label { margin: 0 0 4px; font-size: 12.5px; color: var(--pk-muted); }
     .label b { color: #cfc4ff; font-weight: 600; }
     .next p.text { margin: 0; font-size: 17px; line-height: 1.4; overflow-wrap: anywhere; }
     .facts { position: relative; margin: 14px 0 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; }
-    .facts dt { font-family: var(--pk-mono); font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase;
-      color: var(--pk-faint); padding-top: 3px; }
+    .facts dt { font-size: 13px; font-weight: 500; color: var(--pk-faint); padding-top: 1px; }
     .facts dd { margin: 0; font-size: 15px; overflow-wrap: anywhere; }
     .q { color: var(--pk-muted); font-style: italic; }
     .soft { color: var(--pk-muted); }
@@ -237,9 +236,9 @@
       el('span', { class: 'thread', text: thread }));
 
     const rows = [
-      el('div', { class: 'meta' }, el('span', { class: 'dot', 'aria-hidden': 'true' }),
-        el('span', { text: 'Pickup' }), el('span', { class: 'sep', text: '/' }), awayEl),
       title,
+      el('div', { class: 'meta' }, el('span', { class: 'dot', 'aria-hidden': 'true' }),
+        el('span', { text: 'Pickup' }), el('span', { class: 'sep', text: '·' }), awayEl),
       nextStep && el('div', { class: 'next' },
         el('p', { class: 'label' }, el('b', { text: 'Your next step' }), ` · ${sourceLabel(data.nextStepSource)}`),
         el('p', { class: 'text', text: nextStep })),
@@ -327,9 +326,9 @@
     const btnClose = el('button', { 'type': 'button' }, 'Close', el('kbd', { 'aria-hidden': 'true', text: 'Esc' }));
     const title = el('h2', { id: 'pk-card-title' }, el('span', { class: 'lead', text: 'Start here: ' }), el('span', { class: 'thread', text: thread }));
     const rows = [
-      el('div', { class: 'meta' }, el('span', { class: 'dot', 'aria-hidden': 'true' }), el('span', { text: 'Pickup' }),
-        el('span', { class: 'sep', text: '/' }), el('span', { class: 'away', text: at ? `stopped at ${at}` : 'from last time' })),
       title,
+      el('div', { class: 'meta' }, el('span', { class: 'dot', 'aria-hidden': 'true' }), el('span', { text: 'Pickup' }),
+        el('span', { class: 'sep', text: '·' }), el('span', { class: 'away', text: at ? `stopped at ${at}` : 'from last time' })),
       nextStep && el('div', { class: 'next' },
         el('p', { class: 'label' }, el('b', { text: 'Your next step' }), ` · ${sourceLabel(data.nextStepSource)}`),
         el('p', { class: 'text', text: nextStep })),
