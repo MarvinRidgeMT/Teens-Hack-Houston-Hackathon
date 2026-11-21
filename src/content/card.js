@@ -1,4 +1,4 @@
-// Pickup — return card (Sid / Surface) · v3
+// Pickup — return card (Sid / Surface) · v3 (V4 visuals: pearl card, plum text, green Resume)
 // Classic content script, no build step. Load order in registerContentScripts:
 //   src/vendor/motion.js, src/vendor/anime.umd.min.js, src/content/card.js, overlay.js, docs.js, content.js
 //
@@ -26,21 +26,61 @@
   const TOKENS = `
     :host {
       all: initial;
-      --pk-bg: #15142b;
-      --pk-panel: rgba(165, 140, 255, .10);
-      --pk-line: rgba(241, 239, 252, .12);
-      --pk-line-strong: rgba(241, 239, 252, .24);
-      --pk-ink: #f4f2ff;
-      --pk-muted: #b9b4da;
-      --pk-faint: #9893c4;
-      --pk-accent: #c9ff38;
-      --pk-accent-hi: #dbff75;
-      --pk-accent-ink: #121126;
-      --pk-accent-glow: rgba(201, 255, 56, .30);
+      /* V4 "Soft Liquid Future", calm rendition (design/tokens.json "v4"). Near-opaque pearl so the
+         card reads on any website; plum text; pastels only as fills under plum text. */
+      --pk-bg: rgba(253, 251, 255, .97);
+      --pk-panel: #efe7ff;
+      --pk-line: rgba(48, 37, 69, .12);
+      --pk-line-strong: rgba(48, 37, 69, .26);
+      --pk-rim: rgba(187, 155, 250, .55);
+      --pk-ink: #302545;
+      --pk-muted: #554868;
+      --pk-faint: #6f6382;
+      --pk-link: #5a3cc4;
+      --pk-focus: #6a4be0;
+      --pk-focus-glow: rgba(106, 75, 224, .18);
+      --pk-accent: #c4f4ab;
+      --pk-accent-hi: #a6ea88;
+      --pk-accent-ink: #302545;
+      --pk-accent-edge: #5a8f45;
+      --pk-mint: #ddfbea;
+      --pk-dot: #2c6b4c;
+      --pk-danger: #a8213f;
+      --pk-key-bg: rgba(48, 37, 69, .05);
+      --pk-btn-bg: #ffffff;
+      --pk-btn-hover: #f6f1ff;
+      --pk-shadow: 0 0 0 1px var(--pk-rim) inset, 0 1px 0 0 rgba(255,255,255,.9) inset,
+        0 0 0 1px rgba(48, 37, 69, .06), 0 30px 60px -24px rgba(76, 52, 140, .42), 0 10px 24px -12px rgba(76, 52, 140, .24);
       --pk-radius: 20px;
-      --pk-font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --pk-font: "Geist", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --pk-display: "Plus Jakarta Sans", "Geist", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       --pk-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
       --pk-ease-out: cubic-bezier(.23, 1, .32, 1);
+    }
+    /* Plum midnight: the dark rendition, for a dark OS theme. */
+    @media (prefers-color-scheme: dark) {
+      :host {
+        --pk-bg: rgba(38, 30, 61, .97);
+        --pk-panel: #33284f;
+        --pk-line: rgba(244, 239, 255, .12);
+        --pk-line-strong: rgba(244, 239, 255, .26);
+        --pk-rim: rgba(201, 176, 255, .32);
+        --pk-ink: #f4efff;
+        --pk-muted: #cbbfe0;
+        --pk-faint: #a99cc0;
+        --pk-link: #c9b0ff;
+        --pk-focus: #c9b0ff;
+        --pk-focus-glow: rgba(201, 176, 255, .22);
+        --pk-accent-edge: #c4f4ab;
+        --pk-mint: #2f5a46;
+        --pk-dot: #9fe6bd;
+        --pk-danger: #ff8aa5;
+        --pk-key-bg: rgba(244, 239, 255, .08);
+        --pk-btn-bg: rgba(244, 239, 255, .06);
+        --pk-btn-hover: rgba(244, 239, 255, .11);
+        --pk-shadow: 0 0 0 1px var(--pk-rim) inset, 0 1px 0 0 rgba(255,255,255,.06) inset,
+          0 30px 60px -20px rgba(8, 3, 24, .6), 0 10px 24px -8px rgba(8, 3, 24, .4);
+      }
     }
   `;
 
@@ -131,52 +171,53 @@
     }
     .card {
       position: relative; background: var(--pk-bg); border-radius: var(--pk-radius);
-      box-shadow: 0 0 0 1px var(--pk-line) inset, 0 1px 0 0 rgba(255,255,255,.06) inset,
-        0 30px 60px -20px rgba(0,0,0,.55), 0 10px 24px -8px rgba(0,0,0,.35);
-      padding: 18px 20px 16px; transform-origin: top right; overflow: hidden;
+      -webkit-backdrop-filter: blur(16px) saturate(140%); backdrop-filter: blur(16px) saturate(140%);
+      box-shadow: var(--pk-shadow);
+      padding: 20px 20px 18px; transform-origin: top right; overflow: hidden;
     }
-    /* The facts line sits under the heading (no kicker above it), in the text face. */
-    .meta { position: relative; display: flex; align-items: center; gap: 8px; margin-top: 6px;
-      font-size: 13px; color: var(--pk-muted); }
-    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--pk-accent); }
-    @media (prefers-reduced-motion: no-preference) {
-      .dot { animation: pk-pulse 2.4s var(--pk-ease-out) infinite; }
-      @keyframes pk-pulse { 0% { box-shadow: 0 0 0 0 var(--pk-accent-glow); } 70%, 100% { box-shadow: 0 0 0 8px rgba(201,255,56,0); } }
-    }
+    /* 1. The task name: display-weight type on a soft, round-ended mint underlay (no highlighter). */
+    h2 { position: relative; margin: 0; font-family: var(--pk-display); font-size: 24px; line-height: 1.22; font-weight: 780;
+      letter-spacing: -.025em; overflow-wrap: anywhere; text-wrap: balance; color: var(--pk-ink); }
+    h2 .lead { display: block; margin-bottom: 4px; font-family: var(--pk-font); font-size: 13px; line-height: 1.35;
+      font-weight: 500; letter-spacing: 0; color: var(--pk-muted); }
+    h2 .thread { color: var(--pk-ink); background: var(--pk-mint); padding: 0 .22em; margin: 0 -.06em; border-radius: .38em;
+      -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+    /* 3. Saved context: the facts line sits under the name, in the text face. */
+    .meta { position: relative; display: flex; align-items: center; gap: 8px; margin-top: 8px;
+      font-size: 13px; color: var(--pk-muted); font-variant-numeric: tabular-nums; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--pk-dot); flex: none; }
     .sep { color: var(--pk-faint); }
-    .away { color: var(--pk-ink); font-variant-numeric: tabular-nums; }
-    h2 { position: relative; margin: 2px 0 0; font-size: 22px; line-height: 1.25; font-weight: 600;
-      letter-spacing: -.02em; overflow-wrap: anywhere; }
-    h2 .thread { color: var(--pk-accent-ink); background: linear-gradient(var(--pk-accent), var(--pk-accent)) no-repeat 0 62% / 100% 88%;
-      padding: 0 .12em; margin: 0 -.04em; border-radius: .14em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
-    .next { position: relative; margin-top: 14px; padding: 12px 14px; background: var(--pk-panel);
+    .away { color: var(--pk-ink); font-weight: 500; font-variant-numeric: tabular-nums; }
+    /* 2. Your next step, in your own words. */
+    .next { position: relative; margin-top: 16px; padding: 12px 14px 13px; background: var(--pk-panel);
       border-radius: 14px; box-shadow: 0 0 0 1px var(--pk-line) inset; }
     .label { margin: 0 0 4px; font-size: 12.5px; color: var(--pk-muted); }
-    .label b { color: #cfc4ff; font-weight: 600; }
-    .next p.text { margin: 0; font-size: 17px; line-height: 1.4; overflow-wrap: anywhere; }
+    .label b { color: var(--pk-link); font-weight: 650; }
+    .next p.text { margin: 0; font-size: 17px; line-height: 1.4; font-weight: 500; color: var(--pk-ink); overflow-wrap: anywhere; }
     .facts { position: relative; margin: 14px 0 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; }
     .facts dt { font-size: 13px; font-weight: 500; color: var(--pk-faint); padding-top: 1px; }
-    .facts dd { margin: 0; font-size: 15px; overflow-wrap: anywhere; }
+    .facts dd { margin: 0; font-size: 15px; color: var(--pk-ink); overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
     .q { color: var(--pk-muted); font-style: italic; }
     .soft { color: var(--pk-muted); }
     .actions { position: relative; display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-top: 18px; }
     button {
-      font: inherit; font-size: 15px; font-weight: 500; letter-spacing: -.01em;
-      border: 0; border-radius: 999px; padding: 10px 16px; cursor: pointer;
-      color: var(--pk-ink); background: rgba(255,255,255,.06); box-shadow: 0 0 0 1px var(--pk-line) inset;
+      font: inherit; font-size: 15px; font-weight: 500; letter-spacing: -.005em;
+      border: 0; border-radius: 14px; padding: 10px 16px; cursor: pointer;
+      color: var(--pk-ink); background: var(--pk-btn-bg); box-shadow: 0 0 0 1px var(--pk-line-strong) inset;
       display: inline-flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap;
       transition: background-color .15s var(--pk-ease-out), box-shadow .15s var(--pk-ease-out);
     }
-    button:hover { background: rgba(255,255,255,.1); box-shadow: 0 0 0 1px var(--pk-line-strong) inset; }
-    button.primary { grid-column: 1 / -1; padding: 12px 16px; font-size: 16px; font-weight: 600;
+    button:hover { background: var(--pk-btn-hover); box-shadow: 0 0 0 1px var(--pk-muted) inset; }
+    /* 4. Resume: the one strong action. Green fill, plum label, a deeper green rim (3:1 on pearl). */
+    button.primary { grid-column: 1 / -1; padding: 13px 16px; font-size: 16px; font-weight: 650;
       background: var(--pk-accent); color: var(--pk-accent-ink);
-      box-shadow: 0 0 0 1px rgba(255,255,255,.25) inset, 0 6px 14px -6px rgba(0,0,0,.45); }
-    button.primary:hover { background: var(--pk-accent-hi); }
+      box-shadow: 0 0 0 1px var(--pk-accent-edge) inset, 0 1px 0 0 rgba(255,255,255,.6) inset, 0 8px 18px -10px rgba(76, 52, 140, .45); }
+    button.primary:hover { background: var(--pk-accent-hi); box-shadow: 0 0 0 1px var(--pk-accent-edge) inset, 0 8px 18px -10px rgba(76, 52, 140, .45); }
     button .arrow { display: inline-grid; }
-    button:focus-visible { outline: 2px solid var(--pk-accent); outline-offset: 3px; }
-    kbd { font-family: var(--pk-mono); font-size: 11px; font-weight: 500; line-height: 1; padding: 3px 5px; border-radius: 5px;
-      background: rgba(255,255,255,.08); box-shadow: 0 0 0 1px var(--pk-line) inset; color: var(--pk-muted); }
-    button.primary kbd { background: rgba(18,17,38,.12); box-shadow: 0 0 0 1px rgba(18,17,38,.24) inset; color: var(--pk-accent-ink); }
+    button:focus-visible { outline: 2px solid var(--pk-focus); outline-offset: 3px; }
+    kbd { font-family: var(--pk-mono); font-size: 11px; font-weight: 500; line-height: 1; padding: 3px 5px; border-radius: 6px;
+      background: var(--pk-key-bg); box-shadow: 0 0 0 1px var(--pk-line-strong) inset; color: var(--pk-muted); }
+    button.primary kbd { background: rgba(48,37,69,.08); box-shadow: 0 0 0 1px rgba(48,37,69,.28) inset; color: var(--pk-accent-ink); }
     .card:focus { outline: none; }
     .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   `;
