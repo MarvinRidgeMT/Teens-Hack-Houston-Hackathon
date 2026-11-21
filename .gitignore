@@ -1,12 +1,45 @@
+# OS and editor files
 .DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Dependencies and build output
 node_modules/
+build/
+web/three-src/laptop/out/
+*.blend
+*.blend1
+
+# Release zips and packed extensions (attach these to GitHub releases; don't commit them)
 *.zip
+*.crx
+
+# Secrets: never commit these
 .env
 .env.*
+!.env.example
+*.pem
+*.key
+*.p12
+credentials*.json
+secrets*.json
+
 # Chrome profiles and real-Chrome run output (the driver writes these to a temp dir; never commit them)
 *profile*/
 pickup-real-chrome/
 results*.json
+
+# Screenshots the dev scripts in test/dev/ regenerate
+docs-shots/palette/
+docs/v4/after/
+docs/v4/before/
+.impeccable/review/
+
+# Logs
+*.log
+npm-debug.log*
+
 # Claude Code local state and agent worktrees
 .claude/
-build/
