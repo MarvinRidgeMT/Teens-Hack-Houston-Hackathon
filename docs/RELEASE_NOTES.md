@@ -49,3 +49,13 @@ Everything stays in `chrome.storage.local`. No account, no servers, no analytics
 - It can't read Google Docs text, so in Docs it saves your place without a highlight.
 - "Time to first interaction" is a stand-in for getting back into work, not a measure of focus.
 - Our pilot is the 3 people who built it, over about a day: a starting point, not proof.
+
+## Checksum
+
+`pickup-v1.0.0.zip` is 807,878 bytes. SHA-256:
+
+```
+6423bc585b802b5ed1f32516ddbee4e6b5383ed9e7aab259faca2e1d880ca62f
+```
+
+Check it with `shasum -a 256 pickup-v1.0.0.zip` (Mac, Linux) or `Get-FileHash pickup-v1.0.0.zip` (Windows PowerShell).
