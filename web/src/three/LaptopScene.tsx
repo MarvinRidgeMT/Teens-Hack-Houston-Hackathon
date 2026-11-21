@@ -1,10 +1,10 @@
 // The 3D stage: studio lighting built from light-formers (no HDR download), soft contact shadow,
 // and a camera rig that follows the story step and, gently, the pointer.
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { ContactShadows, Environment, Lightformer } from '@react-three/drei';
 import * as THREE from 'three';
-import { Laptop } from './Laptop';
+import { Laptop, laptopHull } from './Laptop';
 import { story } from './story';
 
 // Pose per story step: laptop yaw/pitch and camera position / target.
@@ -14,6 +14,54 @@ const POSES = {
   close: { x: 0.1, yaw: 0, pitch: 0, cam: [0, 1.9, 7.5], look: [0, 0.85, -0.5] },
 } as const;
 
+type Pose = (typeof POSES)[keyof typeof POSES];
+
+const HULL = laptopHull();
+const RIG_Y = -0.35;
+// Clear space to keep around the laptop, in CSS px: the left edge fades out, and the nav sits over the top.
+const MARGIN = { left: 64, right: 32, top: 96, bottom: 32 };
+
+/**
+ * The camera position for a pose, moved back along its line of sight until every corner of the
+ * laptop (at that pose's turn, plus room for the pointer tilt) sits inside the canvas margins.
+ * It only ever moves back, so a pose that already fits keeps the framing it was tuned with.
+ */
+function fitCamera(p: Pose, width: number, height: number, fov: number): THREE.Vector3 {
+  const look = new THREE.Vector3(...(p.look as [number, number, number]));
+  const cam = new THREE.Vector3(...(p.cam as [number, number, number]));
+  if (width < 1 || height < 1) return cam;
+  const probe = new THREE.PerspectiveCamera(fov, width / height, 0.1, 50);
+  const lim = {
+    left: -1 + (2 * MARGIN.left) / width,
+    right: 1 - (2 * MARGIN.right) / width,
+    top: 1 - (2 * MARGIN.top) / height,
+    bottom: -1 + (2 * MARGIN.bottom) / height,
+  };
+  const corners: THREE.Vector3[] = [];
+  for (const sway of [-0.12, 0, 0.12]) {
+    const m = new THREE.Matrix4().compose(
+      new THREE.Vector3(p.x, RIG_Y, 0),
+      new THREE.Quaternion().setFromEuler(new THREE.Euler(p.pitch, p.yaw + sway, 0)),
+      new THREE.Vector3(1, 1, 1),
+    );
+    HULL.forEach((v) => corners.push(v.clone().applyMatrix4(m)));
+  }
+  const v = new THREE.Vector3();
+  for (let i = 0; i < 6; i++) {
+    probe.position.copy(cam);
+    probe.lookAt(look);
+    probe.updateMatrixWorld();
+    let over = 1;
+    for (const c of corners) {
+      v.copy(c).project(probe);
+      over = Math.max(over, v.x / lim.right, v.x / lim.left, v.y / lim.top, v.y / lim.bottom);
+    }
+    if (over <= 1.001) break;
+    cam.sub(look).multiplyScalar(over * 1.01).add(look);
+  }
+  return cam;
+}
+
 function poseFor(step: number) {
   if (step < 0) return POSES.hero;
   if (step === 2) return POSES.close; // the return card: come closest
@@ -22,14 +70,20 @@ function poseFor(step: number) {
 
 function Rig({ reduced }: { reduced: boolean }) {
   const group = useRef<THREE.Group>(null);
-  const { camera } = useThree();
+  const { camera, size } = useThree();
+  const fov = (camera as THREE.PerspectiveCamera).fov;
+  const fitted = useMemo(() => {
+    const out = new Map<Pose, THREE.Vector3>();
+    Object.values(POSES).forEach((p) => out.set(p, fitCamera(p, size.width, size.height, fov)));
+    return out;
+  }, [size.width, size.height, fov]);
   const look = useRef(new THREE.Vector3(...POSES.hero.look));
   const started = useRef(0);
   const target = new THREE.Vector3();
 
   useEffect(() => {
-    camera.position.set(...(POSES.hero.cam as [number, number, number]));
-  }, [camera]);
+    camera.position.copy(fitted.get(POSES.hero)!);
+  }, [camera]); // the first frame only; later frames ease toward the fitted pose
 
   useFrame((_, dt) => {
     const d = Math.min(dt, 1 / 20);
@@ -48,8 +102,7 @@ function Rig({ reduced }: { reduced: boolean }) {
       group.current.rotation.x += (pitch - group.current.rotation.x) * k;
       group.current.position.x += (p.x - group.current.position.x) * k;
     }
-    target.set(...(p.cam as [number, number, number]));
-    camera.position.lerp(target, k);
+    camera.position.lerp(fitted.get(p)!, k);
     look.current.lerp(target.set(...(p.look as [number, number, number])), k);
     camera.lookAt(look.current);
   });
