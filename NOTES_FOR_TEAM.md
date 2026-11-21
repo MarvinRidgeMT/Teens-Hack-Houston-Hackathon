@@ -191,3 +191,21 @@ Built by Claude Code on `redesign/pages` from the design-system templates, for A
 `site/` now uses the design system: Paper (light) and Blue hour (dark) follow the visitor's system setting, Inter is self-hosted in `site/assets/fonts/` (OFL), the brand tile is `pk-mark`, and the footer is the Driftbar meadow (SVG hills, frosted "Pickup" wordmark, fog). Fireflies and fog only move when reduced motion is off. The CSS is copied into `site/styles.css`, so `site/` still works on its own with no third-party requests. Same content, anchors and placeholders as before.
 - **Screenshots** are still the old teal look. `<!-- SHOTS: replace with redesign screenshots -->` marks the four places to swap (social preview image in `<head>`, hero, How it works, demo poster). Keep `site/` under 1.5 MB (it's about 1.3 MB now).
 - **Favicons** (`site/assets/icon*.png`) are still the old teal icon. Swap them when a real logo exists.
+
+## Palette "Warm Desk, Teal Spark" (Fri night, branch `release/v1`)
+
+Token values changed; no token names, components, layout, copy or IDs changed. Spec: `design/Student_focus_app_colour_palettes.md`. Picked values and the contrast test: `design/SOURCE.md`, `test/contrast.test.mjs` (in `npm test`).
+- Teal `#0d7c72` (dark `#3dd6c4`) is the one primary button. Violet `#5b4be0` / `#a99cff` marks the resume moment: the next step, the active task, focus. Red appears only on Delete all.
+- Toolbar badge: `P` violet, `•` neutral grey (being away is normal), `☾` ink, `✓` teal. The glyphs carry the meaning.
+
+### For Sidd: card and overlay colours (only the `--pk-*` values in `card.js` `TOKENS`; you haven't signed off, so not changed)
+1. `--pk-bg: #1c2029`. The card stays dark on every site.
+2. `--pk-panel: rgba(169, 156, 255, .08)`: the next-step box gets the violet tint.
+3. `--pk-line: rgba(230, 232, 238, .14)`; `--pk-line-strong: rgba(230, 232, 238, .26)`.
+4. `--pk-ink: #e6e8ee`; `--pk-muted: #9aa0ae`; `--pk-faint: #8a8f9c`.
+5. `--pk-accent: #2dd4bf` stays spark teal as the Resume fill behind dark text: `--pk-accent-ink: #14171f`. The task name in the headline (`h2 .thread`) uses it as text; that's fine on the dark card, but to keep "spark never as text" switch it to `--pk-resume` or ink.
+6. Next-step label (`.label b`) → `#a99cff` (resume violet). Add a `--pk-resume: #a99cff` and use it there.
+7. The `.next` box border → `rgba(169, 156, 255, .28)`, so the violet "soft landing" reads.
+8. The overlay (`overlay.js`) uses the same `--pk-*` variables, so it follows. Its hard-coded focus glow `rgba(45,212,191,.15)` can stay.
+9. The card is the pilot's treatment: when this ships, add **"card v2 (palette) from <exact time>"** to the Treatment change log here and in `test/REAL_CHROME_LOG.md`.
+10. The card already uses spark teal on dark, so it fits the palette as it is if there's no time tonight.

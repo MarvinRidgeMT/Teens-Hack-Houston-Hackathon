@@ -74,6 +74,7 @@ function readForm() {
     debug: $('debug').checked,
     forceCard: $('force-card').checked,
     features,
+    calm: $('calm').checked,
     voiceEnabled: $('voice-enabled').checked,
     wakeWord: $('wake-word').checked,
     readAloud: $('read-aloud').checked,
@@ -95,6 +96,7 @@ function fillForm(s) {
   $('read-aloud').checked = s.readAloud !== false;
   const f = featuresOf(s);
   for (const k of Object.keys(FEATURE_DEFAULTS)) $(`feat-${k}`).checked = f[k];
+  $('calm').checked = !!s.calm;
   syncDependents();
   syncChips(s);
 }

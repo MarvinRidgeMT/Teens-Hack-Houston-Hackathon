@@ -78,6 +78,7 @@ export function mergeSettings(current, form) {
   next.nudgeDelayMin = clampInt(form.nudgeMin, 1, 120, DEFAULT_SETTINGS.nudgeDelayMin);
   next.debug = !!form.debug;
   next.forceCard = !!form.debug && !!form.forceCard; // force card only works with debug
+  next.calm = form.calm !== undefined ? !!form.calm : !!cur.calm;
   next.features = { ...(cur.features || {}), ...featuresOf({ features: { ...(cur.features || {}), ...(form.features || {}) } }) };
   return next;
 }

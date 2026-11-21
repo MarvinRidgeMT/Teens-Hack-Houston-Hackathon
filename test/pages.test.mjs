@@ -263,4 +263,12 @@ await step('no page copy uses the word "productivity"', async () => {
   for (const f of files) assert.ok(!/productivity/i.test(fs.readFileSync(path.join(root, f), 'utf8')), f);
 });
 
+await step('Calm colours: setup saves settings.calm (default off) and keeps it when the form leaves it out', async () => {
+  const setup = await import('../src/pages/setup-logic.js');
+  const base = { participant: 'a', workSites: ['wikipedia.org'], distractionSites: [], awayMin: '2', nudgeMin: '5' };
+  assert.equal(setup.mergeSettings({}, base).calm, false);
+  assert.equal(setup.mergeSettings({}, { ...base, calm: true }).calm, true);
+  assert.equal(setup.mergeSettings({ calm: true }, base).calm, true);
+});
+
 console.log(`\n${passed} pages checks passed${process.exitCode ? ' — SOME FAILED' : ''}`);

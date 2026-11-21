@@ -150,3 +150,18 @@ Local branch `redesign/integration-test` (never pushed), Chrome for Testing 157.
 ## Treatment change: notification copy v2 + Paper badge colours (Fri Nov 20, 8:23 PM ET)
 
 `redesign/engine-panel`, `redesign/pages` and `redesign/site` merged into local `main` at **8:23 PM ET**. For **both** conditions, the nudge, break-over and Start here notifications now read "Your next step for <task>" / "Next: … · Alt+R takes you back", and the badge uses the Paper colours. A pilot laptop gets this when it pulls and reloads the extension; note each laptop's reload time here. The return card is unchanged: **no "card v2" yet**.
+
+## Run 15: release/v1 with the palette and Calm colours (Fri evening)
+
+Branch `release/v1` = `main` + palette "Warm Desk, Teal Spark" + Calm colours. Chrome for Testing 157.0.8103.78.
+- **Gate (palette commit):** 23 pass, 0 fail. **Gate (with Calm):** 23 pass, 0 fail. Steps 6–8 pass in both: return, card, Resume, first interaction.
+- **Palette screenshots** (light, dark, Calm) are in `docs-shots/palette/` (`node test/dev/palette-shots.mjs`). The dashboard and receipt use made-up events.
+- **The card is unchanged** (Sidd hasn't signed off), so there's no "card v2 (palette)" line. The badge colours change for both conditions when `release/v1` merges.
+- **Review fixes:**
+  - `--shadow-tile` restored;
+  - Calm also softens the parked and saved colours;
+  - the site's old shadow tint replaced;
+  - the meadow's middle hill is violet again;
+  - the panel's listening dot is still under Calm;
+  - the contrast test's spark/reward check also catches raw hex values.
+- **Known:** with Calm on, the saturated colours flash briefly before the setting loads. That's accepted for tonight.
