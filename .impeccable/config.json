@@ -62,6 +62,33 @@
         "value": "geist",
         "createdAt": "2026-11-21T16:18:51.829Z",
         "reason": "Documented in DESIGN.md as 'Geist Variable' (the site's fontsource name); the extension declares the same face as 'Geist'"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "test/dev/dev-setup.html"
+        ],
+        "createdAt": "2026-11-21T16:20:36.072Z",
+        "reason": "Claude triage: dev-only test harness page (test/dev), never shipped; predates the V4 work"
+      },
+      {
+        "rule": "flat-type-hierarchy",
+        "value": "*",
+        "files": [
+          "test/dev/dev-setup.html"
+        ],
+        "createdAt": "2026-11-21T16:20:36.084Z",
+        "reason": "Claude triage: dev-only test harness page (test/dev), never shipped; predates the V4 work"
+      },
+      {
+        "rule": "wide-tracking",
+        "value": "*",
+        "files": [
+          "test/dev/card-preview.html"
+        ],
+        "createdAt": "2026-11-21T16:20:36.095Z",
+        "reason": "Claude triage: dev-only preview fixture for Sidd's card (test/dev), never shipped; its host-page CSS is deliberately ugly to prove the Shadow DOM isolates the card"
       }
     ]
   }
