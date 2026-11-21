@@ -121,8 +121,8 @@ function drawVideo(ctx: CanvasRenderingContext2D) {
   const vx = (W - vw) / 2;
   const vy = CHROME + 70;
   const g = ctx.createLinearGradient(vx, vy, vx + vw, vy + vh);
-  g.addColorStop(0, css('--violet-soft'));
-  g.addColorStop(1, css('--bubblegum'));
+  g.addColorStop(0, css('--bubblegum'));
+  g.addColorStop(1, css('--peach'));
   ctx.fillStyle = g;
   roundRect(ctx, vx, vy, vw, vh, 28);
   ctx.fill();

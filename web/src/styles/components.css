@@ -111,7 +111,7 @@ html.is-locked { overflow: hidden; }
 .bf__tabs { display: flex; gap: 6px; min-width: 0; overflow: hidden; list-style: none; margin: 0; padding: 0; }
 .bf__tab { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px; border-radius: 10px; font: 550 13px/1 var(--font-ui); color: var(--plum-2); background: transparent; white-space: nowrap; }
 .bf__tab.is-active { background: var(--surface-elevated); color: var(--plum); box-shadow: 0 1px 0 var(--line); }
-.bf__tab.is-group { box-shadow: inset 0 -3px 0 var(--green-2); }
+.bf__tab.is-group { background: var(--mint); color: var(--plum); }
 .bf__tab.is-later { background: var(--canvas); color: var(--plum-3); }
 .bf__group { display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 8px; background: var(--green); font: 650 12.5px/1 var(--font-ui); color: var(--plum); white-space: nowrap; }
 .bf__body { position: relative; padding: 22px 26px; min-height: 220px; }
