@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { AnimatePresence, LayoutGroup, motion } from 'motion/react';
-import { BellRing, CornerUpLeft, TextSelect, MoonStar, PanelRight, Mic, Video, Receipt, Check } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { Button, Keys, Mark, SectionHead } from '../components/ui';
 
 const spring = { type: 'spring' as const, bounce: 0.18, duration: 0.5 };
@@ -92,22 +92,71 @@ function TabsDemo({ reduced }: { reduced: boolean }) {
   );
 }
 
+function DriftDemo({ reduced }: { reduced: boolean }) {
+  const [shown, setShown] = useState(false);
+  const t = reduced ? { duration: 0 } : spring;
+  return (
+    <div className="demo demo--drift">
+      <p className="demo__fine">You wrote a next step and left for a video. Five minutes later:</p>
+      <AnimatePresence initial={false}>
+        {shown && (
+          <motion.div key="n" className="notif" role="status" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={t}>
+            <span className="pk-mark" style={{ width: 28, height: 28 }} aria-hidden="true" />
+            <div>
+              <p className="notif__title">Your next step for Climate essay</p>
+              <p className="notif__body">Next: Find a source for the 2023 rainfall number · Alt+R takes you back</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <div className="demo__actions">
+        <Button variant="secondary" onClick={() => setShown((v) => !v)}>{shown ? 'Dismiss' : 'Skip ahead 5 minutes'}</Button>
+      </div>
+      <p className="demo__fine">That's the only one for this break. No next step written, no reminder.</p>
+    </div>
+  );
+}
+
+function AltRDemo({ reduced }: { reduced: boolean }) {
+  const [back, setBack] = useState(false);
+  const t = reduced ? { duration: 0 } : spring;
+  return (
+    <div className="demo demo--altr" onKeyDown={(e) => { if (e.altKey && e.code === 'KeyR') { e.preventDefault(); setBack(true); } }}>
+      <LayoutGroup>
+        <ul className="tabstrip" aria-label="Example tabs">
+          {['Climate essay: draft', 'Group chat', 'Lo-fi beats'].map((title, i) => {
+            const active = back ? i === 0 : i === 1;
+            return (
+              <motion.li layout key={title} transition={t} className={`tabstrip__tab ${active ? 'is-active' : ''} ${i === 0 ? 'in-group' : ''}`} aria-current={active ? 'page' : undefined}>
+                {title}
+              </motion.li>
+            );
+          })}
+        </ul>
+      </LayoutGroup>
+      <div className="demo__actions">
+        <Button variant="secondary" disabled={back} onClick={() => setBack(true)}>Press Alt+R</Button>
+        {back && <Button variant="ghost" onClick={() => setBack(false)}>Reset</Button>}
+      </div>
+      <p className="demo__fine" role="status">{back ? "You're on your task's tab again, from anywhere in Chrome." : 'You are in the group chat tab.'}</p>
+    </div>
+  );
+}
+
 const MORE = [
-  { icon: BellRing, tone: 'pink', title: 'Drift nudge', body: 'One reminder per break, only if you wrote a next step.' },
-  { icon: CornerUpLeft, tone: 'lime', title: 'Alt+R from anywhere', body: 'Jump back to your task from any tab.', keys: ['Alt', 'R'] },
-  { icon: TextSelect, tone: 'yellow', title: 'Make this my next step', body: 'Right-click a sentence on a work page to save it as your next step.' },
-  { icon: MoonStar, tone: 'violet', title: 'Wrap up, then Start here', body: 'Save your place at night; get one "Start here" reminder the next morning.' },
-  { icon: PanelRight, tone: 'cyan', title: 'Pickup panel', body: 'Ask "where was I?", set a break timer ("back in 10"), see your tasks.', keys: ['Alt', 'V'] },
-  { icon: Video, tone: 'pink', title: 'Lecture video', body: 'On resume, a video goes back 10 seconds and waits, paused.' },
-  { icon: Receipt, tone: 'yellow', title: 'Comeback receipt', body: "Save a picture of this week's comebacks from the dashboard: how many, and your longest break. No streaks." },
-  { icon: Mic, tone: 'ink', title: '"Hey Pickup" voice', body: 'Optional and off by default. Recognised on your device.' },
+  { title: 'Make this my next step', body: 'Right-click a sentence on a work page to save it as your next step.' },
+  { title: 'Wrap up, then Start here', body: 'Save your place at night; get one "Start here" reminder the next morning.' },
+  { title: 'Pickup panel', body: 'Ask "where was I?", set a break timer ("back in 10"), see your tasks.', keys: ['Alt', 'V'] },
+  { title: 'Lecture video', body: 'On resume, a video goes back 10 seconds and waits, paused.' },
+  { title: 'Comeback receipt', body: "Save a picture of this week's comebacks from the dashboard: how many, and your longest break. No streaks." },
+  { title: '"Hey Pickup" voice', body: 'Optional and off by default. Recognised on your device; no audio is kept.' },
 ] as const;
 
 export function Features({ reduced }: { reduced: boolean }) {
   return (
     <section className="features" id="features" aria-labelledby="features-title">
       <div className="wrap">
-        <SectionHead id="features-title" title={<>Everything in v1.0, <Mark tone="cyan">doing its job.</Mark></>} lede="What Pickup does today. No roadmap items on this page." />
+        <SectionHead id="features-title" title={<>Everything in v1.0, <Mark>doing its job.</Mark></>} lede="What Pickup does today. No roadmap items on this page." />
 
         <article className="feat-hero">
           <div className="feat-hero__copy">
@@ -140,14 +189,24 @@ export function Features({ reduced }: { reduced: boolean }) {
           </article>
         </div>
 
+        <div className="feat-pair feat-pair--second">
+          <article className="feat-tile feat-tile--pink">
+            <h3 className="h3">Drift nudge</h3>
+            <p>One quiet reminder per break, and only if you left yourself a next step.</p>
+            <DriftDemo reduced={reduced} />
+          </article>
+          <article className="feat-tile feat-tile--lime">
+            <h3 className="h3">Back with <Keys keys={['Alt', 'R']} /></h3>
+            <p>From any tab in Chrome, one shortcut puts you back on the task.</p>
+            <AltRDemo reduced={reduced} />
+          </article>
+        </div>
+
         <ul className="feat-list">
-          {MORE.map(({ icon: Icon, tone, title, body, ...rest }) => (
-            <li key={title} className="feat-row">
-              <span className={`feat-row__icon feat-row__icon--${tone}`} aria-hidden="true"><Icon size={20} strokeWidth={2} /></span>
-              <div>
-                <h3 className="feat-row__title">{title} {'keys' in rest && <Keys keys={rest.keys} />}</h3>
-                <p>{body}</p>
-              </div>
+          {MORE.map((f) => (
+            <li key={f.title} className="feat-row">
+              <h3 className="feat-row__title">{f.title} {'keys' in f && <Keys keys={f.keys} />}</h3>
+              <p>{f.body}</p>
             </li>
           ))}
         </ul>

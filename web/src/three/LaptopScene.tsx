@@ -57,6 +57,8 @@ function Rig({ reduced }: { reduced: boolean }) {
   return (
     <group ref={group} position={[0, -0.35, 0]}>
       <Laptop />
+      {/* grounding: a soft neutral shadow right under the base; it moves with the laptop */}
+      <ContactShadows position={[0, -0.046, 0.25]} opacity={0.5} scale={[4.2, 3.2]} blur={1.8} far={0.9} resolution={512} color="#000000" />
     </group>
   );
 }
@@ -95,6 +97,9 @@ export default function LaptopScene({ reduced, onFail }: { reduced: boolean; onF
         <Environment resolution={256} frames={1}>
           {/* soft key */}
           <Lightformer form="rect" intensity={5} position={[0, 5, 3]} scale={[10, 5, 1]} rotation={[-Math.PI / 3, 0, 0]} />
+          {/* overhead softbox behind the laptop: the deck and palm rest reflect it, so they read as silver aluminium */}
+          <Lightformer form="rect" intensity={4} position={[0, 6, -6]} scale={[14, 6, 1]} rotation={[Math.PI / 4, 0, 0]} />
+          <Lightformer form="rect" intensity={2.2} position={[0, 7, 1]} scale={[12, 8, 1]} rotation={[Math.PI / 2, 0, 0]} />
           {/* floor bounce so the aluminium reads silver, not grey */}
           <Lightformer form="rect" intensity={1.6} position={[0, -3, 2]} scale={[10, 4, 1]} rotation={[Math.PI / 2.4, 0, 0]} />
           {/* violet rim */}
@@ -105,7 +110,6 @@ export default function LaptopScene({ reduced, onFail }: { reduced: boolean; onF
           <Lightformer form="ring" intensity={0.8} position={[0, 2, 8]} scale={4} />
         </Environment>
         <Rig reduced={reduced} />
-        <ContactShadows position={[0, -0.42, 0.2]} opacity={0.45} scale={9} blur={2.6} far={3} resolution={512} color="#1a0b5c" />
       </Canvas>
     </div>
   );

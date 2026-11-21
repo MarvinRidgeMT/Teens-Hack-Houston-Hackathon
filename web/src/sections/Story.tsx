@@ -159,7 +159,6 @@ export function Story({ reduced }: { reduced: boolean }) {
             <ol className="walk__steps">
               {WALKTHROUGH.map((s, i) => (
                 <li key={s.id} id={`step-${s.id}`} className={`walk__step ${active === i ? 'is-active' : ''}`}>
-                  <span className="walk__num" aria-hidden="true">{i + 1}</span>
                   <h3 className="walk__step-title">
                     <span className="walk__stroke">{s.title}</span>
                     <Keys keys={s.keys} />

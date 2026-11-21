@@ -129,9 +129,8 @@ export function TryIt({ reduced }: { reduced: boolean }) {
                     transition={ease}
                     onKeyDown={cardKeys}
                   >
-                    <p className="rcard__kicker"><span className="rcard__dot" aria-hidden="true" />Welcome back</p>
-                    <h3 id="rcard-title" className="rcard__title">Climate essay</h3>
-                    <p className="rcard__meta">Away <span className="tnum">{mins}</span> min</p>
+                    <h3 id="rcard-title" className="rcard__title">Welcome back to <span className="rcard__thread">Climate essay</span></h3>
+                    <p className="rcard__meta"><span className="rcard__dot" aria-hidden="true" />Pickup · away <span className="tnum">{mins}</span> min</p>
                     {note.trim() && (
                       <div className="rcard__next">
                         <p className="rcard__label">Your next step (you wrote this)</p>

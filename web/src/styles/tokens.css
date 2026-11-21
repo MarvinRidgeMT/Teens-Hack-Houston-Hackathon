@@ -85,8 +85,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: var(--midnight);
-    --surface: var(--midnight-2);
+    --bg: #18172f;               /* a step above the midnight story and privacy bands, so sections stay distinct */
+    --surface: #221f42;
     --surface-sunk: var(--midnight-3);
     --text: #f1effc;
     --text-2: #b9b4da;
