@@ -1,6 +1,6 @@
 /* Hero + device frame + stage canvas. */
 .hero { position: relative; min-height: max(100svh, 720px); display: flex; align-items: center; padding: calc(var(--nav-h) + 56px) 0 64px; overflow: clip; background: linear-gradient(180deg, var(--canvas), var(--canvas-2)); }
-.hero__grid { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr); gap: clamp(24px, 3vw, 56px); align-items: center; }
+.hero__grid { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 0.84fr) minmax(0, 1.16fr); gap: clamp(24px, 3vw, 56px); align-items: center; }
 .hero__title { max-width: 12.5ch; }
 .hero__title .hero__mask { padding-right: 0.08em; }
 .hero__mask { display: block; overflow: hidden; padding-bottom: 0.08em; margin-bottom: -0.08em; }
@@ -13,14 +13,14 @@
 .hero__facts li::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--green-2); box-shadow: 0 0 0 3px var(--mint); }
 
 .hero__stage { position: relative; aspect-ratio: 1.18; min-height: 440px; }
-.hero__canvas { position: absolute; inset: -6% -10% -4% -6%; }
+.hero__canvas { position: absolute; inset: -14% -14% -8% -8%; }
 .hero__canvas .stage-canvas { position: absolute; inset: 0; }
 
 /* context objects, placed around the laptop like props on a set */
 .hero-obj { position: absolute; z-index: 3; will-change: transform; }
-.hero-obj--task { left: -2%; top: 12%; }
-.hero-obj--next { right: -2%; bottom: 13%; max-width: min(380px, 70%); }
-.hero-obj--away { right: 14%; top: 5%; }
+.hero-obj--task { left: 0; top: 6%; }
+.hero-obj--next { right: 4%; bottom: 2%; max-width: min(380px, 70%); }
+.hero-obj--away { right: 0; top: -2%; }
 .ctx { display: flex; align-items: center; gap: 12px; color: var(--plum); }
 .ctx--task { padding: 12px 18px 12px 12px; }
 .ctx--task strong { display: block; font: 720 17px/1.15 var(--font-display); letter-spacing: -0.015em; }

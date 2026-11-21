@@ -53,7 +53,7 @@ function Pinned({ reduced }: { reduced: boolean }) {
       .fromTo(q('.sb--away'), { autoAlpha: 0, x: 40 }, { autoAlpha: 1, x: 0, duration: 0.5 }, 0.5)
       .to(q('.sb--away'), { autoAlpha: 0, x: 30, duration: 0.4 }, 1.6)
       .fromTo(q('.sb--next'), { autoAlpha: 0, y: 30, scale: 0.9 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.6 }, 1.4) // park: next step typed
-      .to(q('.sb--task'), { x: 120, y: 150, opacity: 0, scale: 0.7, duration: 0.6 }, 1.7)                                 // gathers into the capsule
+      .to(q('.sb--task'), { x: -70, y: 30, opacity: 0, scale: 0.85, duration: 0.4 }, 1.2)                                 // leaves before the camera turns the screen under it
       .fromTo(q('.sb--saved'), { autoAlpha: 0, scale: 0.85 }, { autoAlpha: 1, scale: 1, duration: 0.4 }, 2.05)
       .to(q('.sb--next, .sb--saved'), { y: -40, autoAlpha: 0, duration: 0.5 }, 2.6)                                      // return: the card takes focus
       .fromTo(q('.sb--timer'), { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.5 }, 2.8)
@@ -107,7 +107,7 @@ function Pinned({ reduced }: { reduced: boolean }) {
               <LaptopStage mode="story" reduced={reduced} margin={STORY_MARGIN}
                 fallback={<DeviceFrame src={SHOT[STORY[scene].id]} alt={SCREEN_ALT[STORY[scene].id]} />} />
             </div>
-            <div className="sb sb--task" aria-hidden="true"><LiquidGlass variant="gel" tint="lilac" radius={20} text className="ctx ctx--task"><span className="ctx__icon"><Layers size={18} /></span><span><strong>Climate Essay</strong><small>3 research tabs · tab group</small></span></LiquidGlass></div>
+            <div className="sb sb--task" aria-hidden="true"><LiquidGlass variant="gel" tint="lilac" radius={20} text className="ctx ctx--task"><span className="ctx__icon"><Layers size={18} /></span><span><strong>Climate Essay</strong><small>3 tabs · tab group</small></span></LiquidGlass></div>
             <div className="sb sb--away" aria-hidden="true"><LiquidGlass variant="gel" tint="blush" radius={999} text className="ctx ctx--away"><PlayCircle size={16} /> Video: lo-fi beats</LiquidGlass></div>
             <div className="sb sb--next" aria-hidden="true"><LiquidGlass variant="crystal" radius={999} text className="ctx ctx--next"><span className="ctx__tag">Next</span>Find a source for the 2023 rainfall number</LiquidGlass></div>
             <div className="sb sb--saved" aria-hidden="true"><LiquidGlass variant="gel" tint="mint" radius={999} text className="ctx ctx--away"><Check size={16} /> Saved: place, tabs, next step</LiquidGlass></div>

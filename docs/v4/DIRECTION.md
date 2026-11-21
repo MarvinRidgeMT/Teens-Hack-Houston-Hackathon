@@ -2,6 +2,14 @@
 
 **Soft. Fluid. Luminous. Playful. Precise.** A pale lavender studio, lit by mint and blush. A premium silver laptop shows the real extension. A few pastel glass objects stand for real things: a task, a next step, a tab group, a break. They feel physical when you touch them, and they don't move all the time. Website: expressive. Extension: calm. Same material, same type, same tokens (`web/src/styles/tokens.css`, `src/shared/tokens.css`, `design/tokens.json` key `v4`).
 
+## Contract
+- **THESIS:** Pickup hands your place back when an interruption ends. The site should feel like that: soft, luminous, physical when touched, and calm.
+- **OWN-WORLD:** "Soft Liquid Future". Pale lavender/pearl studio, mint and blush light, believable pastel liquid glass, a premium silver laptop showing the real extension.
+- **STORY:** Working → Interrupted → Park → Return → Resume, told once, on the laptop, in a pinned scroll stage; every other section demonstrates one real capability.
+- **FIRST VIEWPORT:** headline left ("Undo the interruption, not the mistake."), the Blender laptop at a three-quarter pose right, three context capsules (task, next step, time away) lit like the scene, two CTAs.
+- **FORM:** `seed: none (pinned)`. The brief pins the world and the first surface. From `handoff/CLAUDE_CODE_PROMPT_V4_LIQUID_GLASS.md`: "I want an immersive, tactile, light-themed, pastel-colored, liquid-glass product experience"; "Do not retain the giant saturated purple hero"; "Replace the model rather than trying to rescue it with extra shadows."
+- **FINISH:** award-level craft at 320–1920, reduced motion complete, contrast measured over the worst background behind glass.
+
 ## This, not that
 | Area | This | Not that |
 |---|---|---|

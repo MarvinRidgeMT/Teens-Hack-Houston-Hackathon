@@ -102,7 +102,7 @@ function Rig({ mode, reduced, margin }: { mode: Mode; reduced: boolean; margin: 
   return (
     <group ref={group}>
       <LaptopModel screen={shown} openRef={open} />
-      <ContactShadows position={[0, -0.002, 0]} opacity={0.42} scale={9} blur={2.6} far={1.2} resolution={512} color={css('--plum')} />
+      <ContactShadows position={[0, -0.002, 0]} opacity={0.34} scale={9} blur={2.8} far={1.2} resolution={512} color={css('--plum-3')} />
     </group>
   );
 }
@@ -111,7 +111,7 @@ function Studio() {
   const c = useMemo(() => ({ lav: css('--lavender'), mint: css('--mint'), blush: css('--blush'), white: css('--surface-elevated') }), []);
   return (
     <>
-      <ambientLight intensity={0.3} color={c.lav} />
+      <ambientLight intensity={0.12} color={c.lav} />
       <directionalLight position={[-4, 7, 5]} intensity={1.6} color={c.white} />
       <Environment resolution={256} frames={1} environmentIntensity={1.25}>
         {/* Metal shows only what it reflects: a bright studio all round, coloured accents placed. */}
@@ -128,7 +128,9 @@ function Studio() {
         {/* fill, front-right, lavender */}
         <Lightformer form="rect" intensity={2.2} color={c.lav} position={[7, 2, 5]} scale={[8, 6, 1]} rotation={[0, -Math.PI / 4, 0]} />
         {/* rim strip, back-right, narrow white: outlines lid and base edges */}
-        <Lightformer form="rect" intensity={8} color={c.white} position={[5, 3, -5]} scale={[1.2, 9, 1]} rotation={[0, -Math.PI * 0.75, 0]} />
+        <Lightformer form="rect" intensity={11} color={c.white} position={[5, 3, -5]} scale={[0.8, 10, 1]} rotation={[0, -Math.PI * 0.75, 0]} />
+        {/* second thin rim, front-left low: a line along the lid's top edge and the deck's front chamfer */}
+        <Lightformer form="rect" intensity={6} color={c.white} position={[-6, 1, 4]} scale={[0.6, 8, 1]} rotation={[0, Math.PI / 3, 0]} />
         {/* mint bounce card, bottom-left */}
         <Lightformer form="rect" intensity={2.4} color={c.mint} position={[-6, -1, 3]} scale={[7, 4, 1]} rotation={[0, Math.PI / 3, 0]} />
         {/* blush accent card, right, low */}

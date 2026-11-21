@@ -12,6 +12,7 @@ type Phase = 'working' | 'away' | 'back';
 const BASE: BrowserTab[] = [
   { id: 'essay', title: 'Climate essay: draft', group: true },
   { id: 'res', title: 'Reservoir levels 2023', group: true },
+  { id: 'stats', title: 'Drought statistics', group: true },
 ];
 
 /** A small, clearly labelled simulation: get distracted, come back, see what was kept. */
@@ -29,7 +30,7 @@ export function Interrupted({ reduced }: { reduced: boolean }) {
       </div>
       <div className="wrap int__grid">
         <div className="int__copy">
-          <SectionHead id="int-title" title={<>Life interrupted. <span className="soft">Your work remembered.</span></>}
+          <SectionHead id="int-title" title="Life interrupted. Your work remembered."
             lede="A message, a video, a friend at the door. You were halfway through a sentence. Pickup keeps your place in Chrome so the way back is one key, not five minutes of finding where you were." />
           <ol className="int__beats" role="list">
             <li className={phase === 'working' ? 'is-on' : ''}><span className="tnum">1</span>You're writing, with your research open.</li>

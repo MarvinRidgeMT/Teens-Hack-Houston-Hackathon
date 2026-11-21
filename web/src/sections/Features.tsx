@@ -117,7 +117,7 @@ export function Features({ reduced }: { reduced: boolean }) {
         <span className="atmo__light atmo__light--blush" style={{ width: '34vw', height: '34vw', right: '6vw', bottom: '-6%' }} />
       </div>
       <div className="wrap">
-        <SectionHead id="feat-title" title={<>Everything in v1.0, <span className="soft">doing one job well.</span></>}
+        <SectionHead id="feat-title" title="Everything in v1.0, doing one job well."
           lede="What Pickup does today. Each demo below runs on this page only." />
 
         <div className="fgal">

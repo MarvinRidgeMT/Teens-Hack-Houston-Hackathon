@@ -27,7 +27,7 @@ export function Privacy() {
       </div>
       <div className="wrap privacy__grid">
         <div>
-          <SectionHead id="privacy-title" title={<>Your space <span className="soft">stays yours.</span></>}
+          <SectionHead id="privacy-title" title="Your space stays yours."
             lede="Pickup keeps your place on your computer and nowhere else. Open any line for the details." />
           <DataFlow />
         </div>
@@ -58,7 +58,7 @@ export function Evidence() {
   return (
     <section className="section evidence" id="evidence" aria-labelledby="ev-title">
       <div className="wrap evidence__grid">
-        <SectionHead id="ev-title" title={<>How we test it, <span className="soft">and what we found.</span></>}
+        <SectionHead id="ev-title" title="How we test it, and what we found."
           lede="A small pilot, run honestly. Three people who built the tool, about one day, randomised per comeback. A starting point, not proof." />
         <dl className="ev-method">
           {PILOT_METHOD.map((m) => (

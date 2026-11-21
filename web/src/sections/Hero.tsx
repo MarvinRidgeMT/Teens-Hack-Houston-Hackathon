@@ -5,7 +5,7 @@ import { ArrowDownToLine, ArrowDown, Layers, PauseCircle } from 'lucide-react';
 import { GlassButton } from '../components/glass/GlassButton';
 import { LiquidGlass } from '../components/glass/LiquidGlass';
 import { LaptopStage, DeviceFrame } from '../components/Stage';
-import { HERO } from '../content/site';
+import { HERO, LINKS } from '../content/site';
 import { SCREEN_ALT } from '../three/screens';
 import { story } from '../three/story';
 import { EASE } from '../styles/motion';
@@ -51,8 +51,8 @@ export function Hero({ reduced }: { reduced: boolean }) {
     <section ref={root} className="hero" id="top" aria-labelledby="hero-title">
       <div className="atmo" aria-hidden="true">
         <span className="atmo__light atmo__light--lilac" style={{ width: '58vw', height: '58vw', left: '-14vw', top: '-22vw' }} />
-        <span className="atmo__light atmo__light--mint" style={{ width: '44vw', height: '44vw', right: '-6vw', bottom: '-14vw' }} />
-        <span className="atmo__light atmo__light--blush" style={{ width: '30vw', height: '30vw', right: '22vw', top: '-8vw' }} />
+        <span className="atmo__light atmo__light--mint" style={{ width: '40vw', height: '40vw', left: '8vw', bottom: '-18vw' }} />
+        <span className="atmo__light atmo__light--blush" style={{ width: '34vw', height: '34vw', right: '-10vw', top: '18%' }} />
       </div>
       <div className="wrap hero__grid">
         <div className="hero__copy">
@@ -62,7 +62,7 @@ export function Hero({ reduced }: { reduced: boolean }) {
           </h1>
           <p className="lede hero__lede">{HERO.lede}</p>
           <div className="hero__ctas">
-            <GlassButton href="#install" tone="mint" size="lg" magnetic icon={<ArrowDownToLine size={19} />}>Download Pickup</GlassButton>
+            <GlassButton href={LINKS.downloadLive ? LINKS.download : '#install'} tone="mint" size="lg" magnetic icon={<ArrowDownToLine size={19} />}>{LINKS.downloadLive ? 'Download Pickup' : 'How to install'}</GlassButton>
             <GlassButton href="#story" tone="pearl" size="lg" icon={<ArrowDown size={18} />}>See how it works</GlassButton>
           </div>
           <ul className="hero__facts" role="list" aria-label="At a glance">

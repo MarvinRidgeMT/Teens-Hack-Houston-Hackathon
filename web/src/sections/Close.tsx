@@ -22,11 +22,11 @@ export function Install() {
     <section className="section install" id="install" aria-labelledby="install-title">
       <div className="wrap install__grid">
         <div>
-          <SectionHead id="install-title" title={<>Set up in <span className="soft">about a minute.</span></>}
+          <SectionHead id="install-title" title="Set up in about a minute."
             lede="Chrome 123 or newer, on a laptop or desktop. Pickup loads unpacked from a zip; it isn't on the Chrome Web Store. Free, no account." />
           <div className="install__cta">
             <DownloadCta />
-            <GlassButton href={LINKS.repo} tone="pearl" size="lg" target="_blank" rel="noopener noreferrer" icon={<FolderGit2 size={18} />}>View on GitHub</GlassButton>
+            {LINKS.repoPublic && <GlassButton href={LINKS.repo} tone="pearl" size="lg" target="_blank" rel="noopener noreferrer" icon={<FolderGit2 size={18} />}>View on GitHub</GlassButton>}
           </div>
           {!LINKS.downloadLive && <p className="install__fine">The zip will be on our GitHub release page once the repo is public. It isn't there yet.</p>}
         </div>
@@ -43,11 +43,17 @@ export function Install() {
       </div>
       <div className="wrap shortcuts">
         <h3 className="h3">The keys, and the other way to do each</h3>
-        <ul className="shortcuts__list" role="list">
-          {SHORTCUTS.map((s) => (
-            <li key={s.label}><ShortcutHint keys={s.keys} /><span className="shortcuts__text"><strong>{s.label}</strong><span>{s.alt}</span></span></li>
-          ))}
-        </ul>
+        <LiquidGlass variant="pearl" text radius={30} className="legend">
+          <table className="legend__table">
+            <caption className="sr-only">Keyboard shortcuts and the other way to do each</caption>
+            <thead><tr><th scope="col">Keys</th><th scope="col">What it does</th><th scope="col">Without the keyboard</th></tr></thead>
+            <tbody>
+              {SHORTCUTS.map((s) => (
+                <tr key={s.label}><td><ShortcutHint keys={s.keys} /></td><th scope="row">{s.label}</th><td>{s.alt}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </LiquidGlass>
         <p className="shortcuts__tip">Try it without your own data: open the dashboard and click <strong>Load sample data</strong>.</p>
       </div>
     </section>
@@ -87,7 +93,7 @@ export function Footer() {
         </div>
         <nav aria-label="Footer" className="footer__nav">
           <a href="#install">Download</a>
-          <a href={LINKS.repo} target="_blank" rel="noopener noreferrer">GitHub <ExternalLink size={12} aria-hidden="true" /></a>
+          {LINKS.repoPublic && <a href={LINKS.repo} target="_blank" rel="noopener noreferrer">GitHub <ExternalLink size={12} aria-hidden="true" /></a>}
           {LINKS.devpost && <a href={LINKS.devpost} target="_blank" rel="noopener noreferrer">Devpost</a>}
           <a href="#privacy">Privacy</a>
         </nav>

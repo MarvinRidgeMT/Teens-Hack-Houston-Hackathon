@@ -41,7 +41,7 @@ export function ReturnDemo({ reduced }: { reduced: boolean }) {
         <span className="atmo__light atmo__light--mint" style={{ width: '30vw', height: '30vw', left: '-6vw', bottom: '-4vw' }} />
       </div>
       <div className="wrap">
-        <SectionHead id="rd-title" align="center" title={<>Every line is something <span className="soft">you did or wrote.</span></>}
+        <SectionHead id="rd-title" align="center" title="Every line is something you did or wrote."
           lede="This is the card Pickup shows when you come back to a work page. Press its buttons, or focus it and use Enter, T and Esc. A demo on this page; it doesn't touch your browser." />
 
         <div className="rdemo">
@@ -50,6 +50,7 @@ export function ReturnDemo({ reduced }: { reduced: boolean }) {
               <motion.span layout transition={t} className="bf__group">Climate Essay</motion.span>
               <motion.span layout transition={t} className="bf__tab is-active is-group">Climate essay: draft</motion.span>
               <motion.span layout transition={t} className="bf__tab is-group">Reservoir levels 2023</motion.span>
+              <motion.span layout transition={t} className="bf__tab is-group">Drought statistics</motion.span>
               {!tidied && <motion.span layout key="vid" transition={t} className="bf__tab">Video: lo-fi beats</motion.span>}
               {tidied && <motion.span layout key="later" initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={reduced ? { duration: 0 } : SPRING_PRESS} className="bf__tab is-later">Later (1)</motion.span>}
             </LayoutGroup>
@@ -74,7 +75,7 @@ export function ReturnDemo({ reduced }: { reduced: boolean }) {
                   <dl className="rcard__ctx">
                     <div><dt>Highlight</dt><dd>“Rainfall has been below average since 2023”</dd></div>
                     <div><dt>Spot</dt><dd>Scroll position saved</dd></div>
-                    <div><dt>Tabs</dt><dd>2 in the task group{tidied ? ' · 1 in Later' : ' · 1 opened on your break'}</dd></div>
+                    <div><dt>Tabs</dt><dd>3 in the task group{tidied ? ' · 1 in Later' : ' · 1 opened on your break'}</dd></div>
                   </dl>
                   <div className="rcard__actions">
                     <button ref={resume} type="button" className="rcard__resume" onClick={() => setState('resumed')}>

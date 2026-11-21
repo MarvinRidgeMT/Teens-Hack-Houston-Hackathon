@@ -7,6 +7,8 @@ export const LINKS = {
   // Flip to true once the repo is public and the v1.0 release has the zip. Until then the page says so
   // instead of sending visitors to a 404.
   downloadLive: false,
+  // The repo is private until release; links to it would 404 for visitors, so they stay hidden.
+  repoPublic: false,
   repo: 'https://github.com/MarvinRidgeMT/Teens-Hack-Houston-Hackathon',
   // DEVPOST: set the submission URL here when it exists; null shows "Devpost (coming)".
   devpost: null as string | null,
@@ -26,7 +28,7 @@ export const HERO = {
   lede: 'A Chrome extension that remembers where you left off, so coming back feels easy.',
   facts: ['Free', 'No account', 'Nothing leaves your computer'],
   // The floating context objects use the extension's own words.
-  task: { name: 'Climate Essay', meta: '4 tabs' },
+  task: { name: 'Climate Essay', meta: '3 tabs' },
   next: 'Find a source for the 2023 rainfall number',
   group: 'Climate Essay',
   away: 'Away 12 min',

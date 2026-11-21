@@ -114,7 +114,6 @@
 .istep strong { display: block; font: 700 17px/1.3 var(--font-display); }
 .istep > span > span { display: block; margin-top: 2px; color: var(--plum-2); }
 .shortcuts { margin-top: var(--space-8); }
-.shortcuts__list { margin-top: var(--space-5); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
 .shortcuts__list li { display: grid; gap: 10px; padding: 18px; border-radius: 20px; background: var(--glass-fill-strong); box-shadow: inset 0 0 0 1px var(--glass-border); }
 .shortcuts__list strong { display: block; color: var(--plum); }
 .shortcuts__text > span { display: block; color: var(--plum-2); font-size: 15px; margin-top: 2px; }
@@ -154,3 +153,24 @@
 .fpanel, .fpanel > * { min-width: 0; }
 .fpanel .h3, .flist__title { overflow-wrap: anywhere; }
 @media (max-width: 380px) { .fpanel { padding: 20px 16px; } .park__row input { font-size: 15px; } }
+
+/* keyboard legend: one panel, hairline rows */
+.legend { margin-top: var(--space-5); padding: 6px 24px; }
+.legend__table { width: 100%; border-collapse: collapse; color: var(--plum); }
+.legend__table thead th { text-align: left; font: 600 var(--fs-label) / 1.2 var(--font-ui); color: var(--plum-2); padding: 14px 12px 10px 0; }
+.legend__table td, .legend__table tbody th { padding: 14px 12px 14px 0; border-top: 1px solid var(--line); text-align: left; vertical-align: middle; }
+.legend__table tbody th { font: 650 16px/1.35 var(--font-ui); }
+.legend__table td:last-child { color: var(--plum-2); }
+@media (max-width: 640px) {
+  .legend { padding: 4px 16px; }
+  .legend__table thead { display: none; }
+  .legend__table tr { display: grid; gap: 4px; padding: 12px 0; border-top: 1px solid var(--line); }
+  .legend__table tr:first-child { border-top: 0; }
+  .legend__table td, .legend__table tbody th { border: 0; padding: 0; }
+}
+/* Return demo: a tinted page under the card, so the crystal has something to bend */
+.rdemo { background: linear-gradient(160deg, var(--surface-elevated) 30%, var(--canvas-2) 60%, var(--lavender) 100%); }
+.rdemo__page { position: relative; }
+.rdemo::after { content: ""; position: absolute; right: -6%; top: 18%; width: 52%; height: 70%; border-radius: 50%; background: radial-gradient(closest-side, var(--light-lilac), transparent); pointer-events: none; z-index: 0; }
+.rdemo > * { position: relative; z-index: 1; }
+.rdemo__card-wrap { position: absolute; z-index: 3; }
