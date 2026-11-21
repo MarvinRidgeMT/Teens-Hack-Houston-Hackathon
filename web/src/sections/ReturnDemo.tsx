@@ -69,7 +69,7 @@ export function ReturnDemo({ reduced }: { reduced: boolean }) {
                   <h3 id="rcard-t" className="rcard__title">Welcome back to <span className="rcard__task">Climate Essay</span></h3>
                   <div className="rcard__next" id="rcard-next">
                     <p className="label">Your next step · you wrote this</p>
-                    <p className="rcard__next-text">Find a source for the drought statistic</p>
+                    <p className="rcard__next-text">Find a source for the 2023 rainfall number</p>
                   </div>
                   <dl className="rcard__ctx">
                     <div><dt>Highlight</dt><dd>“Rainfall has been below average since 2023”</dd></div>

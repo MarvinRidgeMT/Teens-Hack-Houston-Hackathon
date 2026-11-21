@@ -27,7 +27,7 @@ export const HERO = {
   facts: ['Free', 'No account', 'Nothing leaves your computer'],
   // The floating context objects use the extension's own words.
   task: { name: 'Climate Essay', meta: '4 tabs' },
-  next: 'Find a source for the drought statistic',
+  next: 'Find a source for the 2023 rainfall number',
   group: 'Climate Essay',
   away: 'Away 12 min',
 };

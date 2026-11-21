@@ -105,7 +105,7 @@ function Pinned({ reduced }: { reduced: boolean }) {
             </div>
             <div className="sb sb--task" aria-hidden="true"><LiquidGlass variant="gel" tint="lilac" radius={20} text className="ctx ctx--task"><span className="ctx__icon"><Layers size={18} /></span><span><strong>Climate Essay</strong><small>3 research tabs · tab group</small></span></LiquidGlass></div>
             <div className="sb sb--away" aria-hidden="true"><LiquidGlass variant="gel" tint="blush" radius={999} text className="ctx ctx--away"><PlayCircle size={16} /> Video: lo-fi beats</LiquidGlass></div>
-            <div className="sb sb--next" aria-hidden="true"><LiquidGlass variant="crystal" radius={999} text className="ctx ctx--next"><span className="ctx__tag">Next</span>Find a source for the drought statistic</LiquidGlass></div>
+            <div className="sb sb--next" aria-hidden="true"><LiquidGlass variant="crystal" radius={999} text className="ctx ctx--next"><span className="ctx__tag">Next</span>Find a source for the 2023 rainfall number</LiquidGlass></div>
             <div className="sb sb--saved" aria-hidden="true"><LiquidGlass variant="gel" tint="mint" radius={999} text className="ctx ctx--away"><Check size={16} /> Saved: place, tabs, next step</LiquidGlass></div>
             <div className="sb sb--timer" aria-hidden="true"><LiquidGlass variant="gel" tint="blush" radius={999} text className="ctx ctx--away"><Bell size={15} /> <span className="tnum">Away 12 min</span></LiquidGlass></div>
             <div className="sb sb--back" aria-hidden="true"><LiquidGlass variant="gel" tint="mint" radius={999} text className="ctx ctx--away"><Check size={16} /> Back at your spot</LiquidGlass></div>
@@ -135,7 +135,7 @@ function Stacked() {
                 <LiquidGlass variant="pearl" text radius={22} className="story-stack__nudge" role="img" aria-label="Pickup's one nudge per break, shown only if you wrote a next step">
                   <span className="label">Pickup · one nudge per break</span>
                   <strong>Your next step for Climate Essay</strong>
-                  <span>Next: Find a source for the drought statistic · Alt+R takes you back</span>
+                  <span>Next: Find a source for the 2023 rainfall number · Alt+R takes you back</span>
                 </LiquidGlass>
               ) : (
                 <DeviceFrame src={SHOT[s.id]} alt={SCREEN_ALT[s.id]} />

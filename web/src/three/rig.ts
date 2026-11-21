@@ -2,7 +2,7 @@
 // any aspect ratio. Poses are tuned by eye; fitCamera only ever moves the camera back.
 import * as THREE from 'three';
 
-export type Pose = { x: number; y: number; yaw: number; pitch: number; cam: [number, number, number]; look: [number, number, number] };
+export type Pose = { x: number; y: number; yaw: number; pitch: number; cam: [number, number, number]; look: [number, number, number]; /** A close-up: skip the whole-laptop fit. */ close?: boolean };
 
 /** Hero first, then one pose per story scene (working, interrupted, park, return, resume). */
 export const HERO_POSE: Pose = { x: 0, y: 0, yaw: -0.52, pitch: 0.05, cam: [0.2, 2.3, 7.6], look: [0, 0.85, -0.2] };
@@ -10,7 +10,7 @@ export const STORY_POSES: Pose[] = [
   { x: 0.05, y: 0, yaw: -0.3, pitch: 0.04, cam: [0.2, 2.5, 9.0], look: [0, 0.85, 0] },     // working
   { x: 0.08, y: -0.05, yaw: -0.42, pitch: 0.06, cam: [0.4, 2.9, 10.2], look: [0, 0.8, 0] }, // interrupted: steps back
   { x: 0.04, y: 0, yaw: -0.18, pitch: 0.03, cam: [0.1, 2.4, 8.4], look: [0, 0.95, -0.4] },   // park
-  { x: 0, y: 0, yaw: 0, pitch: 0, cam: [0, 2.05, 6.6], look: [0, 1.05, -0.9] },              // return: up to the screen
+  { x: 0, y: 0, yaw: 0, pitch: 0, cam: [0, 1.62, 5.0], look: [0, 1.12, -1.0], close: true },  // return: up to the screen (base may crop)
   { x: 0.03, y: 0, yaw: -0.12, pitch: 0.02, cam: [0.1, 2.3, 8.2], look: [0, 0.95, -0.4] },   // resume: settles
 ];
 
@@ -30,7 +30,7 @@ export type Margin = { left: number; right: number; top: number; bottom: number 
 export function fitCamera(p: Pose, width: number, height: number, fov: number, margin: Margin): THREE.Vector3 {
   const look = new THREE.Vector3(...p.look);
   const cam = new THREE.Vector3(...p.cam);
-  if (width < 1 || height < 1 || !HULL.length) return cam;
+  if (p.close || width < 1 || height < 1 || !HULL.length) return cam;
   const probe = new THREE.PerspectiveCamera(fov, width / height, 0.1, 60);
   const lim = {
     left: -1 + (2 * margin.left) / width,

@@ -62,7 +62,7 @@ export function Interrupted({ reduced }: { reduced: boolean }) {
                   <LiquidGlass variant="pearl" text radius={20} className="mini-card" role="status">
                     <p className="mini-card__title">Welcome back to <strong>Climate Essay</strong></p>
                     <p className="mini-card__meta tnum">Away 7 min · your next step</p>
-                    <p className="mini-card__next">Find a source for the drought statistic</p>
+                    <p className="mini-card__next">Find a source for the 2023 rainfall number</p>
                   </LiquidGlass>
                 </motion.div>
               )}
