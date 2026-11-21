@@ -45,7 +45,7 @@ export function Install() {
         <h3 className="h3">The keys, and the other way to do each</h3>
         <ul className="shortcuts__list" role="list">
           {SHORTCUTS.map((s) => (
-            <li key={s.label}><ShortcutHint keys={s.keys} /><span><strong>{s.label}</strong><span>{s.alt}</span></span></li>
+            <li key={s.label}><ShortcutHint keys={s.keys} /><span className="shortcuts__text"><strong>{s.label}</strong><span>{s.alt}</span></span></li>
           ))}
         </ul>
         <p className="shortcuts__tip">Try it without your own data: open the dashboard and click <strong>Load sample data</strong>.</p>
