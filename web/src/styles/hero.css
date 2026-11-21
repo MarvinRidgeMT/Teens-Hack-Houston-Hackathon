@@ -1,6 +1,13 @@
 /* Hero + device frame + stage canvas. */
 .hero { position: relative; min-height: max(100svh, 720px); display: flex; align-items: center; padding: calc(var(--nav-h) + 56px) 0 64px; overflow: clip; background: linear-gradient(180deg, var(--canvas), var(--canvas-2)); }
 .hero__grid { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 0.84fr) minmax(0, 1.16fr); gap: clamp(24px, 3vw, 56px); align-items: center; }
+/* Capybara above the headline. The art's ground shadow sits at y 194 of 210, so a small negative margin
+   brings the title up to where it stands. Hover: the same small hop as the final CTA's capybara. */
+.hero__capy { display: block; width: clamp(84px, 8vw, 116px); height: auto; margin: 0 0 calc(clamp(84px, 8vw, 116px) * -0.02); transform-origin: 50% 100%; }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .hero__capy { transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+  .hero__capy:hover { transform: translateY(-4px) rotate(-2deg); }
+}
 .hero__title { max-width: 12.5ch; }
 .hero__title .hero__mask { padding-right: 0.08em; }
 .hero__mask { display: block; overflow: hidden; padding-bottom: 0.08em; margin-bottom: -0.08em; }

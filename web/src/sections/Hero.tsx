@@ -56,6 +56,9 @@ export function Hero({ reduced }: { reduced: boolean }) {
       </div>
       <div className="wrap hero__grid">
         <div className="hero__copy">
+          {/* Pickup's capybara says hello at the top; the headline carries the meaning, so the art is decorative here
+              (the final CTA's capybara has the full description). Eager: it is above the fold. */}
+          <img className="hero__capy" src="assets/capybara.svg" alt="" width={260} height={210} decoding="async" />
           <h1 id="hero-title" className="display hero__title">
             <span className="hero__mask"><span className="hero__line">Undo the interruption,</span></span>
             <span className="hero__mask"><span className="hero__line hero__line--soft">not the mistake.</span></span>
