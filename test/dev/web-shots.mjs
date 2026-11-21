@@ -81,7 +81,11 @@ for (const spec of specs) {
   await send('Page.navigate', { url });
   await sleep(1200);
   if (selector) {
-    await evaluate(`(() => { const el = document.querySelector(${JSON.stringify(selector)}); if (el) { el.scrollIntoView({ block: 'center' }); } })()`);
+    // Scroll twice: on a large viewport the first scroll can land before the page has settled and be lost.
+    const go = `(() => { const el = document.querySelector(${JSON.stringify(selector)}); if (el) { el.scrollIntoView({ block: 'center' }); } return scrollY; })()`;
+    await evaluate(go);
+    await sleep(700);
+    await evaluate(go);
   }
   await sleep(wait);
   const metrics = await evaluate(`({ sw: document.documentElement.scrollWidth, iw: innerWidth, sh: document.documentElement.scrollHeight })`);
