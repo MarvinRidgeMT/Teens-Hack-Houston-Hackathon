@@ -146,3 +146,7 @@ Local branch `redesign/integration-test` (never pushed), Chrome for Testing 157.
 - **`test/dev/pages-shots.mjs`:** popup (360 wide) and setup/dashboard (1280×800 @2x) in both themes, plus the receipt PNG. These use made-up events in a throwaway profile; they are not results. No request left `chrome-extension://` on any page.
 - **Found and fixed:** `.pk-card { display: flex }` beat the `hidden` attribute, so the popup's "Add your work sites first" card stayed visible. `pk.css` now makes `[hidden]` always win.
 - `check-integration` on the merged tree: no FAIL, no WARN.
+
+## Treatment change: notification copy v2 + Paper badge colours (Fri Nov 20, 8:23 PM ET)
+
+`redesign/engine-panel`, `redesign/pages` and `redesign/site` merged into local `main` at **8:23 PM ET**. For **both** conditions, the nudge, break-over and Start here notifications now read "Your next step for <task>" / "Next: … · Alt+R takes you back", and the badge uses the Paper colours. A pilot laptop gets this when it pulls and reloads the extension; note each laptop's reload time here. The return card is unchanged: **no "card v2" yet**.

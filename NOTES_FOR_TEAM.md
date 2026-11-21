@@ -158,7 +158,7 @@ Copy two pure files as they are into your scripts. Both are tested in `test/feat
 
 **Treatment change log:**
 - The card itself is **unchanged tonight** (no "card v2" yet).
-- The notification copy and badge colours change for both conditions at the moment `redesign/engine-panel` merges. Anish adds that time to `test/REAL_CHROME_LOG.md` when merging.
+- Notification copy v2 and badge colours: merged into main **Fri 8:23 PM ET**, both conditions (see `test/REAL_CHROME_LOG.md`). Each pilot laptop's reload time goes there too.
 
 ## Pages (redesign/pages)
 
