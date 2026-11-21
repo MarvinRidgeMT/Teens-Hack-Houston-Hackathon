@@ -1,17 +1,17 @@
-// Pickup F6: "Save comeback receipt". Draws a PNG on a <canvas> in the Paper theme
+// Pickup F6: "Save comeback receipt". Draws a PNG on a <canvas> in the V4 light (Pearl) theme
 // and downloads it with <a download>. No permission, no upload. Owner: Abhinav (pages).
 // The words come from receiptText() in stats.js (non-debug events only).
 
 import { receiptText, weekStart } from '../shared/stats.js';
 
-// Paper theme tokens (src/shared/tokens.css). The image is always Paper so it reads
+// Light theme tokens (src/shared/tokens.css). The image is always light so it reads
 // the same wherever it is shared.
 const C = {
-  // v3 calm palette, Paper values (design/tokens.json).
-  paper: '#f7f6fb', surface: '#ffffff', mist: '#ece7ff', ink: '#121126', inkBody: '#4d4b66',
-  border: 'rgba(18, 17, 38, 0.12)', accent: '#6038ff', onAccent: '#ffffff', periwinkle: '#4a22e6', saved: '#0b7285',
+  // V4 light palette (design/tokens.json "v4.light"): canvas, pearl, lavender, plum text.
+  paper: '#f8f5ff', surface: '#fdfbff', mist: '#efe7ff', ink: '#302545', inkBody: '#554868',
+  border: 'rgba(48, 37, 69, 0.12)', accent: '#5a3cc4', onAccent: '#ffffff', periwinkle: '#5a3cc4', saved: '#2c6b4c',
 };
-const FONT = '"Inter", system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif';
+const FONT = '"Geist", system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif';
 const W = 1200;
 const H = 630;
 const SCALE = 2;

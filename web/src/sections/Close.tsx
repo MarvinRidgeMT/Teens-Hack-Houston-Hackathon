@@ -1,68 +1,82 @@
-import { ArrowDownToLine, ExternalLink, Play } from 'lucide-react';
-import { BrandMark, ButtonLink, Mark, SectionHead } from '../components/ui';
-import { LINKS } from '../content/site';
+import { ArrowDownToLine, ExternalLink, FolderGit2 } from 'lucide-react';
+import { LiquidGlass } from '../components/glass/LiquidGlass';
+import { GlassButton } from '../components/glass/GlassButton';
+import { BrandMark, SectionHead, ShortcutHint } from '../components/ui';
+import { INSTALL_STEPS, LINKS, SHORTCUTS } from '../content/site';
 
-export function Demo() {
+/** The download CTA: real link when the release is public, an honest pending state until then. */
+export function DownloadCta({ size = 'lg' }: { size?: 'md' | 'lg' }) {
+  if (LINKS.downloadLive) {
+    return <GlassButton href={LINKS.download} tone="mint" size={size} magnetic icon={<ArrowDownToLine size={19} />}>Download Pickup</GlassButton>;
+  }
   return (
-    <section className="demo-video" id="demo" aria-labelledby="demo-title">
-      <div className="wrap">
-        <SectionHead id="demo-title" title="The six-minute demo" />
-        <div className="video">
-          {LINKS.videoId ? (
-            <iframe
-              src={`https://www.youtube-nocookie.com/embed/${LINKS.videoId}`}
-              title="Pickup demo video"
-              loading="lazy"
-              allow="encrypted-media; picture-in-picture"
-              allowFullScreen
-            />
-          ) : (
-            <>
-              <img src="assets/shot-resume.jpg" width={1600} height={1000} alt="" loading="lazy" />
-              <p className="video__soon"><Play size={18} aria-hidden="true" /> The demo video is posted Saturday.</p>
-            </>
-          )}
+    <span className="gbtn gbtn--pending gbtn--lg" role="note">
+      <ArrowDownToLine size={18} aria-hidden="true" />
+      <span className="gbtn__label">Download goes live with the v1.0 release</span>
+    </span>
+  );
+}
+
+export function Install() {
+  return (
+    <section className="section install" id="install" aria-labelledby="install-title">
+      <div className="wrap install__grid">
+        <div>
+          <SectionHead id="install-title" title="Set up in about a minute."
+            lede="Chrome 123 or newer, on a laptop or desktop. Pickup loads unpacked from a zip; it isn't on the Chrome Web Store. Free, no account." />
+          <div className="install__cta">
+            <DownloadCta />
+            {LINKS.repoPublic && <GlassButton href={LINKS.repo} tone="pearl" size="lg" target="_blank" rel="noopener noreferrer" icon={<FolderGit2 size={18} />}>View on GitHub</GlassButton>}
+          </div>
+          {!LINKS.downloadLive && <p className="install__fine">The zip will be on our GitHub release page once the repo is public. It isn't there yet.</p>}
         </div>
+        <ol className="install__steps" role="list">
+          {INSTALL_STEPS.map((s, i) => (
+            <li key={s.title}>
+              <LiquidGlass variant="pearl" text radius={22} className="istep">
+                <span className="istep__n tnum">{i + 1}</span>
+                <span><strong>{s.title}</strong><span>{s.body}</span></span>
+              </LiquidGlass>
+            </li>
+          ))}
+        </ol>
+      </div>
+      <div className="wrap shortcuts">
+        <h3 className="h3">The keys, and the other way to do each</h3>
+        <LiquidGlass variant="pearl" text radius={30} className="legend">
+          <table className="legend__table">
+            <caption className="sr-only">Keyboard shortcuts and the other way to do each</caption>
+            <thead><tr><th scope="col">Keys</th><th scope="col">What it does</th><th scope="col">Without the keyboard</th></tr></thead>
+            <tbody>
+              {SHORTCUTS.map((s) => (
+                <tr key={s.label}><td><ShortcutHint keys={s.keys} /></td><th scope="row">{s.label}</th><td>{s.alt}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </LiquidGlass>
+        <p className="shortcuts__tip">Try it without your own data: open the dashboard and click <strong>Load sample data</strong>.</p>
       </div>
     </section>
   );
 }
 
-const STEPS = [
-  <><strong>Download</strong> the zip and unzip it.</>,
-  <>Open <code>chrome://extensions</code> in Chrome.</>,
-  <>Turn on <strong>Developer mode</strong> (top right).</>,
-  <>Click <strong>Load unpacked</strong> and pick the unzipped folder.</>,
-];
-
-export function Install() {
+export function FinalCta() {
   return (
-    <section className="install" id="install" aria-labelledby="install-title">
-      <div className="wrap install__grid">
-        <div>
-          <SectionHead id="install-title" title={<>Your next task <Mark>is waiting.</Mark></>} lede="Pickup makes it easier to find your way back. It installs in about a minute." />
-          <div className="install__ctas">
-            {LINKS.downloadLive ? (
-              <ButtonLink href={LINKS.download} variant="primary" icon={<ArrowDownToLine size={18} aria-hidden="true" />}>Download the zip</ButtonLink>
-            ) : (
-              <span className="btn btn--primary btn--pending" role="note">
-                <ArrowDownToLine size={18} aria-hidden="true" />
-                <span>Download goes live with the v1.0 release</span>
-              </span>
-            )}
-            <ButtonLink href="#demo" variant="on-violet" icon={<Play size={16} aria-hidden="true" />}>Watch the demo</ButtonLink>
+    <section className="section final" aria-labelledby="final-title">
+      <div className="atmo" aria-hidden="true">
+        <span className="atmo__light atmo__light--lilac" style={{ width: '50vw', height: '50vw', left: '-6vw', top: '-10%' }} />
+        <span className="atmo__light atmo__light--mint" style={{ width: '40vw', height: '40vw', right: '-4vw', bottom: '-20%' }} />
+        <span className="atmo__light atmo__light--blush" style={{ width: '26vw', height: '26vw', left: '40vw', bottom: '-10%' }} />
+      </div>
+      <div className="wrap">
+        <LiquidGlass variant="crystal" radius="48px 48px 48px 28px" interactive className="final__panel">
+          <h2 id="final-title" className="display final__title">Come back to <span className="soft">what matters.</span></h2>
+          <p className="lede final__lede">Pickup keeps your place, so an interruption costs you a key press, not your train of thought.</p>
+          <div className="final__ctas">
+            <DownloadCta />
+            <GlassButton href="#return-card" tone="pearl" size="lg">Try the card again</GlassButton>
           </div>
-          <p className="install__fine">
-            Chrome 123 or newer, on a laptop or desktop. Pickup loads unpacked from a zip and is not on the Chrome Web Store. Free, no account.
-            {!LINKS.downloadLive && ' The zip will be on our GitHub release page once the repo is public; it is not there yet.'}
-          </p>
-        </div>
-        <div>
-          <ol className="install__steps">
-            {STEPS.map((s, i) => <li key={i}>{s}</li>)}
-          </ol>
-          <p className="install__tip">Try it without your own data: open the dashboard and click <strong>Load sample data</strong>.</p>
-        </div>
+        </LiquidGlass>
       </div>
     </section>
   );
@@ -72,44 +86,22 @@ export function Footer() {
   return (
     <footer className="footer">
       <div className="wrap footer__grid">
-        <div className="footer__brand">
-          <a className="footer__logo" href="#top"><BrandMark size={34} tone="lime" /> Pickup</a>
-          <p className="footer__tag">The calm way back to your work.</p>
-          <p className="footer__made">Built in 48 hours for Triple H 2026 by Anish (engine), Sidd (surface) and Abhinav (setup, evidence and story).</p>
+        <div>
+          <a className="gnav__brand" href="#top"><BrandMark size={30} /> Pickup</a>
+          <p className="footer__tag">Undo the interruption, not the mistake.</p>
+          <p className="footer__made">Built for Triple H 2026 by Anish (engine), Sidd (return card and park overlay) and Abhinav (setup, evidence and story).</p>
         </div>
-        <nav className="footer__cols" aria-label="Footer">
-          <div>
-            <h2 className="footer__h">Product</h2>
-            <ul>
-              <li><a href="#how">How it works</a></li>
-              <li><a href="#try">Try it</a></li>
-              <li><a href="#features">Features</a></li>
-            </ul>
-          </div>
-          <div>
-            <h2 className="footer__h">Trust</h2>
-            <ul>
-              <li><a href="#privacy">Privacy</a></li>
-              <li><a href="#evidence">How we test</a></li>
-            </ul>
-          </div>
-          <div>
-            <h2 className="footer__h">Get it</h2>
-            <ul>
-              <li><a href="#install">Install</a></li>
-              <li><a href={LINKS.repo}>GitHub <ExternalLink size={12} aria-hidden="true" /></a></li>
-              <li>{LINKS.devpost ? <a href={LINKS.devpost}>Devpost</a> : <span className="footer__muted">Devpost (coming)</span>}</li>
-            </ul>
-          </div>
+        <nav aria-label="Footer" className="footer__nav">
+          <a href="#install">Download</a>
+          {LINKS.repoPublic && <a href={LINKS.repo} target="_blank" rel="noopener noreferrer">GitHub <ExternalLink size={12} aria-hidden="true" /></a>}
+          {LINKS.devpost && <a href={LINKS.devpost} target="_blank" rel="noopener noreferrer">Devpost</a>}
+          <a href="#privacy">Privacy</a>
         </nav>
       </div>
-      <div className="wrap footer__legal">
-        <p>
-          Type: Bricolage Grotesque and Inter (SIL OFL). Built with React, Three.js, React Three Fiber, GSAP, Lenis, Motion and Lucide icons.
-          The laptop is drawn in code; the screens on it are real screenshots of Pickup.
-        </p>
-      </div>
-      <p className="footer__word" aria-hidden="true">pickup</p>
+      <p className="wrap footer__legal">
+        © 2026 the Pickup team. Type: Plus Jakarta Sans and Geist (SIL Open Font License). Built with React, Three.js, React Three Fiber, GSAP, Lenis, Motion and Lucide icons.
+        The laptop is modelled in Blender by the team; the screens on it are real screenshots of Pickup.
+      </p>
     </footer>
   );
 }

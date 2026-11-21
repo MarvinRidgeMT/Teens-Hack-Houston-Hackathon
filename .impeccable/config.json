@@ -4,30 +4,6 @@
     "ignoreFiles": [],
     "ignoreValues": [
       {
-        "rule": "overused-font",
-        "value": "inter",
-        "createdAt": "2026-11-21T04:18:14.272Z",
-        "reason": "Team rule: handoff/CLAUDE_CODE_PROMPT_PALETTE.md says the bundled Inter stays bundled (extension makes no network requests); design/README.md specifies Inter"
-      },
-      {
-        "rule": "cramped-padding",
-        "value": "*",
-        "files": [
-          "site/index.html"
-        ],
-        "createdAt": "2026-11-21T04:18:14.331Z",
-        "reason": "False positive from the static scan: full-bleed bands use calc((100% - var(--wrap)) / 2) side padding, 16px at 375px; rendered-page detect reports no cramped-padding"
-      },
-      {
-        "rule": "overused-font",
-        "value": "inter",
-        "files": [
-          "web/src/styles/tokens.css"
-        ],
-        "createdAt": "2026-11-21T06:10:29.851Z",
-        "reason": "Team rule (PRODUCT.md, handoff/CLAUDE_CODE_PROMPT_PALETTE.md): the bundled Inter stays; the site uses it for body text so it matches the extension, with Bricolage Grotesque as the display face"
-      },
-      {
         "rule": "cramped-padding",
         "value": "*",
         "files": [
@@ -37,12 +13,6 @@
         "reason": "False positive from the static scan: the flagged .pk-chip status pill gets its vertical inset from min-height 26px (6px above and below 14px text), which the HTML-only scan cannot see; predates this session"
       },
       {
-        "rule": "design-system-font",
-        "value": "georgia",
-        "createdAt": "2026-11-21T06:27:12.594Z",
-        "reason": "Claude triage: .essay is the mock third-party article inside the .browser demo frame; serif signals 'someone else's page', not site type"
-      },
-      {
         "rule": "cramped-padding",
         "value": "*",
         "files": [
@@ -50,6 +20,48 @@
         ],
         "createdAt": "2026-11-21T06:32:27.672Z",
         "reason": "False positive from the static scan: .pk-chip pills get their inset from min-height 26px, and the bordered .db-scroll table wrappers hold cells with their own padding; neither is visible to an HTML-only scan; predates this session"
+      },
+      {
+        "rule": "nested-cards",
+        "value": "*",
+        "files": [
+          "site/index.html"
+        ],
+        "createdAt": "2026-11-21T15:50:00.000Z",
+        "reason": "V4: the three nested surfaces are product demonstrations, not layout cards: the Return card (and the mini card in the interruption sim) sits over a page inside a drawn browser window, as it does in Chrome; the story's nudge sits in its panel. Flattening would misrepresent the product."
+      },
+      {
+        "rule": "overused-font",
+        "value": "plus jakarta sans",
+        "createdAt": "2026-11-21T16:09:01.882Z",
+        "reason": "Sanctioned by the V4 brief: §8 lists Plus Jakarta Sans among its font candidates; chosen with Geist after UI UX Pro Max typography search (DIRECTION.md)"
+      },
+      {
+        "rule": "overused-font",
+        "value": "geist",
+        "createdAt": "2026-11-21T16:09:01.894Z",
+        "reason": "Sanctioned by the V4 brief: §8 lists Geist among its font candidates; UI face paired with Plus Jakarta Sans (DIRECTION.md)"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "site/index.html"
+        ],
+        "createdAt": "2026-11-21T16:09:01.907Z",
+        "reason": "False positive of the HTML-only static scan of the prerendered page (no CSS applied); the rendered-page detect (http://127.0.0.1:8765/site/) reports no cramped-padding"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "plus jakarta sans",
+        "createdAt": "2026-11-21T16:18:51.816Z",
+        "reason": "Documented in DESIGN.md as 'Plus Jakarta Sans Variable' (the site's fontsource name); the extension declares the same face as 'Plus Jakarta Sans'"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "geist",
+        "createdAt": "2026-11-21T16:18:51.829Z",
+        "reason": "Documented in DESIGN.md as 'Geist Variable' (the site's fontsource name); the extension declares the same face as 'Geist'"
       }
     ]
   }

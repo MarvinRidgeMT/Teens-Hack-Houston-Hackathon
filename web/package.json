@@ -5,11 +5,13 @@
   "description": "Pickup download website: React + TypeScript + Vite + React Three Fiber. Builds static files into ../site.",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
-    "preview": "vite preview --outDir ../site"
+    "build": "node scripts/check-tokens.mjs && node scripts/contrast.mjs > /dev/null && tsc --noEmit && vite build && node scripts/prerender.mjs",
+    "preview": "vite preview --outDir ../site",
+    "check": "node scripts/check-tokens.mjs && node scripts/contrast.mjs"
   },
   "dependencies": {
-    "@fontsource-variable/bricolage-grotesque": "5.3.0",
+    "@fontsource-variable/geist": "^5.3.0",
+    "@fontsource-variable/plus-jakarta-sans": "^5.3.0",
     "@gsap/react": "2.1.2",
     "@react-three/drei": "10.7.9",
     "@react-three/fiber": "9.8.2",

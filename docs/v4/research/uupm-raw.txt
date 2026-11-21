@@ -1,0 +1,307 @@
+### liquid glass soft ui pastel --design-system
+╔═════════════════════════════════════════════════════════════════════════════════════════╗
+║  TARGET: LIQUID GLASS SOFT UI PASTEL - RECOMMENDED DESIGN SYSTEM                        ║
+╚═════════════════════════════════════════════════════════════════════════════════════════╝
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+├─── PATTERN ─────────────────────────────────────────────────────────────────────────────┤
+│  Name: Hero + Testimonials + CTA                                                        │
+│     Conversion: Social proof before CTA. Use a concise set of verified testimonials     │
+│     with photo, name, and role. CTA after social proof. Provide previous/next and       │
+│     pause controls; stop rotation on focus, hover, and reduced motion; announce slide   │
+│     position. Previous/next buttons and keyboard controls must expose every slide       │
+│     without dragging.                                                                   │
+│     CTA: Hero (sticky) + Post-testimonials                                              │
+│     Sections:                                                                           │
+│       1. Hero                                                                           │
+│       2. Problem statement                                                              │
+│       3. Solution overview                                                              │
+│       4. Testimonials carousel                                                          │
+│       5. CTA                                                                            │
+├─── STYLE ───────────────────────────────────────────────────────────────────────────────┤
+│  Name: Liquid Glass                                                                     │
+│     Mode Support: Light supported | Dark supported                                      │
+│     Keywords: dynamic material, optical glass, translucency, lensing, refraction,       │
+│     fluid morphing, system navigation                                                   │
+│     Best For: Apple-platform navigation, controls, and system-aligned app chrome        │
+│     Performance: cost:moderate|drivers:animation,blur | Accessibility:                  │
+│     risk:conditional|requires:contrast-text-4.5,keyboard,visible-focus,reduced-motion   │
+├─── COLORS ──────────────────────────────────────────────────────────────────────────────┤
+│     Primary:           #1E3A8A    (--color-primary)                                     │
+│     On Primary:        #FFFFFF    (--color-on-primary)                                  │
+│     Secondary:         #3B82F6    (--color-secondary)                                   │
+│     On Secondary:      #000000    (--color-on-secondary)                                │
+│     Accent/CTA:        #A16207    (--color-accent)                                      │
+│     On Accent/CTA:     #FFFFFF    (--color-on-accent)                                   │
+│     Background:        #F8FAFC    (--color-background)                                  │
+│     Foreground:        #1E40AF    (--color-foreground)                                  │
+│     Card:              #FFFFFF    (--color-card)                                        │
+│     Card Foreground:   #1E40AF    (--color-card-foreground)                             │
+│     Muted:             #E9EEF5    (--color-muted)                                       │
+│     Muted Foreground:  #475569    (--color-muted-foreground)                            │
+│     Border:            #BFDBFE    (--color-border)                                      │
+│     Destructive:       #DC2626    (--color-destructive)                                 │
+│     On Destructive:    #FFFFFF    (--color-on-destructive)                              │
+│     Ring:              #1E3A8A    (--color-ring)                                        │
+│     Notes: Luxury navy + gold service [Accent adjusted from #CA8A04]                    │
+├─── TYPOGRAPHY ──────────────────────────────────────────────────────────────────────────┤
+│  Varela Round / Nunito Sans                                                             │
+│     Mood: soft, rounded, friendly, approachable, warm, gentle                           │
+│     Best For: Children's products, pet apps, friendly brands, wellness, soft UI         │
+│     Google Fonts:                                                                       │
+│     https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;500;600;700&fami  │
+│     ly=Varela+Round&display=swap                                                        │
+│     CSS Import: @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:w...  │
+├─── KEY EFFECTS ─────────────────────────────────────────────────────────────────────────┤
+│     Lensing and refraction, adaptive translucency, and fluid morph transitions aligned  │
+│     to Apple platform behavior                                                          │
+├─── AVOID ───────────────────────────────────────────────────────────────────────────────┤
+│     Poor photos + Complex booking                                                       │
+├─── PRE-DELIVERY CHECKLIST ──────────────────────────────────────────────────────────────┤
+│     [ ] No emojis as icons (use SVG: Heroicons/Lucide)                                  │
+│     [ ] cursor-pointer on all clickable elements                                        │
+│     [ ] Hover states with smooth transitions (150-300ms)                                │
+│     [ ] Light mode: text contrast 4.5:1 minimum                                         │
+│     [ ] Focus states visible for keyboard nav                                           │
+│     [ ] prefers-reduced-motion respected                                                │
+│     [ ] Responsive: 375px, 768px, 1024px, 1440px                                        │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+
+### pastel lavender mint blush light --domain color
+## UI Pro Max Search Results
+**Domain:** color | **Query:** pastel lavender mint blush light
+**Source:** colors.csv | **Found:** 4 results
+
+### Result 1
+- **Product Type:** Period & Cycle Tracker
+- **Primary:** #BE185D
+- **On Primary:** #FFFFFF
+- **Secondary:** #EC4899
+- **On Secondary:** #000000
+- **Accent:** #7C3AED
+- **On Accent:** #FFFFFF
+- **Background:** #FDF2F8
+- **Foreground:** #0F172A
+- **Card:** #FFFFFF
+- **Card Foreground:** #0F172A
+- **Muted:** #FBF1F5
+- **Muted Foreground:** #475569
+- **Border:** #F7E3EB
+- **Destructive:** #DC2626
+- **On Destructive:** #FFFFFF
+- **Ring:** #BE185D
+- **Notes:** Blush rose + fertility lavender
+
+### Result 2
+- **Product Type:** Meditation & Mindfulness
+- **Primary:** #7C3AED
+- **On Primary:** #FFFFFF
+- **Secondary:** #8B5CF6
+- **On Secondary:** #000000
+- **Accent:** #059669
+- **On Accent:** #000000
+- **Background:** #FAF5FF
+- **Foreground:** #0F172A
+- **Card:** #FFFFFF
+- **Card Foreground:** #0F172A
+- **Muted:** #F7F3FD
+- **Muted Foreground:** #475569
+- **Border:** #EFE7FC
+- **Destructive:** #DC2626
+- **On Destructive:** #FFFFFF
+- **Ring:** #7C3AED
+- **Notes:** Calm lavender + mindful green
+
+### Result 3
+- **Product Type:** Beauty/Spa/Wellness Service
+- **Primary:** #EC4899
+- **On Primary:** #000000
+- **Secondary:** #F9A8D4
+- **On Secondary:** #0F172A
+- **Accent:** #8B5CF6
+- **On Accent:** #000000
+- **Background:** #FDF2F8
+- **Foreground:** #831843
+- **Card:** #FFFFFF
+- **Card Foreground:** #831843
+- **Muted:** #F1EEF5
+- **Muted Foreground:** #475569
+- **Border:** #FBCFE8
+- **Destructive:** #DC2626
+- **On Destructive:** #FFFFFF
+- **Ring:** #EC4899
+- **Notes:** Soft pink + lavender luxury
+
+### Result 4
+- **Product Type:** Mental Health App
+- **Primary:** #8B5CF6
+- **On Primary:** #000000
+- **Secondary:** #C4B5FD
+- **On Secondary:** #0F172A
+- **Accent:** #059669
+- **On Accent:** #000000
+- **Background:** #FAF5FF
+- **Foreground:** #4C1D95
+- **Card:** #FFFFFF
+- **Card Foreground:** #4C1D95
+- **Muted:** #EDEFF9
+- **Muted Foreground:** #475569
+- **Border:** #EDE9FE
+- **Destructive:** #DC2626
+- **On Destructive:** #FFFFFF
+- **Ring:** #8B5CF6
+- **Notes:** Calming lavender + wellness green [Accent adjusted from #10B981]
+
+
+### premium productivity editorial rounded --domain typography
+## UI Pro Max Search Results
+**Domain:** typography | **Query:** premium productivity editorial rounded
+**Source:** typography.csv | **Found:** 4 results
+
+### Result 1
+- **Font Pairing Name:** Classic Elegant
+- **Category:** Serif + Sans
+- **Heading Font:** Playfair Display
+- **Body Font:** Inter
+- **Mood/Style Keywords:** elegant, luxury, sophisticated, timeless, premium, editorial
+- **Best For:** Luxury brands, fashion, spa, beauty, editorial, magazines, high-end e-commerce
+- **Google Fonts URL:** https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap
+- **CSS Import:** @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+- **Tailwind Config:** fontFamily: { serif: ['Playfair Display', 'serif'], sans: ['Inter', 'sans-serif'] }
+- **Notes:** High contrast between elegant heading and clean body. Perfect for luxury/premium.
+
+### Result 2
+- **Font Pairing Name:** Material You MD3 (Roboto System)
+- **Category:** Sans (System Default)
+- **Heading Font:** Roboto
+- **Body Font:** Roboto
+- **Mood/Style Keywords:** material design 3, md3, android, google, tonal, friendly, rounded, accessible, adaptive
+- **Best For:** Android apps, cross-platform tools, productivity software, data-heavy B2B dashboards, enterprise mobile
+- **Google Fonts URL:** https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400
+- **CSS Import:** @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap');
+- **Tailwind Config:** fontFamily: { sans: ['Roboto', 'sans-serif'] }
+- **Notes:** MD3 type scale: Display Large 56px/400/64px. Headline Large 32px/500/40px. Title Large 22px/500/28px. Body Large 16px/400/24px. Label Medium 12px/500/16px. Buttons and Labels: letterSpacing 0.1px. Use system Roboto on Android; load from Google Fonts for iOS parity. Never use custom weights beyond 30...
+
+### Result 3
+- **Font Pairing Name:** Modern Dark Cinema (Inter System)
+- **Category:** Sans + Mono
+- **Heading Font:** Inter
+- **Body Font:** Inter
+- **Mood/Style Keywords:** dark, cinematic, technical, precision, clean, premium, developer, professional, high-end utility
+- **Best For:** Developer tools, fintech/trading, AI dashboards, streaming platforms, high-end productivity apps
+- **Google Fonts URL:** https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap
+- **CSS Import:** @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+- **Tailwind Config:** fontFamily: { sans: ['Inter', 'sans-serif'] }
+- **Notes:** Single-family precision system: Inter 700 (-1.5 tracking) for Display 48pt; Inter 600 (-0.5 tracking) for H1 32pt / H2 24pt; Inter 400 for body 16pt; Inter 500 uppercase +1.2 tracking for labels/mono. Gradient text via mask-view + react-native-linear-gradient (#FFFFFF → rgba(255,255,255,0.7)) on maj...
+
+### Result 4
+- **Font Pairing Name:** Soft Rounded
+- **Category:** Sans + Sans
+- **Heading Font:** Varela Round
+- **Body Font:** Nunito Sans
+- **Mood/Style Keywords:** soft, rounded, friendly, approachable, warm, gentle
+- **Best For:** Children's products, pet apps, friendly brands, wellness, soft UI
+- **Google Fonts URL:** https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;500;600;700&family=Varela+Round&display=swap
+- **CSS Import:** @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;500;600;700&family=Varela+Round&display=swap');
+- **Tailwind Config:** fontFamily: { heading: ['Varela Round', 'sans-serif'], body: ['Nunito Sans', 'sans-serif'] }
+- **Notes:** Both rounded and friendly. Perfect for soft UI designs.
+
+
+### glassmorphism text contrast --domain ux
+## UI Pro Max Search Results
+**Domain:** ux | **Query:** glassmorphism text contrast
+**Source:** ux-guidelines.csv | **Found:** 4 results
+
+### Result 1
+- **Category:** Typography
+- **Issue:** Contrast Readability
+- **Platform:** All
+- **Description:** Body text needs good contrast
+- **Do:** Use darker text on light backgrounds
+- **Don't:** Gray text on gray background
+- **Code Example Good:** text-gray-900 on white
+- **Code Example Bad:** text-gray-400 on gray-100
+- **Severity:** High
+
+### Result 2
+- **Category:** Accessibility
+- **Issue:** Color Contrast
+- **Platform:** All
+- **Description:** Text must be readable against background
+- **Do:** Minimum 4.5:1 ratio for normal text
+- **Don't:** Low contrast text
+- **Code Example Good:** #333 on white (7:1)
+- **Code Example Bad:** #999 on white (2.8:1)
+- **Severity:** High
+
+### Result 3
+- **Category:** Accessibility
+- **Issue:** Alt Text
+- **Platform:** All
+- **Description:** Images need text alternatives
+- **Do:** Descriptive alt text for meaningful images
+- **Don't:** Empty or missing alt attributes
+- **Code Example Good:** alt='Dog playing in park'
+- **Code Example Bad:** alt='' for content images
+- **Severity:** High
+
+### Result 4
+- **Category:** Accessibility
+- **Issue:** Focus Appearance
+- **Platform:** Web
+- **Description:** WCAG 2.2 AAA defines minimum area and contrast for focus indicators
+- **Do:** Use an indicator at least as large as a 2 CSS px perimeter with 3:1 state contrast
+- **Don't:** Present this enhanced AAA criterion as an AA requirement or use a thin low-contrast outline
+- **Code Example Good:** outline: 2px solid currentColor; outline-offset: 2px
+- **Code Example Bad:** box-shadow: 0 0 1px low-contrast
+- **Severity:** Medium
+
+
+### scroll storytelling pinned --domain gsap
+## UI Pro Max Search Results
+**Domain:** gsap | **Query:** scroll storytelling pinned
+**Source:** motion.csv | **Found:** 3 results
+
+### Result 1
+- **Category:** Scroll Reveal
+- **Intensity Tier:** Complex
+- **Trigger:** scroll (continuous scrub)
+- **Duration:** tied to scroll position
+- **Easing:** none (scrub-driven)
+- **GSAP Snippet:** gsap.timeline({ scrollTrigger: { trigger: section, start: 'top top', end: '+=150%', scrub: 1, pin: true } }).from('.headline', { opacity: 0, y: 40 }).to('.bg-layer', { yPercent: -20 }, '<');
+- **Framework Notes:** Pinning needs the section to have deterministic height; recalc ScrollTrigger.refresh() after images/fonts load; Use matchMedia('(prefers-reduced-motion: reduce)') to skip non-essential motion and render the final state immediately
+- **Do:** Use scrub: true or a small number (0.5-1.5) instead of instant jumps so it feels tied to the scrollbar
+- **Don't:** Don't pin more than 1-2 sections per page; excessive pinning fights native scroll feel and hurts mobile UX
+- **Performance Notes:** Pinning forces layout reflow; test on mid-tier mobile devices, not just desktop
+
+### Result 2
+- **Category:** Scroll Reveal
+- **Intensity Tier:** Subtle
+- **Trigger:** scroll (viewport enter)
+- **Duration:** 300-400ms
+- **Easing:** power1.out
+- **GSAP Snippet:** gsap.from(el, { opacity: 0, y: 12, duration: 0.35, ease: 'power1.out', scrollTrigger: { trigger: el, start: 'top 90%', toggleActions: 'play none none reverse' } });
+- **Framework Notes:** Requires the ScrollTrigger plugin registered once via gsap.registerPlugin(ScrollTrigger); Use matchMedia('(prefers-reduced-motion: reduce)') to skip non-essential motion and render the final state immediately
+- **Do:** Keep the y offset small (8-16px) so it reads as a fade, not a slide
+- **Don't:** Don't reveal below-the-fold content needed for SEO/crawlers as invisible-by-default without a no-JS fallback
+- **Performance Notes:** toggleActions 'play none none reverse' avoids re-triggering on every scroll direction change
+
+### Result 3
+- **Category:** Parallax Scroll
+- **Intensity Tier:** Subtle
+- **Trigger:** scroll (continuous)
+- **Duration:** tied to scroll position
+- **Easing:** linear (scrub)
+- **GSAP Snippet:** gsap.to('.bg-layer', { yPercent: 10, ease: 'none', scrollTrigger: { trigger: section, scrub: true } });
+- **Framework Notes:** Apply parallax to background/decorative layers only, never to text or interactive controls; Use matchMedia('(prefers-reduced-motion: reduce)') to skip non-essential motion and render the final state immediately
+- **Do:** Keep the yPercent delta small (5-15) so foreground and background never desync distractingly
+- **Don't:** Don't parallax body copy; it hurts reading comfort and can trigger motion sickness
+- **Performance Notes:** will-change: transform on the parallax layer only; remove it after scroll settles to free GPU memory
+
+
+### react three fiber landing --stack react
+## UI Pro Max Stack Guidelines
+**Stack:** react | **Query:** react three fiber landing
+**Source:** stacks/react.csv | **Found:** 0 results
+
+No matches. This is not a match with an empty value -- the query did not hit the database. Retry with broader/different keywords before falling back to general defaults, and say explicitly that no database match was found if you do fall back.
+**Closest known terms:** tree, handling, reactive, filter

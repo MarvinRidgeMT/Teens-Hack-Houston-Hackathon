@@ -1,127 +1,155 @@
-// The 3D stage: studio lighting built from light-formers (no HDR download), soft contact shadow,
-// and a camera rig that follows the story step and, gently, the pointer.
-import { useEffect, useMemo, useRef, useState } from 'react';
+// The 3D stage: a product-photography studio built from Lightformers (no HDR download), a soft
+// lavender contact shadow, adaptive quality, and a camera rig. mode="hero" holds the hero pose and
+// plays the opening (lid opens, laptop settles); mode="story" follows story.progress from ScrollTrigger.
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { ContactShadows, Environment, Lightformer } from '@react-three/drei';
+import { AdaptiveDpr, ContactShadows, Environment, Lightformer, PerformanceMonitor } from '@react-three/drei';
 import * as THREE from 'three';
-import { Laptop, laptopHull } from './Laptop';
-import { story } from './story';
+import { LaptopModel } from './LaptopModel';
+import { story, SCREENS, type Screen } from './story';
+import { drawScreen } from './screens';
+import { HERO_POSE, STORY_POSES, blendPose, fitCamera, type Margin, type Pose } from './rig';
 
-// Pose per story step: laptop yaw/pitch and camera position / target.
-const POSES = {
-  hero: { x: 0.08, yaw: -0.36, pitch: 0.05, cam: [0.2, 2.4, 8.9], look: [0, 0.62, 0] },
-  step: { x: 0.05, yaw: -0.14, pitch: 0.02, cam: [0, 2.15, 8.2], look: [0, 0.7, -0.3] },
-  close: { x: 0.1, yaw: 0, pitch: 0, cam: [0, 1.9, 7.5], look: [0, 0.85, -0.5] },
-} as const;
+type Mode = 'hero' | 'story';
+const css = (n: string) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const FOV = 28;
+const HERO_SCREENS: Screen[] = ['return'];
 
-type Pose = (typeof POSES)[keyof typeof POSES];
-
-const HULL = laptopHull();
-const RIG_Y = -0.35;
-// Clear space to keep around the laptop, in CSS px: the left edge fades out, and the nav sits over the top.
-const MARGIN = { left: 64, right: 32, top: 96, bottom: 32 };
-
-/**
- * The camera position for a pose, moved back along its line of sight until every corner of the
- * laptop (at that pose's turn, plus room for the pointer tilt) sits inside the canvas margins.
- * It only ever moves back, so a pose that already fits keeps the framing it was tuned with.
- */
-function fitCamera(p: Pose, width: number, height: number, fov: number): THREE.Vector3 {
-  const look = new THREE.Vector3(...(p.look as [number, number, number]));
-  const cam = new THREE.Vector3(...(p.cam as [number, number, number]));
-  if (width < 1 || height < 1) return cam;
-  const probe = new THREE.PerspectiveCamera(fov, width / height, 0.1, 50);
-  const lim = {
-    left: -1 + (2 * MARGIN.left) / width,
-    right: 1 - (2 * MARGIN.right) / width,
-    top: 1 - (2 * MARGIN.top) / height,
-    bottom: -1 + (2 * MARGIN.bottom) / height,
-  };
-  const corners: THREE.Vector3[] = [];
-  for (const sway of [-0.12, 0, 0.12]) {
-    const m = new THREE.Matrix4().compose(
-      new THREE.Vector3(p.x, RIG_Y, 0),
-      new THREE.Quaternion().setFromEuler(new THREE.Euler(p.pitch, p.yaw + sway, 0)),
-      new THREE.Vector3(1, 1, 1),
-    );
-    HULL.forEach((v) => corners.push(v.clone().applyMatrix4(m)));
-  }
-  const v = new THREE.Vector3();
-  for (let i = 0; i < 6; i++) {
-    probe.position.copy(cam);
-    probe.lookAt(look);
-    probe.updateMatrixWorld();
-    let over = 1;
-    for (const c of corners) {
-      v.copy(c).project(probe);
-      over = Math.max(over, v.x / lim.right, v.x / lim.left, v.y / lim.top, v.y / lim.bottom);
-    }
-    if (over <= 1.001) break;
-    cam.sub(look).multiplyScalar(over * 1.01).add(look);
-  }
-  return cam;
+function useScreens(wanted: Screen[]) {
+  const [tex, setTex] = useState<Partial<Record<Screen, THREE.Texture>>>({});
+  const gl = useThree((s) => s.gl);
+  useEffect(() => {
+    let alive = true;
+    const made: THREE.Texture[] = [];
+    wanted.forEach(async (s) => {
+      try {
+        const canvas = await drawScreen(s);
+        if (!alive) return;
+        const t = new THREE.CanvasTexture(canvas);
+        t.colorSpace = THREE.SRGBColorSpace;
+        t.anisotropy = gl.capabilities.getMaxAnisotropy();
+        t.generateMipmaps = true;
+        t.minFilter = THREE.LinearMipmapLinearFilter;
+        made.push(t);
+        setTex((cur) => ({ ...cur, [s]: t }));
+      } catch (err) {
+        console.error(err);
+      }
+    });
+    return () => { alive = false; made.forEach((t) => t.dispose()); };
+  }, [gl, wanted]);
+  return tex;
 }
 
-function poseFor(step: number) {
-  if (step < 0) return POSES.hero;
-  if (step === 2) return POSES.close; // the return card: come closest
-  return POSES.step;
-}
-
-function Rig({ reduced }: { reduced: boolean }) {
+function Rig({ mode, reduced, margin }: { mode: Mode; reduced: boolean; margin: Margin }) {
   const group = useRef<THREE.Group>(null);
+  // only the hero plays the opening; the story's laptop is already open
+  const open = useRef(reduced || mode === 'story' ? 1 : 0);
   const { camera, size } = useThree();
-  const fov = (camera as THREE.PerspectiveCamera).fov;
-  const fitted = useMemo(() => {
-    const out = new Map<Pose, THREE.Vector3>();
-    Object.values(POSES).forEach((p) => out.set(p, fitCamera(p, size.width, size.height, fov)));
-    return out;
-  }, [size.width, size.height, fov]);
-  const look = useRef(new THREE.Vector3(...POSES.hero.look));
+  const screens = useScreens(mode === 'hero' ? HERO_SCREENS : SCREENS);
+  const [scene, setScene] = useState(mode === 'hero' ? 3 : story.scene);
+  const look = useRef(new THREE.Vector3(...HERO_POSE.look));
   const started = useRef(0);
-  const target = new THREE.Vector3();
+
+  useEffect(() => (mode === 'story' ? story.subscribe(setScene) : undefined), [mode]);
+
+  // Fitted camera per pose, recomputed only when the canvas size changes.
+  const fitted = useMemo(() => {
+    const fit = (p: Pose): Pose => ({ ...p, cam: fitCamera(p, size.width, size.height, FOV, margin).toArray() as Pose['cam'] });
+    return { hero: fit(HERO_POSE), story: STORY_POSES.map(fit) };
+  }, [size.width, size.height, margin]);
 
   useEffect(() => {
-    camera.position.copy(fitted.get(POSES.hero)!);
-  }, [camera]); // the first frame only; later frames ease toward the fitted pose
+    const p = mode === 'hero' ? fitted.hero : fitted.story[0];
+    camera.position.set(...p.cam);
+    look.current.set(...p.look);
+    // the first frame only; later frames ease toward the pose
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [camera]);
+
+  const shown = screens[SCREENS[scene]] ?? null;
+  const target = useMemo(() => new THREE.Vector3(), []);
 
   useFrame((_, dt) => {
     const d = Math.min(dt, 1 / 20);
-    // The opening runs on wall-clock time, so it ends in 1.6 s even on a slow GPU.
-    if (!reduced && story.intro < 1) {
-      if (started.current === 0) started.current = performance.now();
-      story.intro = Math.min(1, (performance.now() - started.current) / 1600);
+    // Opening on wall-clock time (ends in ~1.4 s even on a slow GPU): the lid opens and the laptop settles.
+    if (reduced) open.current = 1;
+    else if (open.current < 1) {
+      if (!started.current) started.current = performance.now();
+      const t = Math.min(1, (performance.now() - started.current) / 1400);
+      open.current = THREE.MathUtils.smootherstep(t, 0, 1);
     }
-    const p = poseFor(story.step);
-    const k = reduced ? 1 : 1 - Math.exp(-d * 3.2);
-    const introYaw = reduced ? 0 : (1 - THREE.MathUtils.smootherstep(story.intro, 0, 1)) * -0.55;
-    if (group.current) {
-      const yaw = p.yaw + introYaw + (reduced ? 0 : story.pointerX * 0.12);
-      const pitch = p.pitch + (reduced ? 0 : story.pointerY * 0.05);
-      group.current.rotation.y += (yaw - group.current.rotation.y) * k;
-      group.current.rotation.x += (pitch - group.current.rotation.x) * k;
-      group.current.position.x += (p.x - group.current.position.x) * k;
+    let p: Pose;
+    if (mode === 'hero') p = fitted.hero;
+    else {
+      const s = THREE.MathUtils.clamp(story.progress, 0, 1) * (fitted.story.length - 1);
+      const i = Math.min(Math.floor(s), fitted.story.length - 2);
+      p = blendPose(fitted.story[i], fitted.story[i + 1], THREE.MathUtils.smootherstep(s - i, 0, 1));
     }
-    camera.position.lerp(fitted.get(p)!, k);
-    look.current.lerp(target.set(...(p.look as [number, number, number])), k);
+    const k = reduced ? 1 : 1 - Math.exp(-d * 4);
+    const g = group.current;
+    if (g) {
+      const settle = reduced ? 0 : (1 - open.current) * -0.35;
+      const yaw = p.yaw + (reduced ? 0 : story.pointerX * 0.06);
+      const pitch = p.pitch + (reduced ? 0 : story.pointerY * 0.035);
+      g.rotation.y += (yaw - g.rotation.y) * k;
+      g.rotation.x += (pitch - g.rotation.x) * k;
+      g.position.x += (p.x - g.position.x) * k;
+      g.position.y += (p.y + settle - g.position.y) * k;
+    }
+    camera.position.lerp(target.set(...p.cam), k);
+    look.current.lerp(target.set(...p.look), k);
     camera.lookAt(look.current);
   });
 
   return (
-    <group ref={group} position={[0, -0.35, 0]}>
-      <Laptop />
-      {/* grounding: a soft neutral shadow right under the base; it moves with the laptop */}
-      {/* a plane well larger than the laptop, so the blurred shadow fades out before its edges (no straight-edged wedge) */}
-      <ContactShadows position={[0, -0.046, 0.25]} opacity={0.36} scale={6} blur={3} far={0.55} resolution={512} color="#000000" />
+    <group ref={group}>
+      <LaptopModel screen={shown} openRef={open} />
+      <ContactShadows position={[0, -0.002, 0]} opacity={0.34} scale={9} blur={2.8} far={1.2} resolution={512} color={css('--plum-3')} />
     </group>
   );
 }
 
-export default function LaptopScene({ reduced, onFail }: { reduced: boolean; onFail: () => void }) {
+function Studio() {
+  const c = useMemo(() => ({ lav: css('--lavender'), mint: css('--mint'), blush: css('--blush'), white: css('--surface-elevated') }), []);
+  return (
+    <>
+      <ambientLight intensity={0.12} color={c.lav} />
+      <directionalLight position={[-4, 7, 5]} intensity={1.6} color={c.white} />
+      <Environment resolution={256} frames={1} environmentIntensity={1.25}>
+        {/* Metal shows only what it reflects: a bright studio all round, coloured accents placed. */}
+        {/* large soft key, top-left, white */}
+        <Lightformer form="rect" intensity={6} color={c.white} position={[-4, 6, 4]} scale={[10, 7, 1]} rotation={[-Math.PI / 3, -Math.PI / 8, 0]} />
+        {/* overhead softbox: the deck reads as silver */}
+        <Lightformer form="rect" intensity={4} color={c.white} position={[0, 8, 0]} scale={[16, 12, 1]} rotation={[Math.PI / 2, 0, 0]} />
+        {/* tall softbox behind and above the laptop: the deck reflects it at the viewing angle */}
+        <Lightformer form="rect" intensity={4.5} color={c.white} position={[0, 5, -9]} scale={[18, 8, 1]} rotation={[0.35, 0, 0]} />
+        {/* big white card behind the camera: the lid back and front edges catch it */}
+        <Lightformer form="rect" intensity={3} color={c.white} position={[0, 2, 10]} scale={[20, 8, 1]} />
+        {/* white floor bounce under the laptop */}
+        <Lightformer form="rect" intensity={1.6} color={c.white} position={[0, -4, 0]} scale={[16, 16, 1]} rotation={[-Math.PI / 2, 0, 0]} />
+        {/* fill, front-right, lavender */}
+        <Lightformer form="rect" intensity={2.2} color={c.lav} position={[7, 2, 5]} scale={[8, 6, 1]} rotation={[0, -Math.PI / 4, 0]} />
+        {/* rim strip, back-right, narrow white: outlines lid and base edges */}
+        <Lightformer form="rect" intensity={11} color={c.white} position={[5, 3, -5]} scale={[0.8, 10, 1]} rotation={[0, -Math.PI * 0.75, 0]} />
+        {/* second thin rim, front-left low: a line along the lid's top edge and the deck's front chamfer */}
+        <Lightformer form="rect" intensity={6} color={c.white} position={[-6, 1, 4]} scale={[0.6, 8, 1]} rotation={[0, Math.PI / 3, 0]} />
+        {/* mint bounce card, bottom-left */}
+        <Lightformer form="rect" intensity={2.4} color={c.mint} position={[-6, -1, 3]} scale={[7, 4, 1]} rotation={[0, Math.PI / 3, 0]} />
+        {/* blush accent card, right, low */}
+        <Lightformer form="rect" intensity={1.6} color={c.blush} position={[8, 0.5, 0]} scale={[3, 5, 1]} rotation={[0, -Math.PI / 2, 0]} />
+      </Environment>
+    </>
+  );
+}
+
+export default function LaptopScene({ mode, reduced, onFail, margin }: {
+  mode: Mode; reduced: boolean; onFail: () => void; margin: Margin;
+}) {
   const wrap = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(true);
+  const [dpr, setDpr] = useState(1.75);
 
-  // Stop rendering when the stage is off screen.
   useEffect(() => {
     const el = wrap.current;
     if (!el) return;
@@ -134,40 +162,23 @@ export default function LaptopScene({ reduced, onFail }: { reduced: boolean; onF
     <div ref={wrap} className="stage-canvas" aria-hidden="true">
       <Canvas
         frameloop={visible ? 'always' : 'never'}
-        dpr={[1, 1.75]}
-        shadows={false}
-        camera={{ fov: 30, near: 0.1, far: 50, position: POSES.hero.cam as unknown as [number, number, number] }}
+        dpr={[1, dpr]}
+        camera={{ fov: FOV, near: 0.1, far: 60, position: HERO_POSE.cam }}
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance', preserveDrawingBuffer: import.meta.env.DEV }}
         onCreated={({ gl, scene }) => {
-          if (import.meta.env.DEV) (window as unknown as { __scene: unknown }).__scene = scene;
-          gl.toneMapping = THREE.ACESFilmicToneMapping;
-          gl.toneMappingExposure = 1.05;
+          if (import.meta.env.DEV) (window as unknown as Record<string, unknown>)[`__scene_${mode}`] = scene;
+          gl.toneMapping = THREE.AgXToneMapping;
+          gl.toneMappingExposure = 1.2;
+          gl.outputColorSpace = THREE.SRGBColorSpace;
           gl.domElement.addEventListener('webglcontextlost', (e) => { e.preventDefault(); onFail(); }, { once: true });
         }}
       >
-        <ambientLight intensity={0.25} />
-        <directionalLight position={[3, 6, 4]} intensity={2} color="#ffffff" />
-        <directionalLight position={[-5, 2, -3]} intensity={0.9} color="#a58cff" />
-        <Environment resolution={256} frames={1}>
-          {/* soft key */}
-          <Lightformer form="rect" intensity={5} position={[0, 5, 3]} scale={[10, 5, 1]} rotation={[-Math.PI / 3, 0, 0]} />
-          {/* overhead softbox behind the laptop: the deck and palm rest reflect it, so they read as silver aluminium */}
-          <Lightformer form="rect" intensity={4} position={[0, 6, -6]} scale={[14, 6, 1]} rotation={[Math.PI / 4, 0, 0]} />
-          <Lightformer form="rect" intensity={2.2} position={[0, 7, 1]} scale={[12, 8, 1]} rotation={[Math.PI / 2, 0, 0]} />
-          {/* broad front and side softboxes: the deck stays silver at every story pose, not only the hero */}
-          <Lightformer form="rect" intensity={2.4} position={[0, 2, 7]} scale={[14, 5, 1]} />
-          <Lightformer form="rect" intensity={1.6} position={[-7, 2, 2]} scale={[6, 6, 1]} rotation={[0, Math.PI / 2, 0]} />
-          <Lightformer form="rect" intensity={1.6} position={[7, 2, 2]} scale={[6, 6, 1]} rotation={[0, -Math.PI / 2, 0]} />
-          {/* floor bounce so the aluminium reads silver, not grey */}
-          <Lightformer form="rect" intensity={1.6} position={[0, -3, 2]} scale={[10, 4, 1]} rotation={[Math.PI / 2.4, 0, 0]} />
-          {/* violet rim */}
-          <Lightformer form="rect" intensity={2.4} color="#8a6dff" position={[-6, 1.5, -2]} scale={[3, 6, 1]} rotation={[0, Math.PI / 2.4, 0]} />
-          {/* lime kicker */}
-          <Lightformer form="rect" intensity={1.2} color="#c9ff38" position={[6, 0.5, 1]} scale={[2, 5, 1]} rotation={[0, -Math.PI / 2.2, 0]} />
-          {/* fill */}
-          <Lightformer form="ring" intensity={0.8} position={[0, 2, 8]} scale={4} />
-        </Environment>
-        <Rig reduced={reduced} />
+        <PerformanceMonitor onDecline={() => setDpr(1.1)} onIncline={() => setDpr(1.75)} />
+        <AdaptiveDpr pixelated={false} />
+        <Studio />
+        <Suspense fallback={null}>
+          <Rig mode={mode} reduced={reduced} margin={margin} />
+        </Suspense>
       </Canvas>
     </div>
   );

@@ -1,4 +1,4 @@
-/* Pickup panel. Design system: ../shared/tokens.css (Paper / Blue hour, Inter) and
+/* Pickup panel. Design system: ../shared/tokens.css (V4 Pearl / Plum midnight, Geist + Plus Jakarta Sans) and
    ../shared/pk.css (Button, Chip, Card, Field). Only the panel's own layout lives
    here. Motion: transform and opacity only, off under prefers-reduced-motion. */
 * { box-sizing: border-box; }
@@ -26,13 +26,14 @@ p { margin: 0; }
 .askbox { display: flex; align-items: center; gap: 6px; }
 .askbox .pk-input { flex: 1; min-width: 0; min-height: 42px; font-size: max(16px, var(--fs-body)); }
 .mic, .send {
-  flex: none; width: 42px; height: 42px; border-radius: var(--radius-md); display: grid; place-items: center; cursor: pointer;
+  flex: none; width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; cursor: pointer;
   transition: transform var(--duration-fast) var(--ease-out);
 }
 .mic { background: var(--surface); color: var(--ink); border: 1px solid var(--border-strong); touch-action: none; user-select: none; }
 .mic[aria-pressed="true"] { background: var(--state-away); color: var(--on-state); border-color: var(--state-away); }
 .mic:disabled { opacity: .4; cursor: not-allowed; }
-.send { background: var(--accent); color: var(--on-accent); border: 1px solid var(--accent); }
+.send { background: var(--cta); color: var(--on-cta); border: 1px solid var(--cta-edge); }
+.send:hover { background: var(--cta-hover); }
 .mic:active:not(:disabled), .send:active { transform: scale(.96); }
 .mic:focus-visible, .send:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .hints { display: flex; gap: 14px; flex-wrap: wrap; }
@@ -55,31 +56,32 @@ p { margin: 0; }
 .debug { font: 500 var(--fs-caption)/var(--lh-caption) var(--font-mono); color: var(--state-away); }
 #timerRun { display: grid; gap: 4px; }
 #timerRun[hidden], #timerIdle[hidden] { display: none; }
-.timer-clock { margin: 2px 0; font: 600 46px/1 var(--font-sans); letter-spacing: -.045em; font-variant-numeric: tabular-nums; color: var(--ink); }
+.timer-clock { margin: 2px 0; font: 700 46px/1 var(--font-display); letter-spacing: -.03em; font-variant-numeric: tabular-nums; color: var(--ink); }
 
 /* tasks */
 .tasks { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
-.task { padding: var(--space-3); border-radius: 12px; background: var(--surface); border: 1px solid var(--border);
+.task { padding: var(--space-3); border-radius: 14px; background: var(--surface); border: 1px solid var(--border);
   display: grid; gap: 6px; }
+.task[data-active] { background: var(--selected); border-color: var(--selected-edge); } /* active = mint + edge + accent name + its status chip */
 .task--new { animation: pk-rise var(--duration-base) var(--ease-out) both; animation-delay: calc(var(--i, 0) * var(--stagger)); }
 .task-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .task-name { font: 600 var(--fs-heading)/var(--lh-heading) var(--font-sans); letter-spacing: -.03em; overflow-wrap: anywhere; }
 .task[data-active] .task-name { color: var(--periwinkle); }
 .status-chip { flex: none; }
 .status-chip .pk-dot { flex: none; }
-.task-meta { color: var(--ink-body); }
+.task-meta { color: var(--ink-body); font-variant-numeric: tabular-nums; }
 .edit { display: flex; gap: 6px; }
 .edit .pk-input { flex: 1; min-width: 0; }
 
-.today { padding: 0 4px; }
+.today { padding: 0 4px; font-variant-numeric: tabular-nums; }
 .today b { color: var(--ink); font-weight: 600; }
 
 /* voice */
-.voice { border-radius: var(--radius-lg); background: var(--surface); border: 1px solid var(--border); padding: 4px var(--space-4); }
+.voice { border-radius: var(--radius-lg); background: var(--surface); border: 1px solid var(--rim); padding: 4px var(--space-4); }
 .voice > summary { cursor: pointer; padding: 10px 0; }
 .voice[open] { padding-bottom: var(--space-4); }
 .voice > * + * { margin-top: 10px; }
-.setup { padding: 10px 12px; border-radius: var(--radius-md); background: var(--mist); display: grid; gap: 8px; justify-items: start; }
+.setup { padding: 10px 12px; border-radius: 12px; background: var(--mist); display: grid; gap: 8px; justify-items: start; }
 .switch { display: flex; gap: 10px; align-items: center; }
 .switch input { width: 18px; height: 18px; accent-color: var(--accent); }
 .tips { color: var(--ink-body); }
