@@ -1,102 +1,144 @@
-/* Pickup website tokens. Brand primitives mirror design/tokens.json "brand" (shared with the
-   extension's src/shared/tokens.css); the site is the loud rendition, the extension the calm one.
-   Text on violet is white; lime, cyan, pink and yellow are fills under midnight text. */
-
-@font-face {
-  font-family: "Inter";
-  src: url("/assets/fonts/InterVariable.woff2") format("woff2");
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
+/* PickUp V4 "Soft Liquid Future" tokens. The only place raw colour values live on the site
+   (web/scripts/check-tokens.mjs fails the build on hex colours anywhere else in web/src).
+   Mirrored in design/tokens.json under "v4". Pastels are fills under plum text, never text. */
 
 :root {
-  /* Brand primitives */
-  --violet: #6038ff;
-  --violet-deep: #4a22e6;
-  --violet-light: #a58cff;
-  --lavender: #ece7ff;
-  --lime: #c9ff38;
-  --cyan: #42ddf4;
-  --pink: #ff5cb8;
-  --yellow: #ffe15a;
-  --midnight: #121126;
-  --midnight-2: #1c1b38;
-  --midnight-3: #272550;
-  --off-white: #f7f6fb;
-  --ink-2: #4d4b66;
-  --lavender-text: #c8c2f0;
-  --teal-deep: #0b7285;
+  /* ---------- Palette primitives ---------- */
+  /* 60%: canvas */
+  --canvas: #f8f5ff;
+  --canvas-2: #f3edff;
+  --pearl: #fdfbff;
+  --ivory: #fffbfe;
+  /* 30%: supporting surfaces */
+  --lavender: #e7daff;
+  --lavender-2: #d8c6ff;
+  --mint: #ddfbea;
+  --mint-2: #bff2d4;
+  --sage: #effcf4;
+  /* 10%: accents (fills only) */
+  --blush: #ffd8e8;
+  --bubblegum: #ffbfd8;
+  --green: #c4f4ab;
+  --green-2: #a6ea88;
+  --violet-soft: #bb9bfa;
+  --peach: #ffe2cf;
+  /* text and ink */
+  --plum: #302545;
+  --plum-2: #554868;
+  --plum-3: #6f6382;
+  --accent-ink: #5a3cc4;
+  --danger: #a8213f;
 
-  /* Semantic: light page */
-  --bg: var(--off-white);
-  --surface: #ffffff;
-  --surface-sunk: var(--lavender);
-  --text: var(--midnight);
-  --text-2: var(--ink-2);
-  --border: rgba(18, 17, 38, 0.12);
-  --border-strong: #8a87a3;
-  --link: var(--violet-deep);
-  --focus: var(--violet);
-  --on-fill: var(--midnight);          /* text on lime, cyan, pink, yellow */
-  --on-violet: #ffffff;
-  --on-violet-2: #e4ddff;
-  --success: var(--teal-deep);
-  --danger: #c21f3a;
+  /* ---------- Semantic ---------- */
+  --surface: var(--pearl);
+  --surface-elevated: #ffffff;
+  --text-primary: var(--plum);
+  --text-secondary: var(--plum-2);
+  --link: var(--accent-ink);
+  --focus-ring: #6a4be0;
+  --accent: var(--violet-soft);
+  --cta-fill: var(--green);
+  --cta-fill-2: var(--green-2);
+  --cta-ink: var(--plum);
+  --cta-alt-fill: var(--blush);
+  --cta-alt-fill-2: var(--bubblegum);
+  --line: rgba(48, 37, 69, 0.12);
+  --line-strong: rgba(48, 37, 69, 0.32);
 
-  /* Function colours: one highlighter per idea */
-  --fn-place: var(--lime);     /* your place, resume */
-  --fn-tabs: var(--cyan);      /* tabs, groups, tidy */
-  --fn-break: var(--pink);     /* interruptions, drift */
-  --fn-note: var(--yellow);    /* next steps, notes */
+  /* product states (same meaning as the extension badge) */
+  --state-parked: var(--lavender-2);
+  --state-away: var(--blush);
+  --state-saved: var(--mint-2);
+  --state-task: var(--green);
 
-  /* Type */
-  --font-display: "Bricolage Grotesque Variable", "Inter", system-ui, sans-serif;
-  --font-text: "Inter", system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
-  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  --fs-hero: clamp(2.75rem, 1.4rem + 5.2vw, 6rem);
-  --fs-h2: clamp(2.25rem, 1.3rem + 3.6vw, 4.5rem);
-  --fs-h3: clamp(1.375rem, 1.1rem + 0.9vw, 2rem);
-  --fs-lede: clamp(1.0625rem, 0.95rem + 0.45vw, 1.3125rem);
-  --fs-body: 1.0625rem;
-  --fs-small: 0.9375rem;
-  --fs-label: 0.8125rem;
+  /* ---------- Glass ---------- */
+  --glass-fill: rgba(255, 255, 255, 0.46);
+  --glass-fill-strong: rgba(255, 255, 255, 0.78);
+  --glass-tint-mint: rgba(205, 247, 224, 0.58);
+  --glass-tint-blush: rgba(255, 210, 229, 0.58);
+  --glass-tint-lilac: rgba(226, 213, 255, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.72);
+  --glass-rim-hi: rgba(255, 255, 255, 0.95);
+  --glass-rim-lo: rgba(187, 155, 250, 0.28);
+  --glass-highlight: rgba(255, 255, 255, 0.92);
+  --glass-inner: rgba(124, 92, 196, 0.07);
+  --glass-shadow: 0 30px 60px -30px rgba(76, 52, 140, 0.32), 0 8px 18px -10px rgba(76, 52, 140, 0.16);
+  --glass-shadow-lift: 0 40px 70px -30px rgba(76, 52, 140, 0.38), 0 12px 24px -12px rgba(76, 52, 140, 0.2);
+  --contact-shadow: rgba(84, 58, 150, 0.22);
+  --blur-pearl: 18px;
+  --sat-pearl: 140%;
+  --blur-gel: 14px;
+  --sat-gel: 165%;
+  --blur-crystal: 10px;
+  --sat-crystal: 120%;
 
-  /* Space and shape */
-  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 24px;
-  --space-6: 32px; --space-7: 48px; --space-8: 72px; --space-9: 112px; --space-10: 160px;
-  --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-xl: 32px; --radius-pill: 999px;
-  --wrap: min(1240px, 100% - 2 * max(20px, env(safe-area-inset-left)));
+  /* atmosphere light volumes */
+  --light-lilac: rgba(214, 196, 255, 0.75);
+  --light-mint: rgba(196, 246, 218, 0.8);
+  --light-blush: rgba(255, 201, 224, 0.7);
+  --light-peach: rgba(255, 226, 207, 0.6);
 
-  /* Elevation */
-  --shadow-1: 0 1px 2px rgba(18, 17, 38, 0.08);
-  --shadow-2: 0 2px 6px rgba(18, 17, 38, 0.08), 0 20px 48px rgba(18, 17, 38, 0.14);
-  --shadow-3: 0 30px 80px rgba(0, 0, 0, 0.32);
+  /* ---------- Type ---------- */
+  --font-display: "Plus Jakarta Sans Variable", "Geist Variable", system-ui, sans-serif;
+  --font-ui: "Geist Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+  --fs-display: clamp(44px, 7.2vw, 104px);
+  --fs-h2: clamp(32px, 4.4vw, 60px);
+  --fs-h3: clamp(22px, 1.9vw, 28px);
+  --fs-lede: clamp(18px, 1.45vw, 21px);
+  --fs-body: 17px;
+  --fs-small: 15px;
+  --fs-label: 13px;
 
-  /* Motion */
-  --dur-micro: 160ms;
-  --dur-ui: 280ms;
-  --dur-story: 700ms;
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  /* ---------- Space, radius ---------- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 136px;
+  --r-xs: 10px;
+  --r-sm: 14px;
+  --r-md: 20px;
+  --r-lg: 30px;
+  --r-xl: 40px;
+  --r-pill: 999px;
+  --wrap: min(1240px, calc(100vw - 40px));
+  --nav-h: 64px;
+
+  /* ---------- Motion (mirrors src/styles/motion.ts) ---------- */
+  --dur-pointer: 140ms;
+  --dur-hover: 200ms;
+  --dur-press: 140ms;
+  --dur-card: 400ms;
+  --dur-nav: 360ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-soft: cubic-bezier(0.33, 1, 0.68, 1);
 
   color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
+/* Reduced transparency, calm, or no backdrop-filter: glass becomes solid pearl. */
+@media (prefers-reduced-transparency: reduce) {
   :root {
-    --bg: #18172f;               /* a step above the midnight story and privacy bands, so sections stay distinct */
-    --surface: #221f42;
-    --surface-sunk: var(--midnight-3);
-    --text: #f1effc;
-    --text-2: #b9b4da;
-    --border: rgba(241, 239, 252, 0.14);
-    --border-strong: #77739b;
-    --link: var(--violet-light);
-    --focus: var(--lime);
-    --success: #5fd6e3;
-    --danger: #ff6b81;
-    --shadow-2: 0 2px 6px rgba(0, 0, 0, 0.4), 0 20px 48px rgba(0, 0, 0, 0.5);
-    color-scheme: dark;
+    --glass-fill: var(--pearl);
+    --glass-fill-strong: #ffffff;
+    --glass-tint-mint: var(--mint);
+    --glass-tint-blush: var(--blush);
+    --glass-tint-lilac: var(--lavender);
+  }
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root {
+    --glass-fill: var(--pearl);
+    --glass-fill-strong: #ffffff;
+    --glass-tint-mint: var(--mint);
+    --glass-tint-blush: var(--blush);
+    --glass-tint-lilac: var(--lavender);
   }
 }
