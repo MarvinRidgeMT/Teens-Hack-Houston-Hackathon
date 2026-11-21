@@ -159,6 +159,13 @@ async function main() {
   const badges = await openPage('file://' + strip, { width: 1280, height: 800 });
   log.push('badges: ' + (await shoot(badges, 'badges')).join(', '));
 
+  // Calm colours: the same pages with settings.calm on.
+  await evalIn(ctl, `chrome.storage.local.get('settings').then(({ settings }) => chrome.storage.local.set({ settings: { ...settings, calm: true } })).then(() => true)`);
+  const popupCalm = await openPage(base + 'src/pages/popup.html', { width: 360, height: 640, hook });
+  log.push('popup calm: ' + (await shoot(popupCalm, 'popup-calm', { full: true })).join(', ') + ' | data-calm ' + (await evalIn(popupCalm, `document.documentElement.hasAttribute('data-calm')`)));
+  const setupCalm = await openPage(base + 'src/pages/setup.html', { width: 1280, height: 800 });
+  log.push('setup calm: ' + (await shoot(setupCalm, 'setup-calm')).join(', '));
+
   // Website hero.
   const site = await openPage('file://' + path.join(REPO, 'site/index.html'), { width: 1280, height: 800 });
   log.push('site hero: ' + (await shoot(site, 'site-hero')).join(', '));
