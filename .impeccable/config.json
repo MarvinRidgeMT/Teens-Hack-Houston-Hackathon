@@ -29,6 +29,27 @@
         ],
         "createdAt": "2026-11-21T15:50:00.000Z",
         "reason": "V4: the three nested surfaces are product demonstrations, not layout cards: the Return card (and the mini card in the interruption sim) sits over a page inside a drawn browser window, as it does in Chrome; the story's nudge sits in its panel. Flattening would misrepresent the product."
+      },
+      {
+        "rule": "overused-font",
+        "value": "plus jakarta sans",
+        "createdAt": "2026-11-21T16:09:01.882Z",
+        "reason": "Sanctioned by the V4 brief: §8 lists Plus Jakarta Sans among its font candidates; chosen with Geist after UI UX Pro Max typography search (DIRECTION.md)"
+      },
+      {
+        "rule": "overused-font",
+        "value": "geist",
+        "createdAt": "2026-11-21T16:09:01.894Z",
+        "reason": "Sanctioned by the V4 brief: §8 lists Geist among its font candidates; UI face paired with Plus Jakarta Sans (DIRECTION.md)"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "site/index.html"
+        ],
+        "createdAt": "2026-11-21T16:09:01.907Z",
+        "reason": "False positive of the HTML-only static scan of the prerendered page (no CSS applied); the rendered-page detect (http://127.0.0.1:8765/site/) reports no cramped-padding"
       }
     ]
   }
