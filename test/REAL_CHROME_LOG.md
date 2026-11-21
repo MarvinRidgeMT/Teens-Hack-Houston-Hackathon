@@ -177,3 +177,14 @@ Branch `redesign/v3` at `88e60cb` (the v3 palette, badge colours and extension s
 - **N4 badge:** `P` → `•` → empty, with the same tooltips as before; only the colours changed.
 - **N1 shortcuts unchanged:** park-task ⌥P, resume-task ⌥R, toggle-voice ⌥V.
 - **What this run does not cover:** the gate drives `test/dev/stub-content.js`, not Sidd's content scripts, so the restyled return card and park overlay were not drawn here. Those were exercised headless with `site-shots` (park, pill, panel, card, Resume with scroll restore).
+
+## Treatment change: card v2 (palette) from Sat Nov 21, 9:38 AM ET
+
+`redesign/v3` (PR #1) merged into `main` at **9:38 AM ET** (14:38 UTC) as `5335a58`. This is **"card v2 (palette)"** for **both** conditions:
+- **Return card and park overlay:** teal on black becomes lime on midnight, with the task name on a lime highlighter. Colours only; no behaviour, timing, IDs or event schema changed.
+- **Toolbar badge colours:** `P` violet, `•` neutral grey, `☾` midnight, `✓` deep teal. Glyphs, tooltips and notification text are unchanged.
+
+A pilot laptop gets this when it pulls and reloads the extension; note each laptop's reload time here.
+
+**Pilot laptop reloads:**
+- (none yet)
