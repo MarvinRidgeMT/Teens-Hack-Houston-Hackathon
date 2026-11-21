@@ -44,11 +44,25 @@ export function fromCommands(commands, platform) {
 
 // A key for prose ("Not set: chrome://extensions/shortcuts" when missing) or for a
 // small key chip ("Not set"; the full text goes in its title).
-export const keyText = (key) => key || NOT_SET;
+export const keyText = (key) => (key ? keyWords(key).join(' ') : NOT_SET);
 export const chipText = (key) => key || NOT_SET_SHORT;
 
 // " · ⌃⇧R takes you back", or nothing when the key is not set (a sentence with no key reads wrong).
 export const backHint = (key) => (key ? ` · ${key} takes you back` : '');
+
+// Keys in words for keycaps and screen readers: '⌃⇧P' -> ['Control', 'Shift', 'P'], 'Alt+P' -> ['Alt', 'P'].
+const GLYPH_WORDS = { '⌃': 'Control', '⇧': 'Shift', '⌥': 'Option', '⌘': 'Command' };
+const NAME_WORDS = { ctrl: 'Control', control: 'Control', macctrl: 'Control', shift: 'Shift', alt: 'Alt', option: 'Option', command: 'Command', cmd: 'Command' };
+export function keyWords(key) {
+  const out = [];
+  for (const part of String(key || '').split('+').map((p) => p.trim()).filter(Boolean)) {
+    let rest = part;
+    while (rest && GLYPH_WORDS[rest[0]]) { out.push(GLYPH_WORDS[rest[0]]); rest = rest.slice(1); }
+    if (rest) out.push(NAME_WORDS[rest.toLowerCase()] || rest);
+  }
+  return out;
+}
+export const keyLabel = (key) => keyWords(key).join(' ');
 
 function guessPlatform() {
   const nav = globalThis.navigator;
@@ -85,9 +99,24 @@ export async function fillShortcuts(root = document) {
     });
   }
   const s = await shortcuts();
+  // A keycap becomes one keycap per key, in words ("Control" "Shift" "P"), read as one label.
   for (const el of root.querySelectorAll('[data-shortcut]')) {
     const key = s[el.dataset.shortcut] || '';
-    el.textContent = el.classList.contains('pk-kbd') ? chipText(key) : keyText(key);
+    if (el.classList.contains('pk-kbd') || 'keys' in el.dataset) {
+      el.dataset.keys = '';
+      el.classList.remove('pk-kbd');
+      el.classList.add('pk-keys');
+      const words = keyWords(key);
+      el.replaceChildren(...(words.length ? words : [chipText('')]).map((w) => {
+        const k = document.createElement('kbd');
+        k.className = 'pk-kbd';
+        k.textContent = w;
+        k.setAttribute('aria-hidden', 'true');
+        return k;
+      }));
+      el.setAttribute('role', 'img');
+      el.setAttribute('aria-label', words.length ? keyLabel(key) : NOT_SET);
+    } else el.textContent = keyText(key);
     if (key) el.removeAttribute('title'); else el.title = NOT_SET;
   }
   return s;

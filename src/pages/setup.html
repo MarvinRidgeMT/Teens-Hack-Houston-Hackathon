@@ -9,104 +9,107 @@
   <link rel="stylesheet" href="setup.css">
   <script type="module" src="setup.js"></script>
   <script type="module" src="../shared/theme.js"></script>
-  <script src="../vendor/motion.js"></script>
-  <script type="module" src="setup-motion.js"></script>
 </head>
 <body class="pk">
   <main class="st">
     <div class="st-ct">
-      <section class="st-brand pk-rise" style="--i:0" aria-labelledby="st-title">
+      <header class="st-brand pk-rise" style="--i:0">
         <span class="pk-logo"><span class="pk-mark" aria-hidden="true"></span>Pickup</span>
-        <h1 class="st-title" id="st-title">The calm way back to your work</h1>
-        <p class="st-txt">Pickup remembers where you were in a task, so when a break or a distraction pulls you away you can jump straight back to the right tab, the right spot and your next step.</p>
-        <div class="pk-row st-actions">
-          <button class="pk-btn pk-btn--primary" type="button" id="save">Save and start</button>
-          <a class="pk-btn pk-btn--ghost" href="dashboard.html" id="open-dashboard">Dashboard</a>
-        </div>
-        <p class="st-status" id="status" role="status" aria-live="polite"></p>
-        <div class="pk-row st-chips">
-          <span class="pk-chip"><span class="pk-dot" aria-hidden="true"></span>Saved on this device</span>
-          <span class="pk-chip" id="chip-away">Away after 2 min</span>
-          <span class="pk-chip" id="chip-nudge">Nudge after 5 min</span>
-        </div>
-        <p class="st-copy">Made at Teens Hack Houston.</p>
-      </section>
+        <h1 class="st-title" id="st-title">Set up Pickup in 30 seconds</h1>
+        <p class="st-txt">Pickup notices when you leave your work and helps you get back.</p>
+      </header>
 
-      <form class="st-cols" id="setup-form" novalidate>
-        <fieldset class="st-col pk-rise" style="--i:1">
-          <legend class="st-colt">You</legend>
-          <label class="pk-label" for="participant">Your name or a short code</label>
-          <input class="pk-input" id="participant" maxlength="40" autocomplete="off" placeholder="e.g. abhinav">
-          <p class="pk-meta">Goes in each event and the CSV, so three people's CSVs can be pooled.</p>
-        </fieldset>
-
-        <fieldset class="st-col pk-rise" style="--i:2" aria-describedby="work-help">
-          <legend class="st-colt">Work sites</legend>
+      <form class="st-steps" id="setup-form" novalidate>
+        <fieldset class="st-step pk-rise" style="--i:1" aria-describedby="work-help">
+          <legend class="st-colt"><span class="st-n" aria-hidden="true">1</span>Where do you work?</legend>
+          <div class="st-presets" role="group" aria-label="Add a work site">
+            <button type="button" class="pk-btn pk-btn--sm st-preset" data-kind="work" data-site="docs.google.com">Google Docs</button>
+            <button type="button" class="pk-btn pk-btn--sm st-preset" data-kind="work" data-site="wikipedia.org">Wikipedia</button>
+            <button type="button" class="pk-btn pk-btn--sm st-preset" data-kind="work" data-site="instructure.com">Canvas</button>
+            <button type="button" class="pk-btn pk-btn--sm st-preset" data-kind="work" data-site="classroom.google.com">Classroom</button>
+            <button type="button" class="pk-btn pk-btn--sm st-preset" data-kind="work" data-site="notion.so">Notion</button>
+          </div>
+          <div class="st-add">
+            <label class="pk-sr" for="work-add-input">Add another work site</label>
+            <input class="pk-input" id="work-add-input" placeholder="Another site, like jstor.org" autocomplete="off" spellcheck="false" aria-describedby="work-add-error">
+            <button class="pk-btn" type="button" id="work-add">Add</button>
+          </div>
+          <p class="st-err" id="work-add-error" role="alert"></p>
           <ul class="st-sites" id="work-list" aria-label="Work sites"></ul>
-          <div class="st-add">
-            <label class="pk-sr" for="work-add-input">Add a work site</label>
-            <input class="pk-input" id="work-add-input" placeholder="docs.google.com" autocomplete="off" spellcheck="false">
-            <button class="pk-btn" type="button" id="work-add">Add <span class="pk-kbd">Enter</span></button>
-          </div>
-          <p class="pk-meta" id="work-help">A host like wikipedia.org also covers en.wikipedia.org. Add a path to narrow it, like docs.google.com/document.</p>
-          <p class="pk-meta st-note" id="youtube-note">YouTube is usually a distraction site; you can list a lecture channel or youtube.com/watch as work.</p>
+          <p class="pk-meta" id="work-help">Pickup only runs on these sites.</p>
+          <p class="pk-meta st-note" id="youtube-note" hidden>YouTube is usually a distraction site; you can list a lecture channel or youtube.com/watch as work.</p>
         </fieldset>
 
-        <fieldset class="st-col pk-rise" style="--i:3">
-          <legend class="st-colt">Distractions</legend>
+        <fieldset class="st-step pk-rise" style="--i:2" aria-describedby="distraction-help">
+          <legend class="st-colt"><span class="st-n" aria-hidden="true">2</span>What pulls you away?</legend>
+          <div class="st-presets" role="group" aria-label="Add a distraction site">
+            <button type="button" class="pk-btn pk-btn--sm st-preset" data-kind="distraction" data-site="youtube.com">YouTube</button>
+            <button type="button" class="pk-btn pk-btn--sm st-preset" data-kind="distraction" data-site="tiktok.com">TikTok</button>
+            <button type="button" class="pk-btn pk-btn--sm st-preset" data-kind="distraction" data-site="instagram.com">Instagram</button>
+            <button type="button" class="pk-btn pk-btn--sm st-preset" data-kind="distraction" data-site="reddit.com">Reddit</button>
+            <button type="button" class="pk-btn pk-btn--sm st-preset" data-kind="distraction" data-site="x.com">X</button>
+          </div>
+          <div class="st-add">
+            <label class="pk-sr" for="distraction-add-input">Add another distraction site</label>
+            <input class="pk-input" id="distraction-add-input" placeholder="Another site" autocomplete="off" spellcheck="false" aria-describedby="distraction-add-error">
+            <button class="pk-btn" type="button" id="distraction-add">Add</button>
+          </div>
+          <p class="st-err" id="distraction-add-error" role="alert"></p>
           <ul class="st-sites" id="distraction-list" aria-label="Distraction sites"></ul>
-          <div class="st-add">
-            <label class="pk-sr" for="distraction-add-input">Add a distraction site</label>
-            <input class="pk-input" id="distraction-add-input" placeholder="youtube.com" autocomplete="off" spellcheck="false">
-            <button class="pk-btn" type="button" id="distraction-add">Add <span class="pk-kbd">Enter</span></button>
-          </div>
-          <p class="pk-meta">Switching from a work tab to one of these opens a break.</p>
+          <p class="pk-meta" id="distraction-help">Switching to one of these starts a break. Pickup never blocks anything.</p>
         </fieldset>
 
-        <fieldset class="st-col pk-rise" style="--i:4">
-          <legend class="st-colt">Timing</legend>
-          <label class="pk-label" for="away-min">Count a break after (minutes)</label>
-          <input class="pk-input st-num" type="number" id="away-min" inputmode="numeric" min="1" max="60" step="1">
-          <label class="pk-label" for="nudge-min">Nudge after (minutes away)</label>
-          <input class="pk-input st-num" type="number" id="nudge-min" inputmode="numeric" min="1" max="120" step="1">
-          <p class="pk-meta">One nudge per break at most, and only when you left a next step.</p>
-        </fieldset>
+        <div class="st-step st-small pk-rise" style="--i:3">
+          <label class="pk-label" for="participant">Your name for the pilot</label>
+          <input class="pk-input" id="participant" maxlength="40" autocomplete="off" placeholder="A name or short code">
+        </div>
 
-        <fieldset class="st-col pk-rise" style="--i:5">
-          <legend class="st-colt">Voice</legend>
-          <label class="st-check"><input type="checkbox" id="voice-enabled"><span>Voice in the Pickup panel (push to talk, on this device only)</span></label>
-          <label class="st-check"><input type="checkbox" id="wake-word"><span>Listen for "Hey Pickup" while the panel is open</span></label>
-          <label class="st-check"><input type="checkbox" id="read-aloud"><span>Read panel replies aloud</span></label>
-          <p class="pk-meta"><a class="pk-link" href="../voice/enable.html" id="voice-enable">Set up the microphone</a> (one time).</p>
-        </fieldset>
+        <div class="st-save pk-rise" style="--i:4">
+          <button class="pk-btn pk-btn--primary" type="button" id="save">Save and start</button>
+          <span class="pk-chip st-dirty" id="dirty" hidden>Unsaved changes</span>
+          <p class="st-status" id="status" role="status" aria-live="polite"></p>
+        </div>
 
-        <fieldset class="st-col pk-rise" style="--i:6">
-          <legend class="st-colt">Features</legend>
-          <label class="st-check"><input type="checkbox" id="feat-readyNote"><span>Ready-to-resume note: <span data-shortcut="park"></span> asks where you stopped and what is next</span></label>
-          <label class="st-check"><input type="checkbox" id="feat-youWereHere"><span>Mark where you were when you resume</span></label>
-          <label class="st-check"><input type="checkbox" id="feat-videoReplay"><span>Lecture video: go back 10 seconds when you resume</span></label>
-          <label class="st-check"><input type="checkbox" id="feat-adaptiveCard"><span>Shorter card after a short break</span></label>
-          <label class="st-check"><input type="checkbox" id="feat-readableCard"><span>Readable card: larger text and more spacing</span></label>
-          <label class="st-check"><input type="checkbox" id="feat-receipt"><span>Comeback receipt on the dashboard</span></label>
-          <label class="st-check"><input type="checkbox" id="calm"><span>Calm colours: softer accents, no drifting fireflies</span></label>
-        </fieldset>
+        <details class="st-more pk-rise" style="--i:5">
+          <summary>More settings</summary>
+          <fieldset class="st-group">
+            <legend class="st-gt">Timing</legend>
+            <label class="st-inline" for="away-min">Count it as a break after <input class="pk-input st-num" type="number" id="away-min" inputmode="numeric" min="1" max="60" step="1"> minutes</label>
+            <label class="st-inline" for="nudge-min">Remind me after <input class="pk-input st-num" type="number" id="nudge-min" inputmode="numeric" min="1" max="120" step="1"> minutes away (only if I wrote a next step)</label>
+          </fieldset>
+          <fieldset class="st-group">
+            <legend class="st-gt">Extras</legend>
+            <label class="st-check"><input type="checkbox" id="feat-readyNote"><span>Ask me where I stopped when I park a task</span></label>
+            <label class="st-check"><input type="checkbox" id="feat-youWereHere"><span>Highlight where I was when I come back</span></label>
+            <label class="st-check"><input type="checkbox" id="feat-videoReplay"><span>Rewind lecture videos 10 seconds when I come back</span></label>
+            <label class="st-check"><input type="checkbox" id="feat-adaptiveCard"><span>Use a smaller card after a short break</span></label>
+            <label class="st-check"><input type="checkbox" id="feat-readableCard"><span>Larger, easier-to-read card</span></label>
+            <label class="st-check"><input type="checkbox" id="feat-receipt"><span>Show a comeback summary on the dashboard</span></label>
+            <label class="st-check"><input type="checkbox" id="calm"><span>Calmer colours and no background animation</span></label>
+          </fieldset>
+          <fieldset class="st-group">
+            <legend class="st-gt">Voice</legend>
+            <p class="pk-meta">You can talk to Pickup in its side panel. Voice settings live there: open the panel and choose Voice settings. <a class="pk-link" href="../voice/enable.html" id="voice-enable">Set up the microphone</a> (one time).</p>
+          </fieldset>
+          <fieldset class="st-group">
+            <legend class="st-gt">Shortcuts</legend>
+            <table class="st-keys">
+              <tbody>
+                <tr><th scope="row">Park this task</th><td><span class="pk-kbd" data-shortcut="park"></span></td></tr>
+                <tr><th scope="row">Jump back to your task</th><td><span class="pk-kbd" data-shortcut="resume"></span></td></tr>
+                <tr><th scope="row">Open the Pickup panel</th><td><span class="pk-kbd" data-shortcut="panel"></span></td></tr>
+              </tbody>
+            </table>
+            <p><a class="pk-link" href="#" id="shortcuts">Change shortcuts</a> · <a class="pk-link" href="dashboard.html" id="open-dashboard">Dashboard</a></p>
+          </fieldset>
+        </details>
 
-        <fieldset class="st-col pk-rise" style="--i:7">
-          <legend class="st-colt">Testing</legend>
-          <label class="st-check"><input type="checkbox" id="debug"><span>Debug: a break counts after 10 s; events are marked as testing and left out of every number</span></label>
+        <details class="st-more st-dev">
+          <summary>For testing (developers)</summary>
+          <p class="pk-meta">Turn both off for real use.</p>
+          <label class="st-check"><input type="checkbox" id="debug"><span>Debug: a break counts after 10 seconds; events are marked as testing and left out of every number</span></label>
           <label class="st-check"><input type="checkbox" id="force-card"><span>Force card: every return shows the card (needs debug)</span></label>
-          <p class="pk-meta">Turn both off before the real pilot.</p>
-        </fieldset>
-
-        <nav class="st-col pk-rise" style="--i:8" aria-labelledby="keys-h">
-          <h2 class="st-colt" id="keys-h">Shortcuts</h2>
-          <ul class="st-keys">
-            <li><span class="pk-kbd" data-shortcut="park"></span> Park</li>
-            <li><span class="pk-kbd" data-shortcut="resume"></span> Resume</li>
-            <li><span class="pk-kbd" data-shortcut="panel"></span> Pickup panel</li>
-            <li><a class="pk-link" href="#" id="shortcuts">Change shortcuts</a></li>
-          </ul>
-        </nav>
+        </details>
       </form>
     </div>
 

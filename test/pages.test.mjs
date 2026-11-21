@@ -271,4 +271,21 @@ await step('Calm colours: setup saves settings.calm (default off) and keeps it w
   assert.equal(setup.mergeSettings({ calm: true }, base).calm, true);
 });
 
+await step('setup: an empty Add box is ignored; only a non-empty bad entry gets the inline error', () => {
+  assert.equal(setup.siteInputError(''), '');
+  assert.equal(setup.siteInputError('   '), '');
+  assert.equal(setup.siteInputError('not a site'), 'Type a site like wikipedia.org.');
+  assert.equal(setup.siteInputError('wikipedia.org'), '');
+});
+
+await step('shortcuts: keys are spelled out in words (Mac glyphs and Alt+P)', async () => {
+  const sc = await import('../src/shared/shortcuts.js');
+  assert.deepEqual(sc.keyWords('⌃⇧P'), ['Control', 'Shift', 'P']);
+  assert.deepEqual(sc.keyWords('⌥⌘K'), ['Option', 'Command', 'K']);
+  assert.deepEqual(sc.keyWords('Alt+P'), ['Alt', 'P']);
+  assert.deepEqual(sc.keyWords('Ctrl+Shift+Y'), ['Control', 'Shift', 'Y']);
+  assert.deepEqual(sc.keyWords(''), []);
+  assert.equal(sc.keyLabel('⌃⇧P'), 'Control Shift P');
+});
+
 console.log(`\n${passed} pages checks passed${process.exitCode ? ' — SOME FAILED' : ''}`);

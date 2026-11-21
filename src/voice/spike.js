@@ -212,52 +212,7 @@ function stopListening() {
   setStatus('Not listening');
 }
 
-// ---------- 4. voices ----------
-async function voices() {
-  let list = [];
-  try { list = await chrome.tts.getVoices(); } catch (e) { log('chrome.tts.getVoices failed:', errText(e)); return []; }
-  const en = list.filter((v) => (v.lang || '').toLowerCase().startsWith('en'));
-  const local = en.filter((v) => v.remote === false);
-  log(`chrome.tts.getVoices(): ${list.length} voices, ${en.length} English, ${local.length} English with remote:false`);
-  for (const v of en) log(`  voice "${v.voiceName}" lang=${v.lang} remote=${v.remote} ext=${v.extensionId || '-'}`);
-  try {
-    const ss = speechSynthesis.getVoices().filter((v) => v.lang.toLowerCase().startsWith('en'));
-    log(`speechSynthesis.getVoices(): ${ss.length} English (${ss.filter((v) => v.localService).length} localService)`);
-  } catch (e) { log('speechSynthesis.getVoices failed', errText(e)); }
-  return local;
-}
-
-async function speak(text = TEST_SENTENCE, { volume = 1 } = {}) {
-  const local = await voices();
-  if (!local.length) { log('No local English chrome.tts voice: would fall back to speechSynthesis localService, never a remote voice'); return 'no-local-voice'; }
-  const v = local[0];
-  const pause = $('chkPause').checked && L.want;
-  if (pause) {
-    L.pausedForTts = true;
-    if (L.rec) { try { L.rec.abort(); } catch { /* already ended */ } }
-    log('paused listening for speech');
-  }
-  const t0 = performance.now();
-  log(`chrome.tts.speak with "${v.voiceName}" (${v.lang}), rate 1.05, pause-listening=${pause}: "${text}"`);
-  return new Promise((resolve) => {
-    const done = (why) => {
-      if (L.pausedForTts) {
-        L.pausedForTts = false;
-        setTimeout(() => { if (L.want && !L.rec) { log('resuming listening after speech'); startSession(); } }, 300);
-      }
-      resolve(why);
-    };
-    chrome.tts.speak(text, {
-      voiceName: v.voiceName, lang: v.lang, rate: 1.05, volume,
-      onEvent: (e) => {
-        if (e.type === 'word') return;
-        log(`tts event ${e.type} at +${Math.round(performance.now() - t0)} ms${e.errorMessage ? ' ' + e.errorMessage : ''}`);
-        if (['end', 'interrupted', 'cancelled', 'error'].includes(e.type)) done(e.type);
-      },
-    });
-    if (chrome.runtime.lastError) { log('tts.speak lastError', chrome.runtime.lastError.message); done('error'); }
-  });
-}
+// ---------- 4. voices: removed. Pickup's reply voice is its own (see ROADMAP); no system voices. ----------
 
 // ---------- wiring ----------
 function wire() {
@@ -270,8 +225,6 @@ function wire() {
   $('btnInstall').addEventListener('click', install);
   $('btnStart').addEventListener('click', startListening);
   $('btnStop').addEventListener('click', stopListening);
-  $('btnVoices').addEventListener('click', voices);
-  $('btnSpeak').addEventListener('click', () => speak());
   $('btnCopy').addEventListener('click', async () => {
     try { await navigator.clipboard.writeText(await allLogText($('log'))); log('log copied to clipboard'); } catch (e) { log('copy failed (select the log and copy by hand):', errText(e)); }
   });
@@ -297,4 +250,4 @@ function wire() {
 })();
 
 // For the dev CDP probe only (test/dev/voice-spike-probe.mjs).
-globalThis.__spike = { detectWhere, openPanel, micState, micHere, available, install, startListening, stopListening, voices, speak, apiShape, state: L };
+globalThis.__spike = { detectWhere, openPanel, micState, micHere, available, install, startListening, stopListening, apiShape, state: L };

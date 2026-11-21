@@ -90,13 +90,13 @@ To build the release zip: `scripts/make-release.sh` (writes `pickup-v1.0.0.zip` 
 
 - Fonts: **Plus Jakarta Sans** and **Geist** (extension pages and website), with **Inter** and **Bricolage Grotesque** also bundled in `assets/fonts/`: all SIL Open Font License 1.1 (`assets/fonts/*OFL.txt`).
 - **Motion** (MIT, `src/vendor/MOTION-LICENSE.md`) and **Anime.js** (MIT, `src/vendor/ANIME-LICENSE.md`).
-- The setup headline's blur effect follows React Bits' BlurText (David Haz, MIT + Commons Clause, `src/vendor/REACT-BITS-LICENSE.md`).
+- **Pickup's voice** (on the device, nothing downloaded): **Kokoro-82M** v1.0 int8 ONNX, voice `af_heart` (Apache-2.0), run by **kokoro-js** (Apache-2.0) with **transformers.js** (Apache-2.0) and **ONNX Runtime Web** (MIT); its phonemizer includes **espeak-ng** (GPL-3.0-or-later). See `src/voice/vendor/NOTICE.txt` and `src/voice/model/SOURCE.md`.
 - Website: **three.js** (MIT), React Three Fiber and drei (MIT), React (MIT), **Lenis** (MIT), **Motion** (MIT), **Lucide** icons (ISC), and **GSAP** under GreenSock's "Standard 'no charge' license" (https://gsap.com/standard-license), as stated in its package.
 - The 3D laptop on the website was built from scratch in Blender by a script in this repo (`web/three-src/laptop/build_laptop.py`); no downloaded model, texture or HDRI is used, and it is released CC0 (`docs/v4/LAPTOP.md`). The screens on it are real screenshots of Pickup.
 
 ## Licence
 
-Pickup's own code is MIT ([LICENSE](LICENSE)). Fonts, libraries and the 3D model keep the licences listed above.
+Pickup's own code is GPL-3.0-or-later ([LICENSE](LICENSE)) from v1.0.1, because the bundled voice includes espeak-ng (GPL-3.0); v1.0.0 and earlier were released under MIT. Fonts, libraries and the 3D model keep the licences listed above. The website's GSAP is not part of the extension.
 
 ## Roadmap
 

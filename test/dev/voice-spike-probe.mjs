@@ -70,16 +70,6 @@ async function main() {
   say('tab: API shape =', await ev(tab, `__spike.apiShape()`));
   say('tab: available() =', await ev(tab, `__spike.available()`));
 
-  // 5. voices (the list can fill in late)
-  for (let i = 0; i < 5; i++) {
-    const n = await ev(tab, `chrome.tts.getVoices().then(v => v.length)`);
-    if (n > 0) break;
-    await sleep(1000);
-  }
-  say('tab: local English voices =', await ev(tab, `(async () => (await __spike.voices()).map(v => v.voiceName + ' ' + v.lang))()`));
-  say('tab: speak (volume 0) ->', await ev(tab, `__spike.speak('Pickup voice probe.', { volume: 0 })`, { timeout: 20000 }));
-
-  // side panel: no gesture, then with gesture
   say('tab: sidePanel.open without gesture ->', await ev(tab, `__spike.openPanel()`));
   say('tab: sidePanel.open with gesture ->', await ev(tab, `__spike.openPanel()`, { gesture: true }));
   const panelT = await waitTarget((t) => t.url.startsWith(`${origin}/src/voice/`) && t.targetId !== targetId, 5000);

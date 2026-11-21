@@ -2,12 +2,12 @@
 // Writes chrome.storage.local `settings` (participant, workSites, distractionSites,
 // awayThresholdMs, nudgeDelayMin, debug, forceCard, features), asks for host access
 // to the work sites, registers the content script and injects it into open work tabs.
-// Voice toggles (voiceEnabled, wakeWord, readAloud) go through setVoiceSettings.
+// Voice settings live in the side panel (it owns them); this page only links there.
 
 import { MSG } from '../shared/messages.js';
 import { DEFAULT_SETTINGS, KEYS } from '../shared/constants.js';
 import { $, h, send, hasChrome, getLocal, button, badge } from './ui.js';
-import { FEATURE_DEFAULTS, featuresOf, cleanSite, originsFor, matchesFor, mergeSettings, validate } from './setup-logic.js';
+import { FEATURE_DEFAULTS, featuresOf, cleanSite, siteInputError, originsFor, matchesFor, mergeSettings, validate } from './setup-logic.js';
 import { plural } from './format.js';
 import { fillShortcuts } from '../shared/shortcuts.js';
 import { urlMatches } from '../shared/sites.js';
@@ -27,31 +27,40 @@ function status(state, text, details) {
 function renderList(kind) {
   const ul = $(`${kind}-list`);
   ul.replaceChildren();
-  if (!lists[kind].length) {
-    ul.append(h('li', { className: 'st-empty' }, kind === 'work' ? 'No work sites yet' : 'No distraction sites yet'));
-    return;
-  }
   for (const site of lists[kind]) {
-    const rm = button('Remove', { small: true, kind: 'ghost' });
+    const rm = button('×', { small: true, kind: 'ghost' });
     rm.setAttribute('aria-label', `Remove ${site}`);
     rm.addEventListener('click', () => {
       const i = lists[kind].indexOf(site);
       if (i >= 0) lists[kind].splice(i, 1);
       renderList(kind);
+      markDirty();
       $(`${kind}-add-input`).focus();
     });
     ul.append(h('li', null, h('span', null, site), rm));
   }
+  for (const b of document.querySelectorAll(`.st-preset[data-kind="${kind}"]`)) b.setAttribute('aria-pressed', String(lists[kind].includes(b.dataset.site)));
+  $('youtube-note').hidden = !lists.work.some((w) => w.startsWith('youtube.com'));
 }
 
+function pushSite(kind, site) {
+  if (!lists[kind].includes(site)) lists[kind].push(site);
+  renderList(kind);
+  markDirty();
+}
+
+// Empty box: nothing happens. A non-empty bad entry: an error next to that field.
 function addSite(kind) {
   const input = $(`${kind}-add-input`);
-  const site = cleanSite(input.value);
-  if (!site) { status('nothing', `"${input.value.trim()}" is not a site. Type a host like wikipedia.org.`); input.focus(); return; }
-  if (!lists[kind].includes(site)) lists[kind].push(site);
+  const err = siteInputError(input.value);
+  $(`${kind}-add-error`).textContent = err;
+  input.setAttribute('aria-invalid', String(!!err));
+  if (err) { input.focus(); return false; }
+  if (!input.value.trim()) return true;
+  pushSite(kind, cleanSite(input.value));
   input.value = '';
-  renderList(kind);
   input.focus();
+  return true;
 }
 
 for (const kind of ['work', 'distraction']) {
@@ -59,7 +68,20 @@ for (const kind of ['work', 'distraction']) {
   $(`${kind}-add-input`).addEventListener('keydown', (e) => {
     if (e.key === 'Enter') { e.preventDefault(); addSite(kind); }
   });
+  $(`${kind}-add-input`).addEventListener('input', () => { $(`${kind}-add-error`).textContent = ''; $(`${kind}-add-input`).removeAttribute('aria-invalid'); });
 }
+for (const b of document.querySelectorAll('.st-preset')) {
+  b.addEventListener('click', () => {
+    const { kind, site } = b.dataset;
+    if (lists[kind].includes(site)) { lists[kind] = lists[kind].filter((x) => x !== site); renderList(kind); markDirty(); }
+    else pushSite(kind, site);
+  });
+}
+
+// "Unsaved changes" pill next to Save.
+function markDirty() { $('dirty').hidden = false; }
+$('setup-form').addEventListener('input', (e) => { if (!/-add-input$/.test(e.target.id)) markDirty(); });
+$('setup-form').addEventListener('change', (e) => { if (!/-add-input$/.test(e.target.id)) markDirty(); });
 $('setup-form').addEventListener('submit', (e) => e.preventDefault());
 
 // ---------- form <-> settings ----------
@@ -76,9 +98,6 @@ function readForm() {
     forceCard: $('force-card').checked,
     features,
     calm: $('calm').checked,
-    voiceEnabled: $('voice-enabled').checked,
-    wakeWord: $('wake-word').checked,
-    readAloud: $('read-aloud').checked,
   };
 }
 
@@ -92,35 +111,25 @@ function fillForm(s) {
   $('nudge-min').value = String(s.nudgeDelayMin || DEFAULT_SETTINGS.nudgeDelayMin);
   $('debug').checked = !!s.debug;
   $('force-card').checked = !!s.forceCard;
-  $('voice-enabled').checked = !!s.voiceEnabled;
-  $('wake-word').checked = !!s.wakeWord;
-  $('read-aloud').checked = s.readAloud !== false;
   const f = featuresOf(s);
   for (const k of Object.keys(FEATURE_DEFAULTS)) $(`feat-${k}`).checked = f[k];
   $('calm').checked = !!s.calm;
   syncDependents();
-  syncChips(s);
+  $('dirty').hidden = true;
 }
 
 function syncDependents() {
   $('force-card').disabled = !$('debug').checked;
   if (!$('debug').checked) $('force-card').checked = false;
-  $('wake-word').disabled = !$('voice-enabled').checked;
-  if (!$('voice-enabled').checked) $('wake-word').checked = false;
 }
 $('debug').addEventListener('change', syncDependents);
-$('voice-enabled').addEventListener('change', syncDependents);
-
-function syncChips(s) {
-  if (s.debug) { $('chip-away').textContent = 'Debug: away after 10 s'; $('chip-nudge').textContent = 'Debug: nudge after 30 s'; return; }
-  $('chip-away').textContent = `Away after ${plural(Math.round(s.awayThresholdMs / 60000), 'min', 'min')}`;
-  $('chip-nudge').textContent = `Nudge after ${plural(s.nudgeDelayMin, 'min', 'min')}`;
-}
 
 // ---------- Save and start ----------
 // permissions.request is the first chrome call in this handler and nothing is
 // awaited before it, so Chrome still sees the click as the user's gesture.
 $('save').addEventListener('click', () => {
+  // Text still in an Add box counts (empty boxes are ignored); a bad entry stops here with its inline error.
+  if (!addSite('work') || !addSite('distraction')) return;
   const form = readForm();
   const problem = validate(form);
   if (problem) { status('nothing', problem); return; }
@@ -141,13 +150,12 @@ async function finishSave(form, asking) {
     const stored = await getLocal(KEYS.settings);
     const next = mergeSettings(stored[KEYS.settings], form);
     await chrome.storage.local.set({ [KEYS.settings]: next });
-    const voice = await send({ type: MSG.setVoiceSettings, voiceEnabled: form.voiceEnabled, wakeWord: form.wakeWord, readAloud: form.readAloud });
 
     const notes = [];
     let injected = null;
     let attachError = '';
     try { injected = await registerAndInject(next.workSites, notes); } catch (e) { attachError = String((e && e.message) || e); }
-    fillForm({ ...next, ...(voice && voice.ok ? { voiceEnabled: voice.voiceEnabled, wakeWord: voice.wakeWord, readAloud: voice.readAloud } : {}) });
+    fillForm(next);
     const lines = [`${plural(next.workSites.length, 'work site')}, ${plural(next.distractionSites.length, 'distraction site')}.`];
     if (!attachError) lines.push(injected === null ? 'Reload your open work tabs so Pickup can see them.' : `${plural(injected, 'open work tab')} ready without a reload.`);
     if (next.debug) lines.push('Debug is on: events are marked as testing.');
@@ -155,9 +163,8 @@ async function finishSave(form, asking) {
       const blocked = next.distractionSites.find((d) => urlMatches(`https://${w}`, [d]));
       if (blocked) lines.push(`${w} is also covered by ${blocked} in your distractions, so it still counts as a distraction. Remove ${blocked} there to make it work.`);
     }
-    if (voice && !voice.ok) lines.push('Voice settings not saved.');
     if (attachError) status('nothing', `Settings saved, but Pickup could not attach to your work tabs: ${attachError}`, [...lines, ...notes]);
-    else status('saved', 'Saved. Pickup is on.', [...lines, ...notes]);
+    else status('saved', 'Saved. Open a work site to try it.', [...lines, ...notes]);
   } catch (e) {
     status('nothing', `Nothing saved: ${String((e && e.message) || e)}`);
   } finally {

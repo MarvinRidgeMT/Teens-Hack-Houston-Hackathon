@@ -11,89 +11,91 @@
 </head>
 <body class="pk">
   <main>
+    <!-- One line: what Pickup knows right now. Chrome already titles the panel "Pickup". -->
     <header class="top">
-      <h1 class="pk-logo"><span class="pk-mark" aria-hidden="true"></span>Pickup</h1>
-      <p id="status" class="status pk-chip" role="status">Off</p>
+      <span class="pk-mark mark-sm" aria-hidden="true"></span>
+      <p id="where" class="where" aria-live="polite">No task yet</p>
+      <p id="status" class="listening" role="status" hidden><span class="rec-dot" aria-hidden="true"></span><span id="statusText">Listening…</span>
+        <button id="listenStop" type="button" class="pk-btn pk-btn--sm">Stop</button></p>
     </header>
+
+    <!-- Your tasks: the most useful part, first. -->
+    <section class="tasks-wrap" aria-labelledby="tasksLabel">
+      <h2 id="tasksLabel" class="pk-heading">Your tasks</h2>
+      <ul id="tasks" class="tasks"></ul>
+      <p id="tasksEmpty" class="muted pk-body" hidden>No tasks yet. Start one from the Pickup button in the toolbar, or press <span class="pk-kbd" data-shortcut="park"></span> on a work page.</p>
+    </section>
 
     <!-- Ask: type or talk. Same rule-based parser as voice; replies are fixed templates. -->
     <section class="ask" aria-labelledby="askLabel">
       <h2 id="askLabel" class="pk-heading">Ask</h2>
       <form id="askForm" class="askbox" autocomplete="off">
         <label for="askInput" class="sr-only">Ask Pickup</label>
-        <input id="askInput" class="pk-input" type="text" maxlength="200" placeholder='Ask Pickup… "where was I?"' enterkeyhint="send">
+        <input id="askInput" class="pk-input" type="text" maxlength="200" placeholder="Ask Pickup" enterkeyhint="send"
+          aria-describedby="askHelp" title="Press Enter to ask. Esc clears. Hold the mic button (or Space on it) to talk.">
         <button id="mic" class="mic" type="button" aria-pressed="false" aria-describedby="micHelp" title="Hold to talk">
           <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-2.08A7 7 0 0 0 19 12h-2Z"/></svg>
           <span id="micLabel" class="sr-only">Hold to talk</span>
         </button>
-        <button id="askSend" class="send" type="submit" aria-label="Ask (Enter)">
-          <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M5 12h11.17l-4.58-4.59L13 6l7 7-7 7-1.41-1.41L16.17 14H5z"/></svg>
-        </button>
       </form>
-      <p class="hints pk-meta" aria-hidden="true"><span><kbd class="pk-kbd">Enter</kbd> ask</span><span><kbd class="pk-kbd">Esc</kbd> clear</span><span class="hint-mic"><kbd class="pk-kbd">Space</kbd> hold to talk</span></p>
+      <p id="askHelp" class="sr-only">Press Enter to ask. Escape clears the box.</p>
       <div class="chips" role="group" aria-label="Quick questions">
         <button type="button" class="pk-btn pk-btn--sm chip" data-ask="where was I?">Where was I?</button>
         <button type="button" class="pk-btn pk-btn--sm chip" data-ask="take me back">Take me back</button>
-        <button type="button" class="pk-btn pk-btn--sm chip" data-ask="how long was I away?">How long was I away?</button>
-        <button type="button" class="pk-btn pk-btn--sm chip" data-ask="today">Today</button>
       </div>
+      <!-- Shown once there is a reply. The live region is always in the page so screen readers hear the first reply. -->
       <div class="talk pk-card pk-card--flat" data-empty>
         <p class="pk-eyebrow">You asked</p>
         <p id="heard" class="heard">&nbsp;</p>
         <p class="pk-eyebrow">Pickup</p>
-        <p id="reply" class="reply" aria-live="polite">Try: "Where was I?"</p>
+        <p id="reply" class="reply" aria-live="polite"></p>
       </div>
     </section>
 
-    <!-- Break timer: "Back in 10". One notification when it ends; it replaces the drift nudge. -->
-    <section class="card pk-card pk-card--flat" aria-labelledby="timerLabel">
-      <h2 id="timerLabel" class="pk-heading">Break timer</h2>
+    <!-- Take a break: one row. "Back in 10". One notification when it ends; it replaces the drift nudge. -->
+    <section class="brk" aria-labelledby="timerLabel">
+      <h2 id="timerLabel" class="pk-heading">Take a break</h2>
       <div id="timerIdle">
-        <div class="chips" role="group" aria-label="Start a break">
-          <button type="button" class="pk-btn pk-btn--sm chip" data-min="5">5 min</button>
-          <button type="button" class="pk-btn pk-btn--sm chip" data-min="10">10 min</button>
-          <button type="button" class="pk-btn pk-btn--sm chip" data-min="15">15 min</button>
-          <button type="button" class="pk-btn pk-btn--sm chip" data-min="25">25 min</button>
-        </div>
         <form id="timerForm" class="row">
-          <label for="timerMin" class="sr-only">Minutes</label>
-          <input id="timerMin" type="number" min="1" max="120" step="1" inputmode="numeric" placeholder="min" class="num pk-input">
-          <button type="submit" class="pk-btn">Start break <span class="pk-kbd" aria-hidden="true">Enter</span></button>
+          <div class="chips" role="group" aria-label="Break length">
+            <button type="button" class="pk-btn pk-btn--sm chip" data-min="5" aria-pressed="false">5 min</button>
+            <button type="button" class="pk-btn pk-btn--sm chip" data-min="10" aria-pressed="true">10 min</button>
+            <button type="button" class="pk-btn pk-btn--sm chip" data-min="25" aria-pressed="false">25 min</button>
+          </div>
+          <input id="timerMin" type="hidden" value="10">
+          <button type="submit" class="pk-btn pk-btn--sm pk-btn--primary">Start</button>
         </form>
-        <label for="timerStep" class="field-label pk-label">Next step when I'm back <span class="optional">(optional, your words)</span></label>
-        <input id="timerStep" type="text" maxlength="200" class="field pk-input" placeholder="When I'm back, I'll first ___">
+        <button id="stepToggle" type="button" class="link pk-link" aria-expanded="false" aria-controls="stepWrap">+ add a next step</button>
+        <div id="stepWrap" hidden>
+          <label for="timerStep" class="field-label pk-label">When I'm back, I'll first…</label>
+          <input id="timerStep" type="text" maxlength="200" class="field pk-input" placeholder="Your next step, in your words">
+        </div>
         <p id="timerDebug" class="debug" hidden>Debug mode: 1 minute counts as 10 seconds, for filming.</p>
       </div>
       <div id="timerRun" hidden>
-        <p id="timerTask" class="timer-task pk-task"></p>
-        <p id="timerClock" class="timer-clock" aria-hidden="true">10:00</p>
+        <p class="run-line"><span id="timerClock" class="timer-clock" aria-hidden="true">10:00</span> <span id="timerTask" class="timer-task"></span></p>
         <p id="timerEnds" class="muted pk-meta" role="status"></p>
         <div class="row">
-          <button id="timerBack" type="button" class="pk-btn pk-btn--primary">Back now</button>
-          <button id="timerCancel" type="button" class="pk-btn pk-btn--ghost">Cancel timer</button>
+          <button id="timerBack" type="button" class="pk-btn pk-btn--sm pk-btn--primary">Back now</button>
+          <button id="timerCancel" type="button" class="pk-btn pk-btn--sm pk-btn--ghost">Cancel</button>
         </div>
       </div>
-    </section>
-
-    <!-- Your tasks -->
-    <section class="card pk-card pk-card--flat" aria-labelledby="tasksLabel">
-      <h2 id="tasksLabel" class="pk-heading">Your tasks</h2>
-      <ul id="tasks" class="tasks"></ul>
-      <p id="tasksEmpty" class="muted pk-body" hidden>No tasks yet. Start one from the Pickup popup, or press <kbd class="pk-kbd" data-shortcut="park"></kbd> on a work page.</p>
     </section>
 
     <p id="today" class="today pk-meta">No breaks logged today.</p>
 
-    <!-- Voice: setup and options, collapsed once voice is set up. -->
+    <!-- Voice settings: closed. Two switches, a sample, and a one-time microphone setup. -->
     <details id="voice" class="voice">
-      <summary class="pk-heading">Voice</summary>
+      <summary class="pk-heading">Voice settings</summary>
+      <label class="switch"><input id="readAloud" type="checkbox"><span>Pickup talks back</span></label>
+      <p class="row"><button id="sample" type="button" class="pk-btn pk-btn--sm">Hear a sample</button>
+        <span id="voiceNote" class="muted pk-meta" role="status"></span></p>
+      <label class="switch"><input id="wake" type="checkbox"><span>Listen for "Hey Pickup"</span></label>
       <section id="setup" class="setup" hidden>
         <p id="setupText"></p>
-        <button id="btnSetup" type="button" class="pk-btn pk-btn--primary">Set up voice</button>
+        <button id="btnSetup" type="button" class="link pk-link">Set up the microphone</button>
       </section>
-      <p id="micHelp" class="muted pk-meta">Hold the mic button (or Space) while you talk. Click it once to say one thing. Esc stops.</p>
-      <label class="switch"><input id="wake" type="checkbox"><span>Listen for "Hey Pickup"</span></label>
-      <label class="switch"><input id="readAloud" type="checkbox"><span>Read replies aloud</span></label>
+      <p id="micHelp" class="muted pk-meta">Hold the mic button while you talk, or click it once to say one thing. Esc stops. Replies are always shown as text too.</p>
       <details class="tips">
         <summary>What you can ask</summary>
         <ul>

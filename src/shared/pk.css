@@ -45,7 +45,8 @@
 /* Keycaps look like keys: same drawing as the website's. */
 /* A shortcut chip waits hidden (keeping its line) until fillShortcuts() writes the key. */
 .pk-kbd:empty { visibility: hidden; }
-.pk-kbd { font: 600 var(--fs-kbd)/16px var(--font-mono); padding: 0 5px; border-radius: 5px; border: 1px solid currentColor; border-bottom-width: 2px; white-space: nowrap; opacity: .9; }
+.pk-keys { display: inline-flex; gap: 4px; align-items: center; vertical-align: baseline; }
+.pk-kbd { font: 600 max(13px, var(--fs-kbd))/18px var(--font-mono); padding: 1px 7px; border-radius: 5px; border: 1px solid currentColor; border-bottom-width: 2px; white-space: nowrap; opacity: .9; }
 
 /* Brand tile */
 

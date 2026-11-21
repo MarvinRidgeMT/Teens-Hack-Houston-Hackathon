@@ -30,6 +30,14 @@ export function cleanSite(raw) {
   return s;
 }
 
+// The inline error for a site Add box: '' when empty (ignored) or valid.
+export const SITE_HINT = 'Type a site like wikipedia.org.';
+export function siteInputError(raw) {
+  const t = String(raw || '').trim();
+  if (!t) return '';
+  return cleanSite(t) ? '' : SITE_HINT;
+}
+
 const hostOfSite = (site) => normalizeSite(site).split('/')[0];
 
 // Host permissions to ask for, http and https (both are inside the manifest's
