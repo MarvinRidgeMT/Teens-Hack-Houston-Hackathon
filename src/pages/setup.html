@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pickup setup</title>
+  <link rel="stylesheet" href="../shared/tokens.css">
+  <link rel="stylesheet" href="../shared/pk.css">
+  <link rel="stylesheet" href="setup.css">
+  <script type="module" src="setup.js"></script>
+</head>
+<body class="pk">
+  <main class="st">
+    <div class="st-ct">
+      <section class="st-brand pk-rise" style="--i:0" aria-labelledby="st-title">
+        <span class="pk-logo"><span class="pk-mark" aria-hidden="true"></span>Pickup</span>
+        <h1 class="st-title" id="st-title">The calm way back to your work</h1>
+        <p class="st-txt">Pickup remembers where you were in a task, so when a break or a distraction pulls you away you can jump straight back to the right tab, the right spot and your next step.</p>
+        <div class="pk-row st-actions">
+          <button class="pk-btn pk-btn--primary" type="button" id="save">Save and start</button>
+          <a class="pk-btn pk-btn--ghost" href="dashboard.html" id="open-dashboard">Dashboard</a>
+        </div>
+        <p class="st-status" id="status" role="status" aria-live="polite"></p>
+        <div class="pk-row st-chips">
+          <span class="pk-chip"><span class="pk-dot" aria-hidden="true"></span>Saved on this device</span>
+          <span class="pk-chip" id="chip-away">Away after 2 min</span>
+          <span class="pk-chip" id="chip-nudge">Nudge after 5 min</span>
+        </div>
+        <p class="st-copy">Made at Teens Hack Houston.</p>
+      </section>
+
+      <form class="st-cols" id="setup-form" novalidate>
+        <fieldset class="st-col pk-rise" style="--i:1">
+          <legend class="st-colt">You</legend>
+          <label class="pk-label" for="participant">Your name or a short code</label>
+          <input class="pk-input" id="participant" maxlength="40" autocomplete="off" placeholder="e.g. abhinav">
+          <p class="pk-meta">Goes in each event and the CSV, so three people's CSVs can be pooled.</p>
+        </fieldset>
+
+        <fieldset class="st-col pk-rise" style="--i:2" aria-describedby="work-help">
+          <legend class="st-colt">Work sites</legend>
+          <ul class="st-sites" id="work-list" aria-label="Work sites"></ul>
+          <div class="st-add">
+            <label class="pk-sr" for="work-add-input">Add a work site</label>
+            <input class="pk-input" id="work-add-input" placeholder="docs.google.com" autocomplete="off" spellcheck="false">
+            <button class="pk-btn" type="button" id="work-add">Add <span class="pk-kbd">Enter</span></button>
+          </div>
+          <p class="pk-meta" id="work-help">A host like wikipedia.org also covers en.wikipedia.org. Add a path to narrow it, like docs.google.com/document.</p>
+          <p class="pk-meta st-note" id="youtube-note">YouTube is usually a distraction site; you can list a lecture channel or youtube.com/watch as work.</p>
+        </fieldset>
+
+        <fieldset class="st-col pk-rise" style="--i:3">
+          <legend class="st-colt">Distractions</legend>
+          <ul class="st-sites" id="distraction-list" aria-label="Distraction sites"></ul>
+          <div class="st-add">
+            <label class="pk-sr" for="distraction-add-input">Add a distraction site</label>
+            <input class="pk-input" id="distraction-add-input" placeholder="youtube.com" autocomplete="off" spellcheck="false">
+            <button class="pk-btn" type="button" id="distraction-add">Add <span class="pk-kbd">Enter</span></button>
+          </div>
+          <p class="pk-meta">Switching from a work tab to one of these opens a break.</p>
+        </fieldset>
+
+        <fieldset class="st-col pk-rise" style="--i:4">
+          <legend class="st-colt">Timing</legend>
+          <label class="pk-label" for="away-min">Count a break after (minutes)</label>
+          <input class="pk-input st-num" type="number" id="away-min" inputmode="numeric" min="1" max="60" step="1">
+          <label class="pk-label" for="nudge-min">Nudge after (minutes away)</label>
+          <input class="pk-input st-num" type="number" id="nudge-min" inputmode="numeric" min="1" max="120" step="1">
+          <p class="pk-meta">One nudge per break at most, and only when you left a next step.</p>
+        </fieldset>
+
+        <fieldset class="st-col pk-rise" style="--i:5">
+          <legend class="st-colt">Voice</legend>
+          <label class="st-check"><input type="checkbox" id="voice-enabled"><span>Voice in the Pickup panel (push to talk, on this device only)</span></label>
+          <label class="st-check"><input type="checkbox" id="wake-word"><span>Listen for "Hey Pickup" while the panel is open</span></label>
+          <label class="st-check"><input type="checkbox" id="read-aloud"><span>Read panel replies aloud</span></label>
+          <p class="pk-meta"><a class="pk-link" href="../voice/enable.html" id="voice-enable">Set up the microphone</a> (one time).</p>
+        </fieldset>
+
+        <fieldset class="st-col pk-rise" style="--i:6">
+          <legend class="st-colt">Features</legend>
+          <label class="st-check"><input type="checkbox" id="feat-readyNote"><span>Ready-to-resume note: Alt+P asks where you stopped and what is next</span></label>
+          <label class="st-check"><input type="checkbox" id="feat-youWereHere"><span>Mark where you were when you resume</span></label>
+          <label class="st-check"><input type="checkbox" id="feat-videoReplay"><span>Lecture video: go back 10 seconds when you resume</span></label>
+          <label class="st-check"><input type="checkbox" id="feat-adaptiveCard"><span>Shorter card after a short break</span></label>
+          <label class="st-check"><input type="checkbox" id="feat-readableCard"><span>Readable card: larger text and more spacing</span></label>
+          <label class="st-check"><input type="checkbox" id="feat-receipt"><span>Comeback receipt on the dashboard</span></label>
+        </fieldset>
+
+        <fieldset class="st-col pk-rise" style="--i:7">
+          <legend class="st-colt">Testing</legend>
+          <label class="st-check"><input type="checkbox" id="debug"><span>Debug: a break counts after 10 s; events are marked as testing and left out of every number</span></label>
+          <label class="st-check"><input type="checkbox" id="force-card"><span>Force card: every return shows the card (needs debug)</span></label>
+          <p class="pk-meta">Turn both off before the real pilot.</p>
+        </fieldset>
+
+        <nav class="st-col pk-rise" style="--i:8" aria-labelledby="keys-h">
+          <h2 class="st-colt" id="keys-h">Shortcuts</h2>
+          <ul class="st-keys">
+            <li><span class="pk-kbd">Alt+P</span> Park</li>
+            <li><span class="pk-kbd">Alt+R</span> Resume</li>
+            <li><span class="pk-kbd">Alt+V</span> Pickup panel</li>
+            <li><a class="pk-link" href="#" id="shortcuts">Change shortcuts</a></li>
+          </ul>
+        </nav>
+      </form>
+    </div>
+
+    <footer class="st-meadow" aria-hidden="true">
+      <svg class="st-sky" viewBox="0 0 1200 360" preserveAspectRatio="none" focusable="false">
+        <defs>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" class="sky0"/><stop offset=".45" class="sky1"/><stop offset="1" class="sky2"/>
+          </linearGradient>
+        </defs>
+        <rect width="1200" height="360" fill="url(#sky)"/>
+        <path class="h1" d="M0 230 C220 170 420 200 640 180 C860 160 1020 190 1200 170 L1200 360 L0 360Z"/>
+        <path class="h2" d="M0 270 C260 220 520 250 760 230 C960 214 1080 240 1200 228 L1200 360 L0 360Z"/>
+        <path class="h3" d="M0 300 C180 250 360 262 560 290 C760 318 980 290 1200 300 L1200 360 L0 360Z"/>
+      </svg>
+      <svg class="st-flies" viewBox="0 0 1200 360" preserveAspectRatio="xMidYMid slice" focusable="false">
+        <g transform="translate(0,-280)">
+          <circle class="fly f1" cx="703" cy="508" r="2"/><circle class="fly f2" cx="138" cy="488" r="2.4"/><circle class="fly f3" cx="232" cy="563" r="2.4"/>
+          <circle class="fly f4" cx="158" cy="599" r="1.6"/><circle class="fly f5" cx="116" cy="492" r="2"/><circle class="fly f6" cx="896" cy="487" r="1.6"/>
+          <circle class="fly f1" cx="225" cy="578" r="1.6"/><circle class="fly f2" cx="293" cy="527" r="2.4"/><circle class="fly f3" cx="166" cy="571" r="1.6"/>
+          <circle class="fly f4" cx="492" cy="481" r="2.4"/><circle class="fly f5" cx="312" cy="544" r="2"/><circle class="fly f6" cx="335" cy="500" r="2.4"/>
+          <circle class="fly f2" cx="671" cy="516" r="1.6"/><circle class="fly f3" cx="424" cy="565" r="1.6"/><circle class="fly f4" cx="168" cy="485" r="2.4"/>
+          <circle class="fly f5" cx="461" cy="597" r="2.4"/><circle class="fly f6" cx="1128" cy="579" r="2"/><circle class="fly f1" cx="993" cy="586" r="2"/>
+        </g>
+      </svg>
+      <div class="st-haze"></div>
+      <p class="st-wm">Pickup</p>
+      <div class="st-fog"></div>
+    </footer>
+  </main>
+</body>
+</html>
