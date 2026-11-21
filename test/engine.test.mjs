@@ -3,11 +3,29 @@
 
 import assert from 'node:assert/strict';
 import { makeChrome } from './fake-chrome.mjs';
+import { DAY_STARTS_AT_HOUR } from '../src/shared/constants.js';
 
+// The fake clock is the real clock plus `offset`, so the engine's local-time logic
+// (dayKey, "today") sees whatever time of day the suite happens to run at. Steps that
+// mean "the next morning" must say so (nextMorning below), never assume +12 h does it.
+// PICKUP_TEST_START="2026-11-21T09:40" starts the fake clock at that local time, to
+// check the suite at any time of day (see test/dev/time-of-day-sweep.sh).
 const realNow = Date.now.bind(Date);
 let offset = 0;
+if (process.env.PICKUP_TEST_START) {
+  const start = new Date(process.env.PICKUP_TEST_START).getTime();
+  if (!Number.isFinite(start)) throw new Error('PICKUP_TEST_START is not a date: ' + process.env.PICKUP_TEST_START);
+  offset = start - realNow();
+}
 Date.now = () => realNow() + offset;
 const advance = (ms) => { offset += ms; };
+// 9 AM local on the day after the engine's current dayKey (which treats the small hours
+// as the night before), so it is always a later dayKey, whatever time it is now.
+const nextMorning = () => {
+  const d = new Date(Date.now() - DAY_STARTS_AT_HOUR * 3600000);
+  d.setDate(d.getDate() + 1); d.setHours(9, 0, 0, 0);
+  advance(d.getTime() - Date.now());
+};
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const { chrome, sim } = makeChrome({ now: () => Date.now() });
@@ -999,7 +1017,7 @@ await step('Review F1: wrap up, then leave: no nudge at night, and the next morn
   const b = await ob();
   assert.ok(b && b.departed, 'a break opened when leaving');
   assert.equal(sim.alarms.has('nudge:' + b.eventId), false, 'no nudge after wrapping up');
-  advance(12 * 3600000);
+  nextMorning(); // was +12 h: only a later dayKey when the wrap-up fell between 4 PM and 4 AM
   sim.sent.length = 0;
   chrome.notifications.onClicked.fire('starthere:' + thread.id); await flush(); // not shown yet: the click is a no-op path
   sim.activate(nb); await flush(); // first activity of the morning
