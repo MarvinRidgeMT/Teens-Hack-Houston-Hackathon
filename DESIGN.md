@@ -287,6 +287,7 @@ Paper (light) and Blue hour (dark) follow `prefers-color-scheme`; `data-theme` f
 - **Body** (400, 17px, 1.6): site copy, max about 40ch in tiles and 58ch in prose.
 - **Label** (500, 13px): captions, fine print, figure captions, in the text face.
 - **Extension scale**: task name in Bricolage 680 20/24 on a lime stroke; heading Inter 600 16/20; body 14/20; caption 12/16; chip 11/14. Page titles (dashboard, setup) in Bricolage 700 at 30 to 34px.
+- **V4 extension rendition ("Soft Liquid Future", on branch, see docs/v4/DIRECTION.md and design/tokens.json "v4")**: Plus Jakarta Sans Variable (display: task names 760, page titles 780) and Geist Variable (UI and body), both OFL and bundled in assets/fonts/. The task name sits on a soft round-ended mint underlay instead of the lime stroke. The content-script card and overlay keep a system stack (the fonts are not web-accessible resources).
 
 ### Named Rules
 **The Mono Is for Keys Rule.** Monospace appears inside keycaps, code and the numbered step discs only. Labels, metadata and facts lines use Inter.

@@ -93,15 +93,15 @@ export const RETURN_VIA = Object.freeze({
 export const RETURN_VIA_TTL_MS = 10000; // a returnVia marker older than this is ignored
 
 // Toolbar badge (Feature 4). Text + tooltip carry the meaning; colour is extra.
-// Toolbar badge: the "Warm Desk, Teal Spark" light state colours (the badge has one
-// colour, no theme). White glyph on top. design/tokens.json state-*. Glyphs carry the
-// meaning, not colour.
+// Toolbar badge: the V4 light state colours (the badge has one colour, no theme). White
+// glyph on top, 6.3:1 or more on every state (test/contrast.test.mjs). design/tokens.json
+// v4.light state-*. Glyphs carry the meaning, not colour.
 export const BADGE = Object.freeze({
-  parked: { text: 'P', color: '#6038ff' },  // state-parked (brand violet)
-  away: { text: '•', color: '#4d4b66' },    // state-away (neutral: being away is normal, never amber or red)
-  wrapped: { text: '☾', color: '#121126' }, // state-wrapped (ink); use 'Z' if the glyph renders badly
-  timer: { color: '#6038ff' },              // brand violet; text is the minutes left, e.g. '9m'
-  flash: { '✓': '#0b7285', default: '#4d4b66' }, // state-saved (deep teal), state-neutral
+  parked: { text: 'P', color: '#5a3cc4' },  // state-parked (accent-ink violet), white 7.3:1
+  away: { text: '•', color: '#554868' },    // state-away (plum-2: being away is normal, never amber or red), white 8.4:1
+  wrapped: { text: '☾', color: '#302545' }, // state-wrapped (plum), white 14.2:1; use 'Z' if the glyph renders badly
+  timer: { color: '#5a3cc4' },              // accent-ink; text is the minutes left, e.g. '9m'
+  flash: { '✓': '#2c6b4c', default: '#554868' }, // state-saved (deep mint ink, white 6.3:1), state-neutral (plum-2)
   flashTitle: { '✓': 'saved', '!': 'nothing saved (see the service worker console)', '?': 'no task to go back to yet' },
 });
 export const BADGE_FLASH_MS = 2000;
