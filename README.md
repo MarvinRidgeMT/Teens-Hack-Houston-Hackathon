@@ -2,16 +2,16 @@
 
 Pickup is a Chrome extension that saves your place when you leave your work and hands it back when you return. Come back to a work tab and a small card shows the task, how long you were away, the next step you wrote and the sentence you were on; press Enter and you are back at the same spot.
 
-**Website:** https://marvinridgemt.github.io/Teens-Hack-Houston-Hackathon/ · **Download:** [pickup-v1.0.0.zip](https://github.com/MarvinRidgeMT/Teens-Hack-Houston-Hackathon/releases/latest/download/pickup-v1.0.0.zip) ([release notes](https://github.com/MarvinRidgeMT/Teens-Hack-Houston-Hackathon/releases/latest))
+**Website:** https://marvinridgemt.github.io/Teens-Hack-Houston-Hackathon/ · **Download:** [pickup-v1.0.1.zip](https://github.com/MarvinRidgeMT/Teens-Hack-Houston-Hackathon/releases/latest/download/pickup-v1.0.1.zip) ([release notes](https://github.com/MarvinRidgeMT/Teens-Hack-Houston-Hackathon/releases/latest))
 
 ![The Pickup return card on a Wikipedia article: task name, time away, your next step, and Resume](web/public/assets/shot-card.jpg)
 
 ## Install in 4 steps
 
-1. Download [`pickup-v1.0.0.zip`](https://github.com/MarvinRidgeMT/Teens-Hack-Houston-Hackathon/releases/latest/download/pickup-v1.0.0.zip) from this repo's [latest release](https://github.com/MarvinRidgeMT/Teens-Hack-Houston-Hackathon/releases/latest) and unzip it.
+1. Download [`pickup-v1.0.1.zip`](https://github.com/MarvinRidgeMT/Teens-Hack-Houston-Hackathon/releases/latest/download/pickup-v1.0.1.zip) from this repo's [latest release](https://github.com/MarvinRidgeMT/Teens-Hack-Houston-Hackathon/releases/latest) and unzip it.
 2. Open `chrome://extensions` in Chrome (or `edge://extensions` in Edge).
 3. Turn on **Developer mode** (top right).
-4. Click **Load unpacked** and pick the unzipped `pickup-v1.0.0` folder (the one that contains `manifest.json`; Windows' Extract All may nest it one level down).
+4. Click **Load unpacked** and pick the unzipped `pickup-v1.0.1` folder (the one that contains `manifest.json`; Windows' Extract All may nest it one level down).
 
 Pickup isn't on the Chrome Web Store. It needs Chrome 123 or newer.
 
@@ -78,7 +78,7 @@ node test/check-integration.mjs
 
 `npm test` runs the engine, voice, panel, feature and contrast checks against a fake Chrome in Node. `check-integration` checks the content scripts and pages against the engine contract plus product rules (no network calls, bundled fonts, on-device voice, no hard-coded shortcut labels). `test/dev/real-chrome-gate.mjs` is a real-Chrome smoke test on macOS with Chrome for Testing; results are logged in `test/REAL_CHROME_LOG.md`.
 
-To build the release zip: `scripts/make-release.sh` (writes `pickup-v1.0.0.zip` with only what the extension needs).
+To build the release zip: `scripts/make-release.sh` (writes `pickup-v1.0.1.zip` with only what the extension needs).
 
 ## Team
 

@@ -2,8 +2,9 @@
 // (PRODUCT.md "Capabilities and Constraints"). Edit copy here, not in the components.
 
 export const LINKS = {
-  // The zip itself, from the latest GitHub release (v1.0.0, published Sat Nov 21). One click downloads it.
-  download: 'https://github.com/MarvinRidgeMT/Teens-Hack-Houston-Hackathon/releases/latest/download/pickup-v1.0.0.zip',
+  // The zip itself, from the latest GitHub release (v1.0.1, published Sat Nov 21). One click downloads it.
+  // The file name is versioned: update it with every release, or the button 404s.
+  download: 'https://github.com/MarvinRidgeMT/Teens-Hack-Houston-Hackathon/releases/latest/download/pickup-v1.0.1.zip',
   // The release page: notes, the SHA-256 and any later versions.
   allReleases: 'https://github.com/MarvinRidgeMT/Teens-Hack-Houston-Hackathon/releases/latest',
   repo: 'https://github.com/MarvinRidgeMT/Teens-Hack-Houston-Hackathon',

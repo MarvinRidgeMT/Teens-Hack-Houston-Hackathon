@@ -6,7 +6,7 @@ import { INSTALL_STEPS, LINKS, PLATFORM_NAME, SHORTCUTS, SHORTCUTS_NOTE, WORKS_O
 
 const TABLE_PLATFORMS: readonly Platform[] = ['mac', 'other'];
 
-/** The download CTA: the v1.0.0 zip, straight from the latest GitHub release. */
+/** The download CTA: the v1.0.1 zip, straight from the latest GitHub release. */
 export function DownloadCta({ size = 'lg' }: { size?: 'md' | 'lg' }) {
   return <GlassButton href={LINKS.download} tone="mint" size={size} magnetic icon={<ArrowDownToLine size={19} />}>Download Pickup</GlassButton>;
 }
@@ -22,7 +22,7 @@ export function Install() {
             <DownloadCta />
             <GlassButton href={LINKS.repo} tone="pearl" size="lg" target="_blank" rel="noopener noreferrer" icon={<FolderGit2 size={18} />}>View on GitHub</GlassButton>
           </div>
-          <p className="install__fine">Pickup v1.0.0, an 808 KB zip. <a href={LINKS.allReleases} target="_blank" rel="noopener noreferrer">All releases <ExternalLink size={12} aria-hidden="true" /></a> (release notes and SHA-256).</p>
+          <p className="install__fine">Pickup v1.0.1, a 70 MB zip (Pickup's voice is inside). <a href={LINKS.allReleases} target="_blank" rel="noopener noreferrer">All releases <ExternalLink size={12} aria-hidden="true" /></a> (release notes and SHA-256).</p>
           <p className="install__fine"><strong>Works on:</strong> {WORKS_ON}</p>
         </div>
         <ol className="install__steps" role="list">
