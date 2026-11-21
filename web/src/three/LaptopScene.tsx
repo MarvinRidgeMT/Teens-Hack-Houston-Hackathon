@@ -9,9 +9,9 @@ import { story } from './story';
 
 // Pose per story step: laptop yaw/pitch and camera position / target.
 const POSES = {
-  hero: { x: -0.15, yaw: -0.36, pitch: 0.05, cam: [0.2, 2.3, 8.1], look: [0, 0.62, 0] },
+  hero: { x: 0.08, yaw: -0.36, pitch: 0.05, cam: [0.2, 2.4, 8.9], look: [0, 0.62, 0] },
   step: { x: 0.05, yaw: -0.14, pitch: 0.02, cam: [0, 2.15, 8.2], look: [0, 0.7, -0.3] },
-  close: { x: -0.05, yaw: 0, pitch: 0, cam: [0, 1.8, 6.1], look: [0, 0.95, -0.55] },
+  close: { x: 0.1, yaw: 0, pitch: 0, cam: [0, 1.9, 7.5], look: [0, 0.85, -0.5] },
 } as const;
 
 function poseFor(step: number) {
