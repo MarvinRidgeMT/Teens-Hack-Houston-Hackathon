@@ -10,42 +10,6 @@
         "reason": "Team rule: handoff/CLAUDE_CODE_PROMPT_PALETTE.md says the bundled Inter stays bundled (extension makes no network requests); design/README.md specifies Inter"
       },
       {
-        "rule": "gradient-text",
-        "value": "*",
-        "files": [
-          "site/index.html"
-        ],
-        "createdAt": "2026-11-21T04:18:14.285Z",
-        "reason": "Design system: the frosted 'Pickup' wordmark of the Driftbar meadow footer (design/README.md, SetupTemplate); decorative, aria-hidden, predates this session"
-      },
-      {
-        "rule": "gradient-text",
-        "value": "*",
-        "files": [
-          "site/styles.css"
-        ],
-        "createdAt": "2026-11-21T04:18:14.298Z",
-        "reason": "Design system: the frosted 'Pickup' wordmark of the Driftbar meadow footer (design/README.md, SetupTemplate); decorative, aria-hidden, predates this session"
-      },
-      {
-        "rule": "gradient-text",
-        "value": "*",
-        "files": [
-          "src/pages/setup.html"
-        ],
-        "createdAt": "2026-11-21T04:18:14.309Z",
-        "reason": "Design system: the frosted 'Pickup' wordmark of the Driftbar meadow footer (design/README.md, SetupTemplate); decorative, aria-hidden, predates this session"
-      },
-      {
-        "rule": "gradient-text",
-        "value": "*",
-        "files": [
-          "src/pages/setup.css"
-        ],
-        "createdAt": "2026-11-21T04:18:14.320Z",
-        "reason": "Design system: the frosted 'Pickup' wordmark of the Driftbar meadow footer (design/README.md, SetupTemplate); decorative, aria-hidden, predates this session"
-      },
-      {
         "rule": "cramped-padding",
         "value": "*",
         "files": [

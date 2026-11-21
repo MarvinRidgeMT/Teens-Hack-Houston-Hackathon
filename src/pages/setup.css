@@ -45,10 +45,9 @@ html, body { margin: 0; background: var(--paper); }
 .fly { fill: #ffd27a; opacity: .7; transform-box: fill-box; transform-origin: center; }
 .st-haze { position: absolute; inset: 0; z-index: 1; background: linear-gradient(to bottom, var(--paper) 0%, transparent 38%); }
 .st-wm { position: absolute; left: 0; right: 0; bottom: -4px; z-index: 2; margin: 0; text-align: center; white-space: nowrap; user-select: none;
-  font: 600 clamp(120px, 25vw, 300px)/.74 var(--font-sans); letter-spacing: -.045em;
-  color: rgba(232, 234, 250, .4); background: linear-gradient(to bottom, rgba(255, 255, 255, .78), rgba(214, 218, 246, .36) 48%, rgba(255, 255, 255, .62));
-  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 -1px 0 rgba(255, 255, 255, .55)) drop-shadow(0 0 18px rgba(190, 200, 255, .45)); }
+  /* A solid display-face wordmark (as on the website's footer): no gradient text, no glow. Decorative, aria-hidden. */
+  font: 800 clamp(120px, 25vw, 300px)/.74 var(--font-display); font-stretch: 80%; letter-spacing: -.025em;
+  color: var(--accent); } /* 5.6:1 on Paper, 6.9:1 at Blue hour */
 .st-fog { position: absolute; left: -10%; right: -10%; bottom: 0; height: 22%; z-index: 3; background: linear-gradient(to top, var(--mist) 0%, transparent 100%); }
 
 @media (prefers-reduced-motion: no-preference) {
