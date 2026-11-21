@@ -16,7 +16,9 @@
   box-shadow: var(--shadow-card); padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-3); }
 .pk-card--flat { box-shadow: none; }
 .pk-eyebrow { font: 500 var(--fs-caption)/var(--lh-caption) var(--font-sans); letter-spacing: .01em; color: var(--ink-body); }
-.pk-task { font: 600 var(--fs-title)/var(--lh-title) var(--font-sans); letter-spacing: -.045em; color: var(--ink); overflow-wrap: anywhere; }
+/* The task name is "your place": display type on a thin lime highlighter stroke (the brand's signature). */
+.pk-task { width: fit-content; max-width: 100%; font: 680 var(--fs-title)/var(--lh-title) var(--font-display); font-stretch: 94%; letter-spacing: -.025em; color: var(--ink); overflow-wrap: anywhere;
+  background: linear-gradient(var(--spark), var(--spark)) no-repeat 0 100% / 100% .3em; padding-bottom: 1px; }
 .pk-heading { font: 600 var(--fs-heading)/var(--lh-heading) var(--font-sans); letter-spacing: -.03em; color: var(--ink); margin: 0; }
 .pk-body { font: 400 var(--fs-body)/var(--lh-body) var(--font-sans); letter-spacing: var(--ls-body); color: var(--ink-body); }
 .pk-meta { font: 400 var(--fs-caption)/var(--lh-caption) var(--font-sans); letter-spacing: .01em; color: var(--ink-body); }
@@ -26,8 +28,8 @@
 .pk-row { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
 
 /* Button: primary (one per view), quiet, ghost; key hint after the label */
-.pk-btn { appearance: none; display: inline-flex; align-items: center; gap: 5px; min-height: 34px; padding: 0 11px;
-  font: 500 var(--fs-label)/1 var(--font-sans); letter-spacing: -.01em; border-radius: var(--radius-md);
+.pk-btn { appearance: none; display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 14px;
+  font: 600 var(--fs-label)/1 var(--font-sans); letter-spacing: -.01em; border-radius: 10px; corner-shape: squircle;
   border: 1px solid var(--border-strong); background: var(--surface); color: var(--ink); cursor: pointer;
   transition: transform var(--duration-fast) var(--ease-out); text-decoration: none; }
 .pk-btn:hover { transform: translateY(-1px); }
@@ -35,14 +37,18 @@
 .pk-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .pk-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
 .pk-btn--primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.pk-btn--primary:hover { background: var(--accent-tint-ink); border-color: var(--accent-tint-ink); }
+.pk-btn:not(.pk-btn--primary):not(.pk-btn--ghost):hover { border-color: var(--ink); }
 .pk-btn--ghost { border-color: transparent; background: transparent; color: var(--ink-body); }
 .pk-btn--sm { min-height: 28px; padding: 0 9px; }
-.pk-kbd { font: 500 var(--fs-kbd)/16px var(--font-mono); padding: 0 4px; border-radius: var(--radius-sm); border: 1px solid currentColor; white-space: nowrap; }
+/* Keycaps look like keys: same drawing as the website's. */
+.pk-kbd { font: 600 var(--fs-kbd)/16px var(--font-mono); padding: 0 5px; border-radius: 5px; border: 1px solid currentColor; border-bottom-width: 2px; white-space: nowrap; opacity: .9; }
 
 /* Brand tile */
-.pk-mark { position: relative; display: inline-block; width: 30px; height: 30px; border-radius: var(--radius-md); background: var(--accent); box-shadow: var(--shadow-tile); flex: none; }
+
+.pk-mark { position: relative; display: inline-block; width: 30px; height: 30px; border-radius: 28%; background: var(--accent); box-shadow: var(--shadow-tile); flex: none; }
 .pk-mark::after { content: ""; position: absolute; left: 13%; right: 13%; bottom: 14%; height: 19%; border-radius: var(--radius-pill); background: var(--on-accent); }
-.pk-logo { display: inline-flex; align-items: center; gap: 10px; font: 500 17px/1 var(--font-sans); letter-spacing: -.02em; color: var(--ink); }
+.pk-logo { display: inline-flex; align-items: center; gap: 10px; font: 700 18px/1 var(--font-display); letter-spacing: -.02em; color: var(--ink); }
 
 /* Chip: states a fact, not interactive */
 .pk-chip { display: inline-flex; align-items: center; gap: 6px; min-height: 26px; padding: 0 10px; border: 1px solid var(--border);
@@ -96,3 +102,8 @@
 @media (prefers-reduced-motion: reduce) {
   .pk *, .pk *::before, .pk *::after, .pk { animation: none !important; transition: none !important; }
 }
+
+/* Numbers that change or line up (times away, counts, timers, tables) use tabular figures;
+   titles balance their line breaks. */
+.pk table, .pk-chip, .pk-meta, .pk-badge, .pk-toast, .pk .tnum { font-variant-numeric: tabular-nums; }
+.pk-task, .pk-heading { text-wrap: balance; }

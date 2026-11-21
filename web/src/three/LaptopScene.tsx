@@ -9,9 +9,9 @@ import { story } from './story';
 
 // Pose per story step: laptop yaw/pitch and camera position / target.
 const POSES = {
-  hero: { yaw: -0.36, pitch: 0.05, cam: [0.2, 2.3, 8.1], look: [0, 0.62, 0] },
-  step: { yaw: -0.14, pitch: 0.02, cam: [0, 2.1, 7.8], look: [0, 0.7, -0.3] },
-  close: { yaw: 0, pitch: 0, cam: [0, 1.75, 5.4], look: [0, 0.95, -0.55] },
+  hero: { x: 0.2, yaw: -0.36, pitch: 0.05, cam: [0.2, 2.3, 8.1], look: [0, 0.62, 0] },
+  step: { x: 0.55, yaw: -0.14, pitch: 0.02, cam: [0, 2.1, 7.8], look: [0, 0.7, -0.3] },
+  close: { x: 0.45, yaw: 0, pitch: 0, cam: [0, 1.75, 5.4], look: [0, 0.95, -0.55] },
 } as const;
 
 function poseFor(step: number) {
@@ -24,6 +24,7 @@ function Rig({ reduced }: { reduced: boolean }) {
   const group = useRef<THREE.Group>(null);
   const { camera } = useThree();
   const look = useRef(new THREE.Vector3(...POSES.hero.look));
+  const started = useRef(0);
   const target = new THREE.Vector3();
 
   useEffect(() => {
@@ -32,7 +33,11 @@ function Rig({ reduced }: { reduced: boolean }) {
 
   useFrame((_, dt) => {
     const d = Math.min(dt, 1 / 20);
-    if (!reduced && story.intro < 1) story.intro = Math.min(1, story.intro + d / 1.6);
+    // The opening runs on wall-clock time, so it ends in 1.6 s even on a slow GPU.
+    if (!reduced && story.intro < 1) {
+      if (started.current === 0) started.current = performance.now();
+      story.intro = Math.min(1, (performance.now() - started.current) / 1600);
+    }
     const p = poseFor(story.step);
     const k = reduced ? 1 : 1 - Math.exp(-d * 3.2);
     const introYaw = reduced ? 0 : (1 - THREE.MathUtils.smootherstep(story.intro, 0, 1)) * -0.55;
@@ -41,6 +46,7 @@ function Rig({ reduced }: { reduced: boolean }) {
       const pitch = p.pitch + (reduced ? 0 : story.pointerY * 0.05);
       group.current.rotation.y += (yaw - group.current.rotation.y) * k;
       group.current.rotation.x += (pitch - group.current.rotation.x) * k;
+      group.current.position.x += (p.x - group.current.position.x) * k;
     }
     target.set(...(p.cam as [number, number, number]));
     camera.position.lerp(target, k);

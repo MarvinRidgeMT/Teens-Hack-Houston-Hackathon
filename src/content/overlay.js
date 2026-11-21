@@ -28,7 +28,7 @@
     .bar { width: 100%; box-sizing: border-box; background: var(--pk-bg); border-radius: 20px;
       box-shadow: 0 0 0 1px var(--pk-line) inset, 0 1px 0 0 rgba(255,255,255,.06) inset, 0 30px 60px -20px rgba(0,0,0,.55);
       padding: 12px 12px 10px 16px; transition: box-shadow .2s var(--pk-ease-out); }
-    .bar:focus-within { box-shadow: 0 0 0 1px var(--pk-accent) inset, 0 0 0 4px rgba(45,212,191,.15), 0 30px 60px -20px rgba(0,0,0,.55); }
+    .bar:focus-within { box-shadow: 0 0 0 1px var(--pk-accent) inset, 0 0 0 4px rgba(201,255,56,.16), 0 30px 60px -20px rgba(0,0,0,.55); }
     .top { display: flex; align-items: center; gap: 8px; font-family: var(--pk-mono); font-size: 11.5px;
       letter-spacing: .06em; text-transform: uppercase; color: var(--pk-muted); }
     .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--pk-accent); }

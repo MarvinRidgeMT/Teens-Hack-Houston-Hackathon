@@ -167,8 +167,11 @@ async function main() {
   log.push('setup calm: ' + (await shoot(setupCalm, 'setup-calm')).join(', '));
 
   // Website hero.
-  const site = await openPage('file://' + path.join(REPO, 'site/index.html'), { width: 1280, height: 800 });
-  log.push('site hero: ' + (await shoot(site, 'site-hero')).join(', '));
+  // The site is a module build now (web/ -> site/); it needs http, not file://. Set PICKUP_SITE_URL to include it.
+  if (process.env.PICKUP_SITE_URL) {
+    const site = await openPage(process.env.PICKUP_SITE_URL, { width: 1280, height: 800 });
+    log.push('site hero: ' + (await shoot(site, 'site-hero')).join(', '));
+  }
 
   console.log(log.join('\n'));
 }

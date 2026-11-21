@@ -91,6 +91,8 @@ Alt+V now opens the **Pickup panel** (it was the voice panel): type or talk to a
 ## Download site (new, Fri, on main)
 
 One static page in `site/` for judges (preview: `python3 -m http.server -d site 8080`). Real screenshots from the extension (`node test/dev/site-shots.mjs`).
+
+> **On branch `redesign/v3` the site is rebuilt** in React + Vite + React Three Fiber: source in `web/`, built into `site/` by `npm --prefix web run build` (never edit `site/` by hand there). See `web/README.md`. On that branch the PILOT RESULTS, VIDEO and DEVPOST blanks live in `web/src/content/site.ts` (`PILOT_RESULTS`, `LINKS.videoId`, `LINKS.devpost`); rebuild after editing.
 - **The Download button needs two things by Saturday:** a **v1.0 GitHub release with the zip** (it links to `/releases/latest`), and the **repo public** (a private repo's releases and Pages are invisible to judges).
 - **Abhinav:** fill the `PILOT RESULTS` block Saturday 10 AM (real numbers only), the `VIDEO` id and the `DEVPOST` link. The page says "open the dashboard and click Load sample data": that button must exist.
 - **Sidd:** drop the 30-second install GIF at `site/assets/install.gif` and swap it in for `install-poster.jpg` (comment in `index.html`).
@@ -161,6 +163,7 @@ Copy two pure files as they are into your scripts. Both are tested in `test/feat
 - Notification copy v2 and badge colours: merged into main **Fri 8:23 PM ET**, both conditions (see `test/REAL_CHROME_LOG.md`). Each pilot laptop's reload time goes there too.
 - Palette badge colours (`release/v1`, tag `v1.0-rc`): merged into main **Fri 9:43 PM ET**, both conditions. The card is unchanged, so there's no "card v2 (palette)".
 - "Sage & Ink" palette (branch `palette/v2`, Fri ~11:30 PM ET): **not merged, not on any pilot laptop.** It changes the badge colours again (parked slate blue `#3f57a0`, saved sage `#3b6b57`, away/neutral `#5b625d`, wrapped `#1f2421`), so if it ever merges, log the exact time here and in `test/REAL_CHROME_LOG.md` like the 9:43 PM entry. The card is still unchanged. Details: `design/SOURCE.md`.
+- **v3 redesign (branch `redesign/v3`, Sat ~1 AM ET): not merged, not on any pilot laptop.** It changes the badge colours (parked violet `#6038ff`, saved deep teal `#0b7285`, away/neutral `#4d4b66`, wrapped `#121126`) **and is "card v2 (palette)"**: Sidd's return card and park overlay move from teal on black to lime on midnight, with the task name on a lime highlighter (colour values only in `src/content/card.js` / `overlay.js`; no behaviour, timing, IDs or schema changed; Sidd agreed per Anish). If it merges, log **"card v2 (palette) from <exact time>"** here and in `test/REAL_CHROME_LOG.md`, plus each pilot laptop's reload time.
 
 ## Pages (redesign/pages)
 

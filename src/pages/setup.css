@@ -7,7 +7,7 @@ html, body { margin: 0; background: var(--paper); }
 .st-ct { position: relative; z-index: 4; display: grid; grid-template-columns: minmax(280px, 400px) 1fr; gap: 48px;
   padding: 64px 64px 0 96px; max-width: 1360px; }
 .st-brand { align-self: start; position: sticky; top: 32px; }
-.st-title { font: 600 20px/1.2 var(--font-sans); letter-spacing: -.045em; margin: 18px 0 0; color: var(--ink); }
+.st-title { font: 700 30px/1.08 var(--font-display); font-stretch: 92%; letter-spacing: -.03em; text-wrap: balance; margin: 18px 0 0; color: var(--ink); }
 .st-txt { font: 400 14px/1.43 var(--font-sans); letter-spacing: -.012em; color: var(--ink-body); max-width: 380px; margin: 14px 0 0; }
 .st-actions { margin-top: 18px; }
 .st-chips { margin-top: 16px; }
