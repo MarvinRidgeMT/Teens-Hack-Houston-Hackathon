@@ -15,7 +15,7 @@ button, input { font: inherit; color: inherit; }
 .where b { color: var(--ink); font-weight: 600; }
 .listening { display: inline-flex; align-items: center; gap: 8px; margin: 0; font-weight: 600; color: var(--ink); }
 .listening[hidden] { display: none; }
-.rec-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--state-away); animation: pk-breathe 2.4s ease-in-out infinite; }
+.rec-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--state-away); } /* static: the "Listening…" words carry the state */
 h2.pk-heading { margin: 0 0 2px; }
 
 .muted { color: var(--ink-body); margin: 0; }
@@ -90,7 +90,6 @@ p { margin: 0; }
 .link { background: none; border: 0; padding: 0; cursor: pointer; font-size: var(--fs-caption); }
 :focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 
-[data-calm] .rec-dot { animation: none !important; } /* Calm colours: no breathing dot */
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
