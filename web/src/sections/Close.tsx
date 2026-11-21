@@ -6,17 +6,9 @@ import { INSTALL_STEPS, LINKS, PLATFORM_NAME, SHORTCUTS, SHORTCUTS_NOTE, WORKS_O
 
 const TABLE_PLATFORMS: readonly Platform[] = ['mac', 'other'];
 
-/** The download CTA: real link when the release is public, an honest pending state until then. */
+/** The download CTA: the v1.0.0 zip, straight from the latest GitHub release. */
 export function DownloadCta({ size = 'lg' }: { size?: 'md' | 'lg' }) {
-  if (LINKS.downloadLive) {
-    return <GlassButton href={LINKS.download} tone="mint" size={size} magnetic icon={<ArrowDownToLine size={19} />}>Download Pickup</GlassButton>;
-  }
-  return (
-    <span className="gbtn gbtn--pending gbtn--lg" role="note">
-      <ArrowDownToLine size={18} aria-hidden="true" />
-      <span className="gbtn__label">Download goes live with the v1.0 release</span>
-    </span>
-  );
+  return <GlassButton href={LINKS.download} tone="mint" size={size} magnetic icon={<ArrowDownToLine size={19} />}>Download Pickup</GlassButton>;
 }
 
 export function Install() {
@@ -28,9 +20,9 @@ export function Install() {
             lede="Chrome 123 or newer, on a laptop or desktop. Pickup loads unpacked from a zip; it isn't on the Chrome Web Store. Free, no account." />
           <div className="install__cta">
             <DownloadCta />
-            {LINKS.repoPublic && <GlassButton href={LINKS.repo} tone="pearl" size="lg" target="_blank" rel="noopener noreferrer" icon={<FolderGit2 size={18} />}>View on GitHub</GlassButton>}
+            <GlassButton href={LINKS.repo} tone="pearl" size="lg" target="_blank" rel="noopener noreferrer" icon={<FolderGit2 size={18} />}>View on GitHub</GlassButton>
           </div>
-          {!LINKS.downloadLive && <p className="install__fine">The zip will be on our GitHub release page once the repo is public. It isn't there yet.</p>}
+          <p className="install__fine">Pickup v1.0.0, an 808 KB zip. <a href={LINKS.allReleases} target="_blank" rel="noopener noreferrer">All releases <ExternalLink size={12} aria-hidden="true" /></a> (release notes and SHA-256).</p>
           <p className="install__fine"><strong>Works on:</strong> {WORKS_ON}</p>
         </div>
         <ol className="install__steps" role="list">
@@ -105,7 +97,7 @@ export function Footer() {
         </div>
         <nav aria-label="Footer" className="footer__nav">
           <a href="#install">Download</a>
-          {LINKS.repoPublic && <a href={LINKS.repo} target="_blank" rel="noopener noreferrer">GitHub <ExternalLink size={12} aria-hidden="true" /></a>}
+          <a href={LINKS.repo} target="_blank" rel="noopener noreferrer">GitHub <ExternalLink size={12} aria-hidden="true" /></a>
           {LINKS.devpost && <a href={LINKS.devpost} target="_blank" rel="noopener noreferrer">Devpost</a>}
           <a href="#privacy">Privacy</a>
         </nav>

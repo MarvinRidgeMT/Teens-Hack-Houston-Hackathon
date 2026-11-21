@@ -62,7 +62,7 @@ export function Hero({ reduced }: { reduced: boolean }) {
           </h1>
           <p className="lede hero__lede">{HERO.lede}</p>
           <div className="hero__ctas">
-            <GlassButton href={LINKS.downloadLive ? LINKS.download : '#install'} tone="mint" size="lg" magnetic icon={<ArrowDownToLine size={19} />}>{LINKS.downloadLive ? 'Download Pickup' : 'How to install'}</GlassButton>
+            <GlassButton href={LINKS.download} tone="mint" size="lg" magnetic icon={<ArrowDownToLine size={19} />}>Download Pickup</GlassButton>
             <GlassButton href="#story" tone="pearl" size="lg" icon={<ArrowDown size={18} />}>See how it works</GlassButton>
           </div>
           <ul className="hero__facts" role="list" aria-label="At a glance">

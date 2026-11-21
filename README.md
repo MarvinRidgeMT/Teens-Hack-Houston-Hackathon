@@ -2,11 +2,13 @@
 
 Pickup is a Chrome extension that saves your place when you leave your work and hands it back when you return. Come back to a work tab and a small card shows the task, how long you were away, the next step you wrote and the sentence you were on; press Enter and you are back at the same spot.
 
+**Website:** https://marvinridgemt.github.io/Teens-Hack-Houston-Hackathon/ · **Download:** [pickup-v1.0.0.zip](https://github.com/MarvinRidgeMT/Teens-Hack-Houston-Hackathon/releases/latest/download/pickup-v1.0.0.zip) ([release notes](https://github.com/MarvinRidgeMT/Teens-Hack-Houston-Hackathon/releases/latest))
+
 ![The Pickup return card on a Wikipedia article: task name, time away, your next step, and Resume](web/public/assets/shot-card.jpg)
 
 ## Install in 4 steps
 
-1. Download `pickup-v1.0.0.zip` from this repo's [Releases](../../releases/latest) page and unzip it.
+1. Download [`pickup-v1.0.0.zip`](https://github.com/MarvinRidgeMT/Teens-Hack-Houston-Hackathon/releases/latest/download/pickup-v1.0.0.zip) from this repo's [latest release](https://github.com/MarvinRidgeMT/Teens-Hack-Houston-Hackathon/releases/latest) and unzip it.
 2. Open `chrome://extensions` in Chrome (or `edge://extensions` in Edge).
 3. Turn on **Developer mode** (top right).
 4. Click **Load unpacked** and pick the unzipped `pickup-v1.0.0` folder (the one that contains `manifest.json`; Windows' Extract All may nest it one level down).
@@ -91,6 +93,10 @@ To build the release zip: `scripts/make-release.sh` (writes `pickup-v1.0.0.zip` 
 - The setup headline's blur effect follows React Bits' BlurText (David Haz, MIT + Commons Clause, `src/vendor/REACT-BITS-LICENSE.md`).
 - Website: **three.js** (MIT), React Three Fiber and drei (MIT), React (MIT), **Lenis** (MIT), **Motion** (MIT), **Lucide** icons (ISC), and **GSAP** under GreenSock's "Standard 'no charge' license" (https://gsap.com/standard-license), as stated in its package.
 - The 3D laptop on the website was built from scratch in Blender by a script in this repo (`web/three-src/laptop/build_laptop.py`); no downloaded model, texture or HDRI is used, and it is released CC0 (`docs/v4/LAPTOP.md`). The screens on it are real screenshots of Pickup.
+
+## Licence
+
+Pickup's own code is MIT ([LICENSE](LICENSE)). Fonts, libraries and the 3D model keep the licences listed above.
 
 ## Roadmap
 

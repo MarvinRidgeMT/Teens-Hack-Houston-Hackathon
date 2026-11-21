@@ -66,7 +66,7 @@ export function GlassNavbar() {
             ))}
           </ul>
         </LayoutGroup>
-        <GlassButton href={LINKS.downloadLive ? LINKS.download : '#install'} tone="mint" className="gnav__cta" icon={<ArrowDownToLine size={17} />}>{LINKS.downloadLive ? 'Download' : 'Install'}</GlassButton>
+        <GlassButton href={LINKS.download} tone="mint" className="gnav__cta" icon={<ArrowDownToLine size={17} />}>Download</GlassButton>
         <button ref={opener} className="gnav__menu" type="button" aria-label="Open menu" aria-haspopup="dialog" onClick={open}>
           <Menu size={22} aria-hidden="true" />
         </button>
@@ -85,7 +85,7 @@ export function GlassNavbar() {
             {NAV_ITEMS.map((i) => <li key={i.href}><a href={i.href} onClick={close}>{i.label}</a></li>)}
           </ul>
           <div className="gsheet__cta">
-            <GlassButton href="#install" tone="mint" size="lg" onClick={close} icon={<ArrowDownToLine size={18} />}>{LINKS.downloadLive ? 'Download Pickup' : 'How to install'}</GlassButton>
+            <GlassButton href={LINKS.download} tone="mint" size="lg" onClick={close} icon={<ArrowDownToLine size={18} />}>Download Pickup</GlassButton>
           </div>
         </LiquidGlass>
       </dialog>

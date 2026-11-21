@@ -2,13 +2,10 @@
 // (PRODUCT.md "Capabilities and Constraints"). Edit copy here, not in the components.
 
 export const LINKS = {
-  // Works once the repo is public and a v1.0 release with the zip exists (it is private today).
-  download: 'https://github.com/MarvinRidgeMT/Teens-Hack-Houston-Hackathon/releases/latest',
-  // Flip to true once the repo is public and the v1.0 release has the zip. Until then the page says so
-  // instead of sending visitors to a 404.
-  downloadLive: false,
-  // The repo is private until release; links to it would 404 for visitors, so they stay hidden.
-  repoPublic: false,
+  // The zip itself, from the latest GitHub release (v1.0.0, published Sat Nov 21). One click downloads it.
+  download: 'https://github.com/MarvinRidgeMT/Teens-Hack-Houston-Hackathon/releases/latest/download/pickup-v1.0.0.zip',
+  // The release page: notes, the SHA-256 and any later versions.
+  allReleases: 'https://github.com/MarvinRidgeMT/Teens-Hack-Houston-Hackathon/releases/latest',
   repo: 'https://github.com/MarvinRidgeMT/Teens-Hack-Houston-Hackathon',
   // DEVPOST: set the submission URL here when it exists; null shows "Devpost (coming)".
   devpost: null as string | null,
