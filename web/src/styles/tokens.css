@@ -1,0 +1,102 @@
+/* Pickup website tokens. Brand primitives mirror design/tokens.json "brand" (shared with the
+   extension's src/shared/tokens.css); the site is the loud rendition, the extension the calm one.
+   Text on violet is white; lime, cyan, pink and yellow are fills under midnight text. */
+
+@font-face {
+  font-family: "Inter";
+  src: url("/assets/fonts/InterVariable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Brand primitives */
+  --violet: #6038ff;
+  --violet-deep: #4a22e6;
+  --violet-light: #a58cff;
+  --lavender: #ece7ff;
+  --lime: #c9ff38;
+  --cyan: #42ddf4;
+  --pink: #ff5cb8;
+  --yellow: #ffe15a;
+  --midnight: #121126;
+  --midnight-2: #1c1b38;
+  --midnight-3: #272550;
+  --off-white: #f7f6fb;
+  --ink-2: #4d4b66;
+  --lavender-text: #c8c2f0;
+  --teal-deep: #0b7285;
+
+  /* Semantic: light page */
+  --bg: var(--off-white);
+  --surface: #ffffff;
+  --surface-sunk: var(--lavender);
+  --text: var(--midnight);
+  --text-2: var(--ink-2);
+  --border: rgba(18, 17, 38, 0.12);
+  --border-strong: #8a87a3;
+  --link: var(--violet-deep);
+  --focus: var(--violet);
+  --on-fill: var(--midnight);          /* text on lime, cyan, pink, yellow */
+  --on-violet: #ffffff;
+  --on-violet-2: #e4ddff;
+  --success: var(--teal-deep);
+  --danger: #c21f3a;
+
+  /* Function colours: one highlighter per idea */
+  --fn-place: var(--lime);     /* your place, resume */
+  --fn-tabs: var(--cyan);      /* tabs, groups, tidy */
+  --fn-break: var(--pink);     /* interruptions, drift */
+  --fn-note: var(--yellow);    /* next steps, notes */
+
+  /* Type */
+  --font-display: "Bricolage Grotesque Variable", "Inter", system-ui, sans-serif;
+  --font-text: "Inter", system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --fs-hero: clamp(2.75rem, 1.4rem + 5.2vw, 6rem);
+  --fs-h2: clamp(2.25rem, 1.3rem + 3.6vw, 4.5rem);
+  --fs-h3: clamp(1.375rem, 1.1rem + 0.9vw, 2rem);
+  --fs-lede: clamp(1.0625rem, 0.95rem + 0.45vw, 1.3125rem);
+  --fs-body: 1.0625rem;
+  --fs-small: 0.9375rem;
+  --fs-label: 0.8125rem;
+
+  /* Space and shape */
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 24px;
+  --space-6: 32px; --space-7: 48px; --space-8: 72px; --space-9: 112px; --space-10: 160px;
+  --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-xl: 32px; --radius-pill: 999px;
+  --wrap: min(1240px, 100% - 2 * max(20px, env(safe-area-inset-left)));
+
+  /* Elevation */
+  --shadow-1: 0 1px 2px rgba(18, 17, 38, 0.08);
+  --shadow-2: 0 2px 6px rgba(18, 17, 38, 0.08), 0 20px 48px rgba(18, 17, 38, 0.14);
+  --shadow-3: 0 30px 80px rgba(0, 0, 0, 0.32);
+
+  /* Motion */
+  --dur-micro: 160ms;
+  --dur-ui: 280ms;
+  --dur-story: 700ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #18172f;               /* a step above the midnight story and privacy bands, so sections stay distinct */
+    --surface: #221f42;
+    --surface-sunk: var(--midnight-3);
+    --text: #f1effc;
+    --text-2: #b9b4da;
+    --border: rgba(241, 239, 252, 0.14);
+    --border-strong: #77739b;
+    --link: var(--violet-light);
+    --focus: var(--lime);
+    --success: #5fd6e3;
+    --danger: #ff6b81;
+    --shadow-2: 0 2px 6px rgba(0, 0, 0, 0.4), 0 20px 48px rgba(0, 0, 0, 0.5);
+    color-scheme: dark;
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "pickup-site",
+  "private": true,
+  "type": "module",
+  "description": "Pickup download website: React + TypeScript + Vite + React Three Fiber. Builds static files into ../site.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --outDir ../site"
+  },
+  "dependencies": {
+    "@fontsource-variable/bricolage-grotesque": "5.3.0",
+    "@gsap/react": "2.1.2",
+    "@react-three/drei": "10.7.9",
+    "@react-three/fiber": "9.8.2",
+    "gsap": "3.15.1",
+    "lenis": "1.3.27",
+    "lucide-react": "1.69.0",
+    "motion": "14.9.1",
+    "react": "19.1.10",
+    "react-dom": "19.1.10",
+    "three": "0.187.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@types/three": "0.187.0",
+    "@vitejs/plugin-react": "6.2.1",
+    "typescript": "5.9.3",
+    "vite": "8.3.6"
+  }
+}

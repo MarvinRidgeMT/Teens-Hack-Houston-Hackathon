@@ -7,7 +7,7 @@ html, body { margin: 0; background: var(--paper); }
 .st-ct { position: relative; z-index: 4; display: grid; grid-template-columns: minmax(280px, 400px) 1fr; gap: 48px;
   padding: 64px 64px 0 96px; max-width: 1360px; }
 .st-brand { align-self: start; position: sticky; top: 32px; }
-.st-title { font: 600 20px/1.2 var(--font-sans); letter-spacing: -.045em; margin: 18px 0 0; color: var(--ink); }
+.st-title { font: 700 30px/1.08 var(--font-display); font-stretch: 92%; letter-spacing: -.03em; text-wrap: balance; margin: 18px 0 0; color: var(--ink); }
 .st-txt { font: 400 14px/1.43 var(--font-sans); letter-spacing: -.012em; color: var(--ink-body); max-width: 380px; margin: 14px 0 0; }
 .st-actions { margin-top: 18px; }
 .st-chips { margin-top: 16px; }
@@ -45,10 +45,9 @@ html, body { margin: 0; background: var(--paper); }
 .fly { fill: #ffd27a; opacity: .7; transform-box: fill-box; transform-origin: center; }
 .st-haze { position: absolute; inset: 0; z-index: 1; background: linear-gradient(to bottom, var(--paper) 0%, transparent 38%); }
 .st-wm { position: absolute; left: 0; right: 0; bottom: -4px; z-index: 2; margin: 0; text-align: center; white-space: nowrap; user-select: none;
-  font: 600 clamp(120px, 25vw, 300px)/.74 var(--font-sans); letter-spacing: -.045em;
-  color: rgba(232, 234, 250, .4); background: linear-gradient(to bottom, rgba(255, 255, 255, .78), rgba(214, 218, 246, .36) 48%, rgba(255, 255, 255, .62));
-  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 -1px 0 rgba(255, 255, 255, .55)) drop-shadow(0 0 18px rgba(190, 200, 255, .45)); }
+  /* A solid display-face wordmark (as on the website's footer): no gradient text, no glow. Decorative, aria-hidden. */
+  font: 800 clamp(120px, 25vw, 300px)/.74 var(--font-display); font-stretch: 80%; letter-spacing: -.025em;
+  color: var(--accent); } /* 5.6:1 on Paper, 6.9:1 at Blue hour */
 .st-fog { position: absolute; left: -10%; right: -10%; bottom: 0; height: 22%; z-index: 3; background: linear-gradient(to top, var(--mist) 0%, transparent 100%); }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -76,3 +75,6 @@ html, body { margin: 0; background: var(--paper); }
 
 /* Calm colours: the meadow stays still (no fireflies or fog drift). */
 :root[data-calm] .fly, :root[data-calm] .st-fog, :root[data-calm] .st-wm { animation: none !important; }
+
+/* Headline blur-in (setup-motion.js, from React Bits' BlurText on Motion). */
+.st-bt { display: inline-block; will-change: transform, filter, opacity; }

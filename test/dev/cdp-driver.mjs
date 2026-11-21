@@ -97,6 +97,7 @@ export async function launch({ profile, ext, restore = false, extraArgs = [] }) 
     '--no-default-browser-check',
     '--disable-search-engine-choice-screen',
   ];
+  if (process.env.PICKUP_HEADLESS) args.push('--headless=new', '--window-size=1280,800');
   args.push(...extraArgs);
   if (restore) args.push('--restore-last-session');
   else args.push('about:blank');

@@ -94,3 +94,6 @@ p { margin: 0; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* Before anything is asked the talk card shows only the hint, not empty transcript labels. */
+.talk[data-empty] .pk-eyebrow, .talk[data-empty] .heard { display: none; }

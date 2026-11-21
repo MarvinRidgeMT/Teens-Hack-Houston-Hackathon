@@ -97,11 +97,11 @@ export const RETURN_VIA_TTL_MS = 10000; // a returnVia marker older than this is
 // colour, no theme). White glyph on top. design/tokens.json state-*. Glyphs carry the
 // meaning, not colour.
 export const BADGE = Object.freeze({
-  parked: { text: 'P', color: '#5b4be0' },  // state-parked (resume violet)
-  away: { text: '•', color: '#5c6170' },    // state-away (neutral: being away is normal, never amber or red)
-  wrapped: { text: '☾', color: '#1e2230' }, // state-wrapped (ink); use 'Z' if the glyph renders badly
-  timer: { color: '#5b4be0' },              // resume violet; text is the minutes left, e.g. '9m'
-  flash: { '✓': '#0d7c72', default: '#5c6170' }, // state-saved (teal), state-neutral
+  parked: { text: 'P', color: '#6038ff' },  // state-parked (brand violet)
+  away: { text: '•', color: '#4d4b66' },    // state-away (neutral: being away is normal, never amber or red)
+  wrapped: { text: '☾', color: '#121126' }, // state-wrapped (ink); use 'Z' if the glyph renders badly
+  timer: { color: '#6038ff' },              // brand violet; text is the minutes left, e.g. '9m'
+  flash: { '✓': '#0b7285', default: '#4d4b66' }, // state-saved (deep teal), state-neutral
   flashTitle: { '✓': 'saved', '!': 'nothing saved (see the service worker console)', '?': 'no task to go back to yet' },
 });
 export const BADGE_FLASH_MS = 2000;

@@ -169,3 +169,11 @@ Branch `release/v1` = `main` + palette "Warm Desk, Teal Spark" + Calm colours. C
 ## Treatment change: palette badge colours (Fri Nov 20, 9:43 PM ET)
 
 `release/v1` (the "Warm Desk, Teal Spark" palette, Calm colours) merged into `main` at **9:43 PM ET** and tagged `v1.0-rc`. For **both** conditions the toolbar badge colours change: `P` violet, `•` neutral grey, `☾` ink, `✓` teal. The glyphs are unchanged, as are the notification text and the return card (**no "card v2 (palette)"**). A pilot laptop gets this when it pulls and reloads; note each reload time here.
+
+## Run 16: redesign/v3 (Sat Nov 21)
+
+Branch `redesign/v3` at `88e60cb` (the v3 palette, badge colours and extension surface restyle). Chrome for Testing 157.0.8103.78, visible run.
+- **Gate: 23 pass, 0 fail, 1 skipped** (the Docs row still needs a Google login in the test profile). Steps 6–8 pass: return after 32 s, card with task, next step and highlight, Resume restores scroll (0 → 1197, saved 1200), first interaction 0.3 s after return.
+- **N4 badge:** `P` → `•` → empty, with the same tooltips as before; only the colours changed.
+- **N1 shortcuts unchanged:** park-task ⌥P, resume-task ⌥R, toggle-voice ⌥V.
+- **What this run does not cover:** the gate drives `test/dev/stub-content.js`, not Sidd's content scripts, so the restyled return card and park overlay were not drawn here. Those were exercised headless with `site-shots` (park, pill, panel, card, Resume with scroll restore).

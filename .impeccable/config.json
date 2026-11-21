@@ -1,0 +1,56 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "createdAt": "2026-11-21T04:18:14.272Z",
+        "reason": "Team rule: handoff/CLAUDE_CODE_PROMPT_PALETTE.md says the bundled Inter stays bundled (extension makes no network requests); design/README.md specifies Inter"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "site/index.html"
+        ],
+        "createdAt": "2026-11-21T04:18:14.331Z",
+        "reason": "False positive from the static scan: full-bleed bands use calc((100% - var(--wrap)) / 2) side padding, 16px at 375px; rendered-page detect reports no cramped-padding"
+      },
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "files": [
+          "web/src/styles/tokens.css"
+        ],
+        "createdAt": "2026-11-21T06:10:29.851Z",
+        "reason": "Team rule (PRODUCT.md, handoff/CLAUDE_CODE_PROMPT_PALETTE.md): the bundled Inter stays; the site uses it for body text so it matches the extension, with Bricolage Grotesque as the display face"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "src/pages/popup.html"
+        ],
+        "createdAt": "2026-11-21T06:23:26.648Z",
+        "reason": "False positive from the static scan: the flagged .pk-chip status pill gets its vertical inset from min-height 26px (6px above and below 14px text), which the HTML-only scan cannot see; predates this session"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "georgia",
+        "createdAt": "2026-11-21T06:27:12.594Z",
+        "reason": "Claude triage: .essay is the mock third-party article inside the .browser demo frame; serif signals 'someone else's page', not site type"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "src/pages/dashboard.html"
+        ],
+        "createdAt": "2026-11-21T06:32:27.672Z",
+        "reason": "False positive from the static scan: .pk-chip pills get their inset from min-height 26px, and the bordered .db-scroll table wrappers hold cells with their own padding; neither is visible to an HTML-only scan; predates this session"
+      }
+    ]
+  }
+}

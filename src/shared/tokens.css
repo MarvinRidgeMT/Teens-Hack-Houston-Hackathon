@@ -1,4 +1,4 @@
-/* Pickup design tokens: Paper (light) and Blue hour (dark), palette "Warm Desk, Teal Spark".
+/* Pickup design tokens: Paper (light) and Blue hour (dark), palette v3 "calm inside" (brand: design/tokens.json "brand").
    Source: design/tokens.json (see design/SOURCE.md). Every Pickup page loads this
    file first. The theme follows prefers-color-scheme; data-theme="light" or "dark"
    on <html> (or the shadow host) forces one. data-readable turns on the
@@ -12,41 +12,50 @@
   font-style: normal;
   font-display: swap;
 }
+@font-face {
+  font-family: "Bricolage Grotesque";
+  src: url("../../assets/fonts/BricolageGrotesqueVariable-latin.woff2") format("woff2");
+  font-weight: 200 800;
+  font-stretch: 75% 100%;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root, :host {
-  /* Paper (Warm Desk, Teal Spark). Generated from design/tokens.json. */
-  --paper: #faf8f4;
+  /* Paper (v3 calm rendition of the Pickup brand). Generated from design/tokens.json. */
+  --paper: #f7f6fb;
   --surface: #ffffff;
-  --ink: #1e2230;
-  --ink-body: #5c6170;
-  --border: rgba(30, 34, 48, 0.12);
-  --border-strong: #8a8f9c;
-  --accent: #0d7c72;
+  --ink: #121126;
+  --ink-body: #4d4b66;
+  --border: rgba(18, 17, 38, 0.12);
+  --border-strong: #8a87a3;
+  --accent: #6038ff;
   --on-accent: #ffffff;
-  --state-parked: #5b4be0;
-  --state-away: #5c6170;
-  --state-wrapped: #1e2230;
-  --state-saved: #0d7c72;
-  --state-neutral: #5c6170;
+  --state-parked: #6038ff;
+  --state-away: #4d4b66;
+  --state-wrapped: #121126;
+  --state-saved: #0b7285;
+  --state-neutral: #4d4b66;
   --on-state: #ffffff;
-  --accent-tint: #e3f4f1;
-  --accent-tint-ink: #0b6e65;
-  --resume: #5b4be0;
-  --resume-tint: #eeebff;
-  --spark: #2dd4bf;
-  --reward: #ffb547;
-  --rest: #8a8f9c;
-  --danger: #b42318;
-  --on-spark: #1e2230;
-  --on-reward: #1e2230;
+  --accent-tint: #ece7ff;
+  --accent-tint-ink: #4a22e6;
+  --resume: #4a22e6;
+  --resume-tint: #ece7ff;
+  --spark: #c9ff38;
+  --reward: #ffe15a;
+  --rest: #8a87a3;
+  --danger: #c21f3a;
+  --on-spark: #121126;
+  --on-reward: #121126;
   --mist: var(--resume-tint);
   --periwinkle: var(--resume);
   --focus-ring: var(--resume);
-  --shadow-card: 0 1px 2px rgba(30, 34, 48, 0.06), 0 12px 32px rgba(91, 75, 224, 0.12);
-  --glow: rgba(91, 75, 224, 0.35);
+  --shadow-card: 0 1px 2px rgba(18, 17, 38, 0.06), 0 14px 36px rgba(18, 17, 38, 0.10);
+  --glow: rgba(96, 56, 255, 0.32);
   --shadow-tile: 0 1px 2px rgba(0, 0, 0, 0.25);
 
   --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-display: "Bricolage Grotesque", "Inter", system-ui, sans-serif; /* titles only; Inter does the work */
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
   --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-6: 24px; --space-10: 40px;
@@ -72,68 +81,68 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]), :host(:not([data-theme="light"])) {
-    --paper: #14171f;
-    --surface: #1c2029;
-    --ink: #e6e8ee;
-    --ink-body: #9aa0ae;
-    --border: rgba(230, 232, 238, 0.14);
-    --border-strong: #717785;
-    --accent: #3dd6c4;
-    --on-accent: #14171f;
-    --state-parked: #a99cff;
-    --state-away: #9aa0ae;
-    --state-wrapped: #e6e8ee;
-    --state-saved: #3dd6c4;
-    --state-neutral: #9aa0ae;
-    --on-state: #14171f;
-    --accent-tint: #173b38;
-    --accent-tint-ink: #7ee8da;
-    --resume: #a99cff;
-    --resume-tint: #2a2750;
-    --spark: #3dd6c4;
-    --reward: #ffc46b;
-    --rest: #9aa0ae;
-    --danger: #f97066;
-    --on-spark: #14171f;
-    --on-reward: #14171f;
+    --paper: #121126;
+    --surface: #1c1b38;
+    --ink: #f1effc;
+    --ink-body: #b9b4da;
+    --border: rgba(241, 239, 252, 0.14);
+    --border-strong: #77739b;
+    --accent: #a58cff;
+    --on-accent: #121126;
+    --state-parked: #a58cff;
+    --state-away: #b9b4da;
+    --state-wrapped: #f1effc;
+    --state-saved: #5fd6e3;
+    --state-neutral: #b9b4da;
+    --on-state: #121126;
+    --accent-tint: #2d2860;
+    --accent-tint-ink: #cfc4ff;
+    --resume: #a58cff;
+    --resume-tint: #2a2557;
+    --spark: #c9ff38;
+    --reward: #ffe15a;
+    --rest: #b9b4da;
+    --danger: #ff6b81;
+    --on-spark: #121126;
+    --on-reward: #121126;
     --mist: var(--resume-tint);
     --periwinkle: var(--resume);
     --focus-ring: var(--resume);
-    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 16px 40px rgba(0, 0, 0, 0.55);
-    --glow: rgba(169, 156, 255, 0.4);
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.45), 0 18px 44px rgba(0, 0, 0, 0.55);
+    --glow: rgba(165, 140, 255, 0.4);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"], :host([data-theme="dark"]) {
-  --paper: #14171f;
-  --surface: #1c2029;
-  --ink: #e6e8ee;
-  --ink-body: #9aa0ae;
-  --border: rgba(230, 232, 238, 0.14);
-  --border-strong: #717785;
-  --accent: #3dd6c4;
-  --on-accent: #14171f;
-  --state-parked: #a99cff;
-  --state-away: #9aa0ae;
-  --state-wrapped: #e6e8ee;
-  --state-saved: #3dd6c4;
-  --state-neutral: #9aa0ae;
-  --on-state: #14171f;
-  --accent-tint: #173b38;
-  --accent-tint-ink: #7ee8da;
-  --resume: #a99cff;
-  --resume-tint: #2a2750;
-  --spark: #3dd6c4;
-  --reward: #ffc46b;
-  --rest: #9aa0ae;
-  --danger: #f97066;
-  --on-spark: #14171f;
-  --on-reward: #14171f;
+  --paper: #121126;
+  --surface: #1c1b38;
+  --ink: #f1effc;
+  --ink-body: #b9b4da;
+  --border: rgba(241, 239, 252, 0.14);
+  --border-strong: #77739b;
+  --accent: #a58cff;
+  --on-accent: #121126;
+  --state-parked: #a58cff;
+  --state-away: #b9b4da;
+  --state-wrapped: #f1effc;
+  --state-saved: #5fd6e3;
+  --state-neutral: #b9b4da;
+  --on-state: #121126;
+  --accent-tint: #2d2860;
+  --accent-tint-ink: #cfc4ff;
+  --resume: #a58cff;
+  --resume-tint: #2a2557;
+  --spark: #c9ff38;
+  --reward: #ffe15a;
+  --rest: #b9b4da;
+  --danger: #ff6b81;
+  --on-spark: #121126;
+  --on-reward: #121126;
   --mist: var(--resume-tint);
   --periwinkle: var(--resume);
   --focus-ring: var(--resume);
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 16px 40px rgba(0, 0, 0, 0.55);
-  --glow: rgba(169, 156, 255, 0.4);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.45), 0 18px 44px rgba(0, 0, 0, 0.55);
+  --glow: rgba(165, 140, 255, 0.4);
   color-scheme: dark;
 }
 
@@ -153,8 +162,8 @@
 /* Calm colours (settings.calm, set as data-calm on <html> by src/shared/theme.js):
    lower-saturation accent, resume and spark (design/tokens.json "calm"). mist,
    periwinkle and focus-ring follow resume. Decorative motion is off under it. */
-:root[data-calm] { --accent: #2f6e67; --resume: #57539a; --spark: #9fd6cc; --state-parked: #57539a; --state-saved: #2f6e67; }
+:root[data-calm] { --accent: #5a4fb0; --resume: #4f468f; --spark: #dcef9e; --state-parked: #5a4fb0; --state-saved: #0b7285; }
 @media (prefers-color-scheme: dark) {
-  :root[data-calm]:not([data-theme="light"]) { --accent: #86c7be; --resume: #b0abdd; --spark: #8ccabf; --state-parked: #b0abdd; --state-saved: #86c7be; }
+  :root[data-calm]:not([data-theme="light"]) { --accent: #b3a9e6; --resume: #b3a9e6; --spark: #c8dc8f; --state-parked: #b3a9e6; --state-saved: #5fd6e3; }
 }
-:root[data-calm][data-theme="dark"] { --accent: #86c7be; --resume: #b0abdd; --spark: #8ccabf; --state-parked: #b0abdd; --state-saved: #86c7be; }
+:root[data-calm][data-theme="dark"] { --accent: #b3a9e6; --resume: #b3a9e6; --spark: #c8dc8f; --state-parked: #b3a9e6; --state-saved: #5fd6e3; }
