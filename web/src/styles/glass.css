@@ -1,0 +1,126 @@
+/* The liquid-glass material. Layers, bottom to top:
+   1 backdrop (blur + saturate)  2 tinted fill  3 rim (gradient border via mask-composite)
+   4 specular (::after, follows --mx/--my)  5 inner shade + thickness (inset shadows) + outer/contact shadow
+   6 refraction (crystal only, Chromium: .lg__lens with backdrop-filter:url(#pk-lens))  7 content (crisp, z-index 2).
+   Blur values are never animated. Move glass with transform/opacity only. */
+
+.lg {
+  --lg-fill: var(--glass-fill);
+  --lg-blur: var(--blur-pearl);
+  --lg-sat: var(--sat-pearl);
+  --lg-r: var(--r-md);
+  --lg-rim-w: 1px;
+  --lg-rim: linear-gradient(150deg, var(--glass-rim-hi) 0%, rgba(255, 255, 255, 0.35) 38%, rgba(255, 255, 255, 0.08) 62%, var(--glass-rim-lo) 100%);
+  --lg-spec: rgba(255, 255, 255, 0.75);
+  --lg-spec-o: 0.55;
+  --lg-spec-w: 70%;
+  --lg-spec-h: 48%;
+  --mx: 22%;
+  --my: 0%;
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--lg-r);
+  background: var(--lg-fill);
+  -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-sat));
+  backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-sat));
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    inset 0 -12px 24px -8px var(--glass-inner),
+    var(--glass-shadow);
+}
+.lg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: var(--lg-rim-w);
+  background: var(--lg-rim);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
+  z-index: 3;
+}
+.lg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(var(--lg-spec-w) var(--lg-spec-h) at var(--mx) var(--my), var(--lg-spec), transparent 70%);
+  opacity: var(--lg-spec-o);
+  pointer-events: none;
+  z-index: 1;
+  transition: opacity var(--dur-hover) var(--ease-out);
+}
+.lg > * { position: relative; z-index: 2; }
+
+/* Variants */
+.lg--pearl { --lg-fill: var(--glass-fill); }
+.lg--gel {
+  --lg-blur: var(--blur-gel);
+  --lg-sat: var(--sat-gel);
+  --lg-spec-o: 0.8;
+  --lg-spec-w: 60%;
+  --lg-spec-h: 40%;
+  --lg-fill: var(--glass-tint-lilac);
+  box-shadow:
+    inset 0 2px 0 var(--glass-highlight),
+    inset 0 -16px 30px -10px var(--glass-inner),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.25),
+    var(--glass-shadow);
+}
+.lg--crystal {
+  --lg-fill: rgba(255, 255, 255, 0.24);
+  --lg-blur: var(--blur-crystal);
+  --lg-sat: var(--sat-crystal);
+  --lg-rim-w: 1.5px;
+  --lg-rim: linear-gradient(140deg, #fff 0%, rgba(255, 255, 255, 0.55) 25%, rgba(255, 255, 255, 0.05) 55%, rgba(187, 155, 250, 0.55) 85%, rgba(196, 244, 171, 0.6) 100%);
+  --lg-spec-o: 0.9;
+  --lg-spec-w: 46%;
+  --lg-spec-h: 30%;
+  box-shadow:
+    inset 0 2px 1px var(--glass-highlight),
+    inset 0 -24px 40px -16px rgba(124, 92, 196, 0.12),
+    inset 10px 0 24px -14px rgba(255, 255, 255, 0.6),
+    var(--glass-shadow-lift);
+}
+/* Tints */
+.lg--mint { --lg-fill: var(--glass-tint-mint); }
+.lg--blush { --lg-fill: var(--glass-tint-blush); }
+.lg--lilac { --lg-fill: var(--glass-tint-lilac); }
+/* Any glass that carries body text gets the strong fill so contrast holds whatever scrolls behind. */
+.lg--text { --lg-fill: var(--glass-fill-strong); }
+.lg--text.lg--mint { --lg-fill: color-mix(in srgb, var(--mint) 82%, transparent); }
+.lg--text.lg--blush { --lg-fill: color-mix(in srgb, var(--blush) 82%, transparent); }
+.lg--text.lg--lilac { --lg-fill: color-mix(in srgb, var(--lavender) 84%, transparent); }
+
+/* Refraction layer (crystal only, Chromium). Text never sits on it: it is behind the content. */
+.lg__lens {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: 0;
+  pointer-events: none;
+  display: none;
+}
+:root[data-lens="on"] .lg--crystal > .lg__lens {
+  display: block;
+  -webkit-backdrop-filter: url(#pk-lens) blur(2px);
+  backdrop-filter: url(#pk-lens) blur(2px);
+  -webkit-mask: radial-gradient(120% 120% at 50% 50%, transparent 62%, #000 86%);
+  mask: radial-gradient(120% 120% at 50% 50%, transparent 62%, #000 86%);
+}
+
+/* Interactive response */
+.lg--interactive { transition: transform var(--dur-card) var(--ease-out), box-shadow var(--dur-card) var(--ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .lg--interactive:hover { --lg-spec-o: 0.95; transform: translateY(-3px); box-shadow: inset 0 1px 0 var(--glass-highlight), inset 0 -12px 24px -8px var(--glass-inner), var(--glass-shadow-lift); }
+}
+
+/* Contact shadow for floating objects */
+.lg-contact { position: absolute; left: 12%; right: 12%; bottom: -18px; height: 22px; border-radius: 50%; background: radial-gradient(closest-side, var(--contact-shadow), transparent); filter: blur(6px); z-index: -1; pointer-events: none; }
+
+@media (forced-colors: active) {
+  .lg { background: Canvas; border: 1px solid CanvasText; backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: none; }
+  .lg::before, .lg::after, .lg__lens { display: none; }
+}

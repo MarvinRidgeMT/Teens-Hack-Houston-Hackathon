@@ -14,31 +14,70 @@ export const LINKS = {
   videoId: null as string | null,
 };
 
-export const WALKTHROUGH = [
+export const NAV_ITEMS = [
+  { href: '#story', label: 'How it works' },
+  { href: '#return-card', label: 'Try the card' },
+  { href: '#features', label: 'Features' },
+  { href: '#privacy', label: 'Privacy' },
+  { href: '#install', label: 'Install' },
+] as const;
+
+export const HERO = {
+  lede: 'A Chrome extension that remembers where you left off, so coming back feels easy.',
+  facts: ['Free', 'No account', 'Nothing leaves your computer'],
+  // The floating context objects use the extension's own words.
+  task: { name: 'Climate Essay', meta: '4 tabs' },
+  next: 'Find a source for the drought statistic',
+  group: 'Climate Essay',
+  away: 'Away 12 min',
+};
+
+/** The pinned story. Each scene drives the laptop screen, the camera and the caption. */
+export const STORY = [
   {
-    id: 'leave',
-    title: 'Leave',
-    keys: ['Alt', 'P'],
-    body: 'Switch away from a work page and Pickup saves where you were: the page, your scroll position and what you last highlighted. Press Alt+P first to leave a next step in your own words.',
+    id: 'working',
+    title: 'Working',
+    body: 'An essay draft, three research tabs in a named tab group. You know exactly what comes next.',
+    keys: [] as string[],
   },
   {
-    id: 'drift',
-    title: 'Drift',
-    keys: ['Alt', 'V'],
-    body: 'If you wrote a next step, Pickup can send one quiet reminder after a few minutes away. One per break, never more, and it never blocks a site. Ask the Pickup panel "where was I?" any time.',
+    id: 'interrupted',
+    title: 'Interrupted',
+    body: 'A message, a video, a quick look at something else. Pickup notices you left a work page. It never blocks the site.',
+    keys: [] as string[],
+  },
+  {
+    id: 'park',
+    title: 'Park',
+    body: 'Press Alt+P first and leave yourself one line: your next step, in your own words. Or skip it; your place is saved either way.',
+    keys: ['Alt', 'P'],
   },
   {
     id: 'return',
     title: 'Return',
-    keys: [],
-    body: 'Come back and a small card shows what you were doing, how long you were gone, and the next step you wrote. Every line is something you did or wrote.',
+    body: 'Come back and a small card shows the task, how long you were away, the next step you wrote and the sentence you were on.',
+    keys: [] as string[],
   },
   {
     id: 'resume',
     title: 'Resume',
+    body: 'Press Enter. You land on the same tab at the same spot. Press T and break tabs fold into a "Later" group. Nothing is closed.',
     keys: ['Enter'],
-    body: "Press Enter and you're back at the exact spot. Press T to tidy the tabs you opened while away into a collapsed \"Later\" group. Nothing is closed.",
   },
+] as const;
+
+export const INSTALL_STEPS = [
+  { title: 'Download the zip', body: 'From the GitHub release, then unzip it.' },
+  { title: 'Open chrome://extensions', body: 'Paste it into Chrome\'s address bar.' },
+  { title: 'Turn on Developer mode', body: 'The switch is at the top right.' },
+  { title: 'Load unpacked', body: 'Pick the unzipped folder. The setup page opens: add your work sites and distraction sites.' },
+] as const;
+
+export const SHORTCUTS = [
+  { keys: ['Alt', 'P'], label: 'Park before you go', alt: 'or the Park button in the toolbar popup' },
+  { keys: ['Alt', 'R'], label: 'Back to your task from any tab', alt: 'or Resume in the popup' },
+  { keys: ['Alt', 'V'], label: 'Open the Pickup panel', alt: 'or the panel button in the popup' },
+  { keys: ['Enter'], label: 'Resume, on the return card', alt: 'or click Resume' },
 ] as const;
 
 export const PRIVACY = [

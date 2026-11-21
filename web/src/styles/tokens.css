@@ -82,7 +82,7 @@
   --font-display: "Plus Jakarta Sans Variable", "Geist Variable", system-ui, sans-serif;
   --font-ui: "Geist Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
-  --fs-display: clamp(44px, 7.2vw, 104px);
+  --fs-display: clamp(44px, 6.1vw, 96px);
   --fs-h2: clamp(32px, 4.4vw, 60px);
   --fs-h3: clamp(22px, 1.9vw, 28px);
   --fs-lede: clamp(18px, 1.45vw, 21px);

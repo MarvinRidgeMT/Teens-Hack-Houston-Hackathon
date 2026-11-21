@@ -1,10 +1,13 @@
 import { MotionConfig } from 'motion/react';
-import { Nav } from './components/Nav';
-import { Story } from './sections/Story';
-import { TryIt } from './sections/TryIt';
+import { GlassNavbar } from './components/glass/GlassNavbar';
+import { GlassDefs } from './components/glass/LiquidGlass';
+import { Hero } from './sections/Hero';
+import { Interrupted } from './sections/Interrupted';
+import { ScrollStory } from './sections/ScrollStory';
+import { ReturnDemo } from './sections/ReturnDemo';
 import { Features } from './sections/Features';
 import { Privacy, Evidence } from './sections/Trust';
-import { Demo, Install, Footer } from './sections/Close';
+import { Install, FinalCta, Footer } from './sections/Close';
 import { useReducedMotion } from './hooks/motion';
 import { useSmoothScroll } from './hooks/useSmoothScroll';
 
@@ -13,18 +16,22 @@ export function App() {
   useSmoothScroll(reduced);
   return (
     <MotionConfig reducedMotion="user">
+      <GlassDefs />
       <a className="skip" href="#main">Skip to content</a>
-      <Nav />
+      <GlassNavbar />
       <main id="main">
-        <Story reduced={reduced} />
-        <TryIt reduced={reduced} />
+        <Hero reduced={reduced} />
+        <Interrupted reduced={reduced} />
+        <ScrollStory reduced={reduced} />
+        <ReturnDemo reduced={reduced} />
         <Features reduced={reduced} />
         <Privacy />
-        <Evidence />
-        <Demo />
         <Install />
+        <Evidence />
+        <FinalCta />
       </main>
       <Footer />
+      <div className="grain" aria-hidden="true" />
     </MotionConfig>
   );
 }
