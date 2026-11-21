@@ -165,3 +165,7 @@ Branch `release/v1` = `main` + palette "Warm Desk, Teal Spark" + Calm colours. C
   - the panel's listening dot is still under Calm;
   - the contrast test's spark/reward check also catches raw hex values.
 - **Known:** with Calm on, the saturated colours flash briefly before the setting loads. That's accepted for tonight.
+
+## Treatment change: palette badge colours (Fri Nov 20, 9:43 PM ET)
+
+`release/v1` (the "Warm Desk, Teal Spark" palette, Calm colours) merged into `main` at **9:43 PM ET** and tagged `v1.0-rc`. For **both** conditions the toolbar badge colours change: `P` violet, `•` neutral grey, `☾` ink, `✓` teal. The glyphs are unchanged, as are the notification text and the return card (**no "card v2 (palette)"**). A pilot laptop gets this when it pulls and reloads; note each reload time here.

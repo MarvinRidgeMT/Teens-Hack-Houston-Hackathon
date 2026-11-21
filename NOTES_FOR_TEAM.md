@@ -159,6 +159,7 @@ Copy two pure files as they are into your scripts. Both are tested in `test/feat
 **Treatment change log:**
 - The card itself is **unchanged tonight** (no "card v2" yet).
 - Notification copy v2 and badge colours: merged into main **Fri 8:23 PM ET**, both conditions (see `test/REAL_CHROME_LOG.md`). Each pilot laptop's reload time goes there too.
+- Palette badge colours (`release/v1`, tag `v1.0-rc`): merged into main **Fri 9:43 PM ET**, both conditions. The card is unchanged, so there's no "card v2 (palette)".
 
 ## Pages (redesign/pages)
 
