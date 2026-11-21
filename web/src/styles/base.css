@@ -51,7 +51,7 @@ p { text-wrap: pretty; }
 
 /* ---------- atmosphere: 2–3 placed light volumes per section + grain (never random blobs) ---------- */
 .atmo { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
-.atmo__light { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.9; transform: translateZ(0); }
+.atmo__light { position: absolute; border-radius: 50%; filter: blur(48px); opacity: 1; transform: translateZ(0); }
 .atmo__light--lilac { background: radial-gradient(closest-side, var(--light-lilac), transparent); }
 .atmo__light--mint { background: radial-gradient(closest-side, var(--light-mint), transparent); }
 .atmo__light--blush { background: radial-gradient(closest-side, var(--light-blush), transparent); }

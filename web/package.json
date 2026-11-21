@@ -5,8 +5,9 @@
   "description": "Pickup download website: React + TypeScript + Vite + React Three Fiber. Builds static files into ../site.",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
-    "preview": "vite preview --outDir ../site"
+    "build": "node scripts/check-tokens.mjs && node scripts/contrast.mjs > /dev/null && tsc --noEmit && vite build",
+    "preview": "vite preview --outDir ../site",
+    "check": "node scripts/check-tokens.mjs && node scripts/contrast.mjs"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.3.0",

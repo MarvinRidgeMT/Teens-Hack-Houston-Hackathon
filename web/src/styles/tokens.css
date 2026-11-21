@@ -52,11 +52,11 @@
   --state-task: var(--green);
 
   /* ---------- Glass ---------- */
-  --glass-fill: rgba(255, 255, 255, 0.46);
-  --glass-fill-strong: rgba(255, 255, 255, 0.78);
-  --glass-tint-mint: rgba(205, 247, 224, 0.58);
-  --glass-tint-blush: rgba(255, 210, 229, 0.58);
-  --glass-tint-lilac: rgba(226, 213, 255, 0.6);
+  --glass-fill: rgba(255, 255, 255, 0.3);
+  --glass-fill-strong: rgba(255, 255, 255, 0.6);
+  --glass-tint-mint: rgba(205, 247, 224, 0.46);
+  --glass-tint-blush: rgba(255, 210, 229, 0.46);
+  --glass-tint-lilac: rgba(226, 213, 255, 0.48);
   --glass-border: rgba(255, 255, 255, 0.72);
   --glass-rim-hi: rgba(255, 255, 255, 0.95);
   --glass-rim-lo: rgba(187, 155, 250, 0.28);
@@ -73,10 +73,10 @@
   --sat-crystal: 120%;
 
   /* atmosphere light volumes */
-  --light-lilac: rgba(214, 196, 255, 0.75);
-  --light-mint: rgba(196, 246, 218, 0.8);
-  --light-blush: rgba(255, 201, 224, 0.7);
-  --light-peach: rgba(255, 226, 207, 0.6);
+  --light-lilac: rgba(190, 162, 255, 0.95);
+  --light-mint: rgba(150, 236, 190, 0.9);
+  --light-blush: rgba(255, 170, 208, 0.85);
+  --light-peach: rgba(255, 210, 180, 0.8);
 
   /* ---------- Type ---------- */
   --font-display: "Plus Jakarta Sans Variable", "Geist Variable", system-ui, sans-serif;

@@ -1,0 +1,6 @@
+.pg { position: relative; min-height: 100vh; padding: 140px 6vw 80px; background: var(--canvas); overflow: hidden; }
+.pg > *:not(.atmo) { position: relative; z-index: 1; }
+.pg__h { max-width: 14ch; }
+.pg__row { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 48px; align-items: center; }
+.pg__tile { width: 260px; min-height: 200px; padding: 24px; color: var(--plum); display: grid; gap: 6px; align-content: start; }
+.pg__tile--crystal { color: var(--plum); }

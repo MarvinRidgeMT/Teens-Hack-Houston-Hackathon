@@ -74,7 +74,7 @@
   --lg-blur: var(--blur-crystal);
   --lg-sat: var(--sat-crystal);
   --lg-rim-w: 1.5px;
-  --lg-rim: linear-gradient(140deg, #fff 0%, rgba(255, 255, 255, 0.55) 25%, rgba(255, 255, 255, 0.05) 55%, rgba(187, 155, 250, 0.55) 85%, rgba(196, 244, 171, 0.6) 100%);
+  --lg-rim: linear-gradient(140deg, var(--glass-rim-hi) 0%, rgba(255, 255, 255, 0.55) 25%, rgba(255, 255, 255, 0.05) 55%, rgba(187, 155, 250, 0.55) 85%, rgba(196, 244, 171, 0.6) 100%);
   --lg-spec-o: 0.9;
   --lg-spec-w: 46%;
   --lg-spec-h: 30%;
