@@ -337,4 +337,35 @@ await step('Badge colours are the V4 light state values; glyphs unchanged', () =
   });
 }
 
+// ---------- shortcut labels ----------
+{
+  const { spawnSync } = await import('node:child_process');
+  const fs = await import('node:fs');
+  const os = await import('node:os');
+  const path = await import('node:path');
+  const check = new URL('./check-integration.mjs', import.meta.url).pathname;
+  const run = (files) => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pickup-keys-fixture-'));
+    for (const [name, body] of Object.entries(files)) {
+      fs.mkdirSync(path.dirname(path.join(dir, name)), { recursive: true });
+      fs.writeFileSync(path.join(dir, name), body);
+    }
+    const r = spawnSync(process.execPath, [check, '--src', dir], { encoding: 'utf8' });
+    fs.rmSync(dir, { recursive: true, force: true });
+    return r.stdout.split('\n').filter((l) => l.includes('[shortcuts]')).join('\n');
+  };
+  await step('check-integration FAILs hard-coded shortcut labels', () => {
+    assert.match(run({ 'a.html': '<span class="pk-kbd">Alt+P</span>' }), /FAIL.*a\.html:1.*Alt\+P/);
+    assert.match(run({ 'b.js': "notice('Try ⌥V.');" }), /FAIL.*b\.js/);
+    assert.match(run({ 'c.md': 'Press Option+R to resume.' }), /FAIL.*c\.md/);
+    assert.match(run({ 'd.ts': "keys: ['Alt', 'R']," }), /FAIL.*d\.ts/);
+    assert.match(run({ 'e.tsx': '<span>⌃⇧R takes you back</span>' }), /FAIL.*e\.tsx/);
+  });
+  await step('check-integration allows shared/shortcuts.js, marked tables and other keys', () => {
+    assert.match(run({ 'shared/shortcuts.js': "export const FALLBACK = { park: 'Alt+P', mac: '⌃⇧P' };" }), /ok.*no hard-coded shortcut/);
+    assert.match(run({ 'f.md': '<!-- shortcuts-table:start -->\n| Alt+P | ⌃⇧P |\n<!-- shortcuts-table:end -->\nChange them at chrome://extensions/shortcuts.' }), /ok.*no hard-coded shortcut/);
+    assert.match(run({ 'g.js': "kbd('Esc'); kbd('↵'); const alt = e.altKey && e.key === 'p'; // Alt+Tab" }), /ok.*no hard-coded shortcut/);
+  });
+}
+
 out(`\n${passed} feature checks passed`);

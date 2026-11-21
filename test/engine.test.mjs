@@ -1083,6 +1083,55 @@ await step('F2: a new wrap-up replaces the old one; the wrap-up command works on
   await chrome.storage.local.set({ wrapUp: null }); await flush();
 });
 
+// ---------------- getShortcuts: labels come from the user's real bindings ----------------
+await step('getShortcuts: Windows reports the manifest keys and the platform', async () => {
+  const r = await sim.send({ type: 'getShortcuts' });
+  assert.deepEqual(r, { ok: true, platform: 'win', park: 'Alt+P', resume: 'Alt+R', panel: 'Alt+V', wrapUp: '' });
+});
+
+await step('getShortcuts: Mac reports Chrome\'s ⌃⇧ keys, and the notification and badge use them', async () => {
+  sim.setShortcuts('mac', { 'park-task': '⌃⇧P', 'resume-task': '⌃⇧R', 'toggle-voice': '⌃⇧V' });
+  const r = await sim.send({ type: 'getShortcuts' });
+  assert.deepEqual(r, { ok: true, platform: 'mac', park: '⌃⇧P', resume: '⌃⇧R', panel: '⌃⇧V', wrapUp: '' });
+  const { badgeState } = await import('../src/sw/badge.js');
+  await settle();
+  await sim.send({ type: 'parkNote', nextStep: 'Mac step' }, wikiA); await flush();
+  sim.activate(yt); await flush();
+  assert.equal((await badgeState()).title, 'Pickup: away from Climate Essay · ⌃⇧R takes you back');
+  advance(3 * 60000);
+  const n = sim.notifications.length;
+  const ob = await store.getOpenBreak();
+  sim.fireAlarm([...sim.alarms.keys()].find((k) => k.includes(ob.eventId))); await flush();
+  assert.equal(sim.notifications.length, n + 1, 'the nudge fired');
+  assert.equal(sim.notifications.at(-1).message, 'Next: Mac step · ⌃⇧R takes you back');
+  sim.activate(wikiA); await flush();
+});
+
+await step('getShortcuts: a key another extension took comes back empty; sentences drop the hint', async () => {
+  sim.setShortcuts('win', { 'park-task': 'Alt+P', 'resume-task': '', 'toggle-voice': 'Alt+V' });
+  const r = await sim.send({ type: 'getShortcuts' });
+  assert.equal(r.ok, true);
+  assert.equal(r.resume, '');
+  assert.equal(r.park, 'Alt+P');
+  const { badgeState } = await import('../src/sw/badge.js');
+  await settle();
+  await sim.send({ type: 'parkNote', nextStep: 'No key' }, wikiA); await flush();
+  sim.activate(yt); await flush();
+  assert.equal((await badgeState()).title, 'Pickup: away from Climate Essay');
+  advance(3 * 60000); sim.activate(wikiA); await flush();
+  sim.setShortcuts('win', { 'park-task': 'Alt+P', 'resume-task': 'Alt+R', 'toggle-voice': 'Alt+V' });
+});
+
+await step('getShortcuts: if Chrome cannot list commands, the platform table answers', async () => {
+  const real = chrome.commands.getAll;
+  chrome.commands.getAll = async () => { throw new Error('boom'); };
+  sim.setShortcuts('mac', {});
+  try {
+    const r = await sim.send({ type: 'getShortcuts' });
+    assert.deepEqual(r, { ok: true, platform: 'mac', park: '⌃⇧P', resume: '⌃⇧R', panel: '⌃⇧V', wrapUp: '' });
+  } finally { chrome.commands.getAll = real; sim.setShortcuts('win', {}); }
+});
+
 const total = (await events()).length;
 (quiet || console.log)(`\n${passed} checks passed, ${total} events logged${process.exitCode ? ' — SOME FAILED' : ''}`);
 process.exit(process.exitCode || 0);

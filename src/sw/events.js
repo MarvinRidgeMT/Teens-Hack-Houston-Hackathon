@@ -64,7 +64,7 @@ export async function snapshot(tab, settings) {
   return { url, scrollY: 0, highlight: '', live: false };
 }
 
-// plan: { stoppedAt, stuckOn } from Alt+P with a next step (F1). Without a plan the
+// plan: { stoppedAt, stuckOn } from the park key with a next step (F1). Without a plan the
 // stored one stays (like the next step itself), also when a next step is typed elsewhere.
 export async function writeBreadcrumb({ thread, tab, snap, signal, leftAt, nextStep, nextStepSource = NEXT_STEP_SOURCE.typed, plan }) {
   const prev = await store.getBreadcrumb(thread.id);
@@ -83,7 +83,7 @@ export async function writeBreadcrumb({ thread, tab, snap, signal, leftAt, nextS
   if (step) {
     crumb.nextStep = cap(step, HIGHLIGHT_MAX);
     crumb.nextStepSource = nextStep !== undefined ? nextStepSource : (prev && prev.nextStepSource) || NEXT_STEP_SOURCE.typed;
-    // The plan belongs to its next step: Alt+P brings a new one; the same step keeps
+    // The plan belongs to its next step: the park key brings a new one; the same step keeps
     // the stored one; a different step written elsewhere drops it.
     const keep = nextStep === undefined || (prev && prev.nextStep === crumb.nextStep);
     const p = plan !== undefined ? plan : keep ? prev || {} : {};
@@ -140,7 +140,7 @@ export async function openBreakFor(workTab, signal, leftAt, settings, { departed
   return ob;
 }
 
-// Alt+P with the overlay answered (or popup Park). The break starts when the
+// the park key with the overlay answered (or popup Park). The break starts when the
 // user actually leaves, so time spent working after parking is not "away".
 export async function park(tab, nextStep, settings, { nextStepSource, stoppedAt, stuckOn } = {}) {
   const thread = await ensureThreadForTab(tab, settings);
@@ -301,7 +301,7 @@ export async function resume(threadId) {
   return { ok: true, tabId: tab.id };
 }
 
-// ---- Resume from anywhere (Alt+R / popup resumeTask) ----
+// ---- Resume from anywhere (resume key / popup resumeTask) ----
 // Target: the open break's thread (parked or away), else the breadcrumb left most
 // recently, else the thread of the last work tab. Returns a thread id or null.
 // A tab of this task, never another task's: the active one, else the one it was

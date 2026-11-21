@@ -12,6 +12,7 @@ import { sampleEvents, sampleThreadNames } from './sample-data.js';
 import { drawReceipt, downloadCanvas } from './receipt.js';
 import { featuresOf } from './setup-logic.js';
 import { plural, durationText } from './format.js';
+import { shortcuts, chipText } from '../shared/shortcuts.js';
 
 const CSV_MIME = 'text/csv;charset=utf-8';
 let mode = 'mine';      // 'mine' | 'sample'
@@ -37,7 +38,7 @@ function conditionChip(c) {
 
 // How the user came back (event.returnVia), in words.
 const VIA = {
-  tab: 'Switched tabs', resumeKey: 'Resume key (Alt+R)', notification: 'Notification', idle: 'Back at the keyboard',
+  tab: 'Switched tabs', resumeKey: `Resume key (${chipText((await shortcuts()).resume)})`, notification: 'Notification', idle: 'Back at the keyboard',
   voice: 'Voice', panel: 'Pickup panel', timer: 'Break timer',
 };
 const SOURCE = { typed: 'You wrote it', selected: 'You picked it', spoken: 'You said it' };

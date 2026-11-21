@@ -6,6 +6,7 @@
 import * as store from '../shared/store.js';
 import { BADGE, BADGE_FLASH_MS } from '../shared/constants.js';
 import { log } from './util.js';
+import { resumeHint } from './shortcuts.js';
 
 async function draw(text, color, title) {
   try {
@@ -26,7 +27,7 @@ export async function badgeState() {
       return { text: `${Math.ceil(left / 60000)}m`, color: BADGE.timer.color, title: `Pickup: back to ${name} at ${at}` };
     }
     return ob.departed
-      ? { text: BADGE.away.text, color: BADGE.away.color, title: `Pickup: away from ${name} · Alt+R takes you back` }
+      ? { text: BADGE.away.text, color: BADGE.away.color, title: `Pickup: away from ${name}${await resumeHint()}` }
       : { text: BADGE.parked.text, color: BADGE.parked.color, title: `Pickup: ${name} parked: leave when you're ready` };
   }
   const wu = await store.getWrapUp();

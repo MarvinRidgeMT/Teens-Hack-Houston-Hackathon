@@ -5,6 +5,7 @@
 //   node test/check-integration.mjs --content test/dev    # point at another folder
 //   node test/check-integration.mjs --pages test/dev
 //   node test/check-integration.mjs --src /tmp/fixture    # repo-wide rules on another folder
+//   node test/check-integration.mjs --root /tmp/pickup-v1.0.0   # an unzipped release
 //
 // FAIL = breaks the contract or a product rule (exit code 1). WARN = worth a look.
 // It reads source text, so it can miss things a real run would show: it never replaces the Gate test.
@@ -13,8 +14,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { MSG, TO_ENGINE, TO_CONTENT, OPTIONAL_TO_CONTENT, CARD_ACTIONS } from '../src/shared/messages.js';
 
-const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const arg = (name, def) => { const i = process.argv.indexOf(name); return i > 0 ? process.argv[i + 1] : def; };
+// --root: check another copy of the extension (the unzipped release) instead of this repo.
+const ROOT = path.resolve(arg('--root', path.resolve(path.dirname(new URL(import.meta.url).pathname), '..')));
 const CONTENT_DIR = path.resolve(ROOT, arg('--content', 'src/content'));
 const PAGES_DIR = path.resolve(ROOT, arg('--pages', 'src/pages'));
 const SRC_DIR = path.resolve(ROOT, arg('--src', 'src')); // repo-wide rules; a test points it at a fixture
@@ -132,6 +134,31 @@ const srcCss = walk(SRC_DIR, ['.css']);
     }
   }
   if (!bad) pass('voice', `${found} SpeechRecognition constructor(s) in src/, all set and check processLocally = true`);
+}
+
+// ---------------- shortcuts: one source of truth ----------------
+// Key names come from chrome.commands (getShortcuts) or src/shared/shortcuts.js. A hard-coded
+// Alt+P / ⌥P / ⌃⇧P anywhere else would show the wrong keys on another OS or after rebinding.
+// Allowed: manifest.json (not scanned), shared/shortcuts.js, and lines between
+// "shortcuts-table:start" and "shortcuts-table:end" (the README / website tables of both sets).
+{
+  const roots = arg('--src', null)
+    ? [SRC_DIR]
+    : ['src', 'web/src', 'README.md', 'docs/RELEASE_NOTES.md'].map((r) => path.join(ROOT, r));
+  const files = roots.flatMap((r) => (fs.existsSync(r) && fs.statSync(r).isFile() ? [r] : walk(r, ['.js', '.mjs', '.html', '.css', '.md', '.ts', '.tsx'])));
+  const KEY = /⌥\s?[PRV]\b|⌃⇧[PRV]\b|\b(?:Alt|Option|MacCtrl\+Shift)\s?\+\s?[PRV]\b|['"`](?:Alt|Option)['"`]\s*,\s*['"`][PRV]['"`]/;
+  let bad = 0;
+  for (const f of files) {
+    if (/(^|[\\/])shared[\\/]shortcuts\.js$/.test(f)) continue;
+    let inTable = false;
+    read(f).split('\n').forEach((line, i) => {
+      if (/shortcuts-table:start/.test(line)) { inTable = true; return; }
+      if (/shortcuts-table:end/.test(line)) { inTable = false; return; }
+      const m = !inTable && line.match(KEY);
+      if (m) { fail('shortcuts', `${rel(f)}:${i + 1} hard-codes "${m[0]}" (use getShortcuts / src/shared/shortcuts.js)`); bad++; }
+    });
+  }
+  if (!bad) pass('shortcuts', `no hard-coded shortcut labels in ${files.length} files`);
 }
 
 // ---------------- Sidd: content script ----------------

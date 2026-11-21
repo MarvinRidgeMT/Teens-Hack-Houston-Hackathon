@@ -56,7 +56,7 @@ export async function onMenuClicked(info, tab) {
   const text = String(info.selectionText || '').replace(/\s+/g, ' ').trim().slice(0, HIGHLIGHT_MAX);
   if (!text) {
     // Google Docs draws text on a canvas, so Chrome usually gets no selection text there.
-    log('Make this my next step: Chrome gave no selected text (common in Google Docs). Nothing saved; use Alt+P to type it.');
+    log('Make this my next step: Chrome gave no selected text (common in Google Docs). Nothing saved; use the park key to type it.');
     await flashBadge('!');
     return;
   }

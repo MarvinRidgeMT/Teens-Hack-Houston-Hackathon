@@ -3,7 +3,7 @@ import { AnimatePresence, LayoutGroup, motion } from 'motion/react';
 import { Check, CornerDownLeft, Undo2 } from 'lucide-react';
 import { LiquidGlass } from '../components/glass/LiquidGlass';
 import { GlassButton } from '../components/glass/GlassButton';
-import { SectionHead, ShortcutHint } from '../components/ui';
+import { KeyHint, PlatformToggle, SectionHead, ShortcutHint } from '../components/ui';
 import { SPRING_CARD, SPRING_PRESS } from '../styles/motion';
 
 function ParkDemo({ reduced }: { reduced: boolean }) {
@@ -93,7 +93,7 @@ function JumpDemo({ reduced }: { reduced: boolean }) {
         </ul>
       </LayoutGroup>
       <div className="fdemo__actions">
-        <GlassButton tone="pearl" onClick={() => setBack((b) => !b)}>{back ? 'Reset' : <>Press <ShortcutHint keys={['Alt', 'R']} /></>}</GlassButton>
+        <GlassButton tone="pearl" onClick={() => setBack((b) => !b)}>{back ? 'Reset' : <>Press <KeyHint id="resume" /></>}</GlassButton>
         <p className="fdemo__fine" role="status">{back ? 'Back on your task\'s tab, from anywhere in Chrome.' : 'You\'re in the group chat.'}</p>
       </div>
     </div>
@@ -105,7 +105,7 @@ const SUPPORT = [
   { title: 'Drift nudge', body: 'One quiet notification per break, and only if you wrote a next step. It never blocks a site.' },
   { title: 'Your next step, three ways', body: 'Type it when you park, right-click a sentence and choose "Make this my next step", or, with voice turned on, say it in the panel.' },
   { title: 'Wrap up, then Start here', body: 'Save your place at night and get one "Start here" reminder with your next step the next morning.' },
-  { title: 'Pickup panel', body: 'Ask "where was I?", set a break timer ("back in 10"), see your tasks and today\'s facts.', keys: ['Alt', 'V'] },
+  { title: 'Pickup panel', body: 'Ask "where was I?", set a break timer ("back in 10"), see your tasks and today\'s facts.', key: 'panel' as const },
   { title: 'Lecture video', body: 'On resume, a video jumps back 10 seconds and waits, paused.' },
 ] as const;
 
@@ -120,11 +120,12 @@ export function Features({ reduced }: { reduced: boolean }) {
       <div className="wrap">
         <SectionHead id="feat-title" title="Everything in v1.0, doing one job well."
           lede="What Pickup does today. Each demo below runs on this page only." />
+        <PlatformToggle />
 
         <div className="fgal">
           <LiquidGlass as="article" variant="gel" tint="lilac" radius="40px 40px 40px 24px" text className="fpanel fpanel--park">
             <div className="fpanel__copy">
-              <h3 className="h3">Park before you go <ShortcutHint keys={['Alt', 'P']} /></h3>
+              <h3 className="h3">Park before you go <KeyHint id="park" /></h3>
               <p>Leave yourself one line. Or don't: Pickup saves your place either way, and Esc skips the prompt.</p>
             </div>
             <ParkDemo reduced={reduced} />
@@ -155,7 +156,7 @@ export function Features({ reduced }: { reduced: boolean }) {
             <ul className="flist" role="list">
               {SUPPORT.map((f) => (
                 <li key={f.title} className="flist__row">
-                  <h3 className="flist__title"><Check size={16} aria-hidden="true" className="flist__check" />{f.title} {'keys' in f && <ShortcutHint keys={f.keys} />}</h3>
+                  <h3 className="flist__title"><Check size={16} aria-hidden="true" className="flist__check" />{f.title} {'key' in f && <KeyHint id={f.key} />}</h3>
                   <p>{f.body}</p>
                 </li>
               ))}

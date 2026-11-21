@@ -1,4 +1,4 @@
-// Pickup — Alt+P "park" overlay (Sid / Surface) · v3 (V4 visuals: pearl bar, plum text, green save)
+// Pickup — "park" overlay (park-task key) (Sid / Surface) · v3 (V4 visuals: pearl bar, plum text, green save)
 // Classic content script. Needs card.js loaded first (uses PickupUI helpers).
 //
 // Built from what the reference libraries give us:

@@ -1,5 +1,5 @@
 // Pickup panel, engine side. Owner: Anish (Engine).
-// - Break timer ("Back in 10"): parks the task like Alt+P, plans the break on
+// - Break timer ("Back in 10"): parks the task like the park key, plans the break on
 //   openBreak (plannedMin, endsAt), and replaces that break's drift nudge with one
 //   "Break's over" notification. Return detection and the coin flip are unchanged.
 // - Task list (listThreads) and typed next steps (setNextStep).
@@ -17,6 +17,7 @@ import { cancelNudge, scheduleNudge } from './nudge.js';
 import { tabInThread } from './threads.js';
 import { updateBadge } from './badge.js';
 import { getTab, tabUrl, log } from './util.js';
+import { resumeHint } from './shortcuts.js';
 
 export const breakMs = (minutes, settings) => minutes * (settings && settings.debug ? DEBUG_BREAK_MS_PER_MIN : 60000);
 export const clockTime = (t) => new Date(t).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
@@ -26,7 +27,7 @@ async function activeTab() {
 }
 
 // ---------- break timer ----------
-// The break to plan: park the active work tab (like Alt+P); else the break already
+// The break to plan: park the active work tab (like the park key); else the break already
 // open (you may be on YouTube); else park the most recent task's own tab.
 async function breakToPlan(tab, step, source, settings) {
   if (tab && isWorkUrl(tabUrl(tab), settings)) {
@@ -96,7 +97,7 @@ export async function onAlarm(alarm) {
     type: 'basic',
     iconUrl: chrome.runtime.getURL('assets/icon128.png'),
     title: `Break's over: ${thread ? thread.name : 'your task'}`,
-    message: crumb && crumb.nextStep ? `Next: ${crumb.nextStep} · Alt+R takes you back` : 'Pick up where you left off · Alt+R takes you back',
+    message: `${crumb && crumb.nextStep ? `Next: ${crumb.nextStep}` : 'Pick up where you left off'}${await resumeHint()}`,
     priority: 1,
   });
   await store.setOpenBreak({ ...ob, breakOverShown: true });

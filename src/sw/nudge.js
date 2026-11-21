@@ -3,6 +3,7 @@
 
 import * as store from '../shared/store.js';
 import { NUDGE_ALARM_PREFIX, DEBUG_NUDGE_DELAY_MIN, BREAK_ALARM_PREFIX } from '../shared/constants.js';
+import { resumeHint } from './shortcuts.js';
 import { log } from './util.js';
 
 export async function scheduleNudge(openBreak, crumb, settings) {
@@ -38,7 +39,7 @@ export async function onAlarm(alarm) {
     type: 'basic',
     iconUrl: chrome.runtime.getURL('assets/icon128.png'),
     title: `Your next step for ${thread.name}`,
-    message: `Next: ${crumb.nextStep} · Alt+R takes you back`,
+    message: `Next: ${crumb.nextStep}${await resumeHint()}`,
     priority: 0,
   });
   await store.setOpenBreak({ ...ob, nudged: true });

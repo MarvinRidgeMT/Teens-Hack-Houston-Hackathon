@@ -2,20 +2,21 @@
 // and Today strip). Owner: Anish.
 // - runCommand() is the one path for typed and spoken asks: parse() -> voiceCommand
 //   -> the engine's fixed-template reply. Typed asks resume with returnVia 'panel'.
-// - Push-to-talk always works: hold the button or Space, click once, or Alt+V.
+// - Push-to-talk always works: hold the button or Space, click once, or the panel key (toggle-voice).
 // - "Listen for 'Hey Pickup'" is opt-in (default off) and runs only while this panel is open.
 // - Speech is recognised on this device only (recognizer.js enforces processLocally = true).
 // - The engine builds every reply (src/sw/voice.js); this page only shows and speaks it.
 // - No audio and no transcripts are kept. Only a dictated next step is stored, by the engine.
 
 import { MSG } from '../shared/messages.js';
+import { fillShortcuts } from '../shared/shortcuts.js';
 import { parse, splitWake, tidyWords, wakeCommand } from './intents.js';
 import { createRecognizer, onDeviceStatus, micState } from './recognizer.js';
 
 const HOLD_MS = 300;            // pressed longer than this = hold-to-talk, else a click
-const ONE_SHOT_MAX_MS = 8000;   // a click or Alt+V listens this long at most
+const ONE_SHOT_MAX_MS = 8000;   // a click or the panel key listens this long at most
 const WAKE_WINDOW_MS = 6000;    // after a bare "Hey Pickup", wait this long for the command
-const SHORTCUT_FRESH_MS = 4000; // Alt+V that opened this panel
+const SHORTCUT_FRESH_MS = 4000; // the panel key that opened this panel
 const FATAL = new Set(['not-allowed', 'service-not-allowed', 'language-not-supported', 'audio-capture']);
 const NOT_AVAILABLE = "On-device speech isn't available in this Chrome, so voice is off. Pickup never sends your voice to a server.";
 const WAKE_AT_START = /^\s*(?:hey,?\s+)?pick\s?-?up\b/i;
@@ -369,10 +370,10 @@ function wire() {
   setInterval(() => { if (!S.ready) refresh(); }, 5000);
 }
 
-// Alt+V: the engine opened this panel (or it was open) and asked for push-to-talk.
+// The panel key (toggle-voice): the engine opened this panel (or it was open) and asked for push-to-talk.
 let lastShortcut = 0;
 function onShortcut(at) {
-  if (at === lastShortcut) return; // the same Alt+V seen twice (load + storage change)
+  if (at === lastShortcut) return; // the same key press seen twice (load + storage change)
   lastShortcut = at;
   if (!S.ready) { showReply('Set up voice first.'); return; }
   if (S.mode === 'talk') { cancelTalk(); return; }
@@ -382,6 +383,7 @@ function onShortcut(at) {
 
 (async () => {
   wire();
+  fillShortcuts().catch(() => {});
   await refresh();
   const { voiceShortcutAt } = await chrome.storage.session.get('voiceShortcutAt').catch(() => ({}));
   if (voiceShortcutAt && Date.now() - voiceShortcutAt < SHORTCUT_FRESH_MS) onShortcut(voiceShortcutAt);

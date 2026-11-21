@@ -9,6 +9,7 @@ import { ensureThreadForTab } from './threads.js';
 import { snapshot, writeBreadcrumb, resume } from './events.js';
 import { cancelNudge } from './nudge.js';
 import { sendToTab, log } from './util.js';
+import { resumeHint } from './shortcuts.js';
 
 // Local date of (t - 4 h), so working past midnight still counts as "tonight".
 export function dayKey(t) {
@@ -77,7 +78,7 @@ export async function checkStartHere() {
     type: 'basic',
     iconUrl: chrome.runtime.getURL('assets/icon128.png'),
     title: `Start here: ${thread.name}`,
-    message: step.nextStep ? `Next: ${step.nextStep} · Alt+R takes you back` : 'Pick up where you stopped yesterday · Alt+R takes you back',
+    message: `${step.nextStep ? `Next: ${step.nextStep}` : 'Pick up where you stopped yesterday'}${await resumeHint()}`,
     priority: 0,
   });
   log('start here shown', thread.name);

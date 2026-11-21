@@ -47,7 +47,7 @@ export const DEFAULT_SETTINGS = Object.freeze({
 // Redesign features (Fri night). Each can be turned off on the setup page and works
 // with the others off. Read with featuresOf(settings), never settings.features directly.
 export const DEFAULT_FEATURES = Object.freeze({
-  readyNote: true,     // F1: Alt+P asks Stopped at / Next I'll / Stuck on
+  readyNote: true,     // F1: the park key asks Stopped at / Next I'll / Stuck on
   youWereHere: true,   // F2: Resume marks the last highlight on the page
   videoReplay: true,   // F3: Resume puts a lecture video 10 s before where you left
   adaptiveCard: true,  // F4: compact card under 5 min away
@@ -68,7 +68,7 @@ export const FOCUS_BLIP_MS = 1000;        // ignore Chrome focus losses shorter 
 export const IDLE_DETECTION_SEC = 180;    // idle after 3 minutes without input
 export const HIGHLIGHT_MAX = 200;
 
-// Decision 7 (provisional): a next step stays until the next Alt+P. Set to true to
+// Decision 7 (provisional): a next step stays until the next park key press. Set to true to
 // clear it after the first logged return (the card shows it once, then it is gone).
 export const NEXT_STEP_CLEARS_ON_RETURN = false;
 
@@ -76,14 +76,14 @@ export const SIGNALS = Object.freeze({
   tab: 'tab',       // switched to a listed distraction site
   focus: 'focus',   // Chrome lost focus to another app
   idle: 'idle',     // idle 3+ min or screen locked
-  park: 'park',     // Alt+P / popup Park
+  park: 'park',     // park key / popup Park
 });
 
 // How the user came back (event.returnVia). 'resumeKey' and 'notification' mean
 // Pickup did the navigating, so stats can keep those returns apart.
 export const RETURN_VIA = Object.freeze({
   tab: 'tab',                   // a normal tab or window activation
-  resumeKey: 'resumeKey',       // Alt+R / popup resumeTask
+  resumeKey: 'resumeKey',       // resume key / popup resumeTask
   notification: 'notification', // clicked the nudge or the Start-here notification
   idle: 'idle',                 // back at the keyboard while Chrome was on the task
   voice: 'voice',               // "Hey Pickup, I'm back" (voice side panel)

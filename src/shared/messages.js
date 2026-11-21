@@ -24,10 +24,10 @@ export const MSG = Object.freeze({
   startTask: 'startTask',       // { tabId, name, taskType? } -> { ok, thread }
   removeFromThread: 'removeFromThread', // { threadId, tabId } -> { ok }
   keepInThread: 'keepInThread', // { threadId, tabId } -> { ok }   (suggested -> manual)
-  park: 'park',                 // { tabId } -> { ok }   same as Alt+P
+  park: 'park',                 // { tabId } -> { ok }   same as the park-task key
   wrapUp: 'wrapUp',             // { tabId, nextStep? } -> { ok, wrapUp }  save for tomorrow (Feature 2)
   setTaskType: 'setTaskType',   // { threadId, taskType } -> { ok }
-  resumeTask: 'resumeTask',     // { threadId? } -> { ok, threadId }  same as Alt+R (Feature 1)
+  resumeTask: 'resumeTask',     // { threadId? } -> { ok, threadId }  same as the resume-task key (Feature 1)
   voiceCommand: 'voiceCommand', // { intent, args } -> { ok, say, data }   voice side panel
   setVoiceSettings: 'setVoiceSettings', // { voiceEnabled?, wakeWord?, readAloud? } -> { ok, voiceEnabled, wakeWord, readAloud }
   // Pickup panel (Fri):
@@ -35,6 +35,7 @@ export const MSG = Object.freeze({
   cancelBreak: 'cancelBreak',   // {} -> { ok }   clears the timer; the break stays open
   listThreads: 'listThreads',   // {} -> [{ threadId, name, taskType, nextStep?, nextStepSource?, leftAt?, url, tabCount, isOpenBreak, isParked, isWrapped, awaySince?, endsAt?, sortAt }]
   setNextStep: 'setNextStep',   // { threadId, nextStep } -> { ok }   typed in the panel's task list
+  getShortcuts: 'getShortcuts', // {} -> { ok, platform, park, resume, panel, wrapUp }   the user's real keys ('' = not set)
 });
 
 // Types the service worker answers (content script + popup/pages -> SW).
@@ -44,6 +45,7 @@ export const TO_ENGINE = Object.freeze([
   MSG.setTaskType, MSG.park, MSG.wrapUp, MSG.resumeTask,
   MSG.voiceCommand, MSG.setVoiceSettings,
   MSG.startBreak, MSG.cancelBreak, MSG.listThreads, MSG.setNextStep,
+  MSG.getShortcuts,
 ]);
 
 // Optional SW -> content types: a missing handler is fine (check-integration WARNs).

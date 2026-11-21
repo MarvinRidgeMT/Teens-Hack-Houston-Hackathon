@@ -5,7 +5,7 @@
 //   tab   - switched from a work tab to a listed distraction site (tabs.onActivated / onUpdated)
 //   focus - Chrome lost focus to another app for more than 1 s (windows.onFocusChanged)
 //   idle  - no input for 3 min, or screen locked (idle.onStateChanged)
-//   park  - Alt+P / popup Park (commands.onCommand), the strongest signal
+//   park  - park key / popup Park (commands.onCommand), the strongest signal
 
 import * as store from '../shared/store.js';
 import { MSG } from '../shared/messages.js';

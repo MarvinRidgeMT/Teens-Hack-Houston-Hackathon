@@ -6,6 +6,7 @@ import { MSG } from '../shared/messages.js';
 import { TASK_TYPES, DEFAULT_TASK_TYPE, DEFAULT_SETTINGS, KEYS } from '../shared/constants.js';
 import { isDistractionUrl } from '../shared/sites.js';
 import { $, h, send, button, badge, hasChrome, getLocal, openPage } from './ui.js';
+import { shortcuts, fillShortcuts, keyText } from '../shared/shortcuts.js';
 import { agoText, awayText, clockText, plural, stepSourceLabel, capitalize } from './format.js';
 
 let tab = null;        // the active tab when the popup opened
@@ -168,7 +169,7 @@ function wireFooter() {
   // sidePanel.open must run straight from the click, with no await before it.
   $('open-panel').addEventListener('click', () => {
     if (!hasChrome || !chrome.sidePanel || windowId == null) { notice('nothing', 'The Pickup panel needs Chrome 116 or newer.'); return; }
-    chrome.sidePanel.open({ windowId }).then(() => window.close(), () => notice('nothing', 'The Pickup panel did not open. Try Alt+V.'));
+    chrome.sidePanel.open({ windowId }).then(() => window.close(), async () => notice('nothing', `The Pickup panel did not open. Try ${keyText((await shortcuts()).panel)}.`));
   });
   $('open-dashboard').addEventListener('click', () => openPage('src/pages/dashboard.html'));
   $('open-setup').addEventListener('click', () => openPage('src/pages/setup.html'));
@@ -219,4 +220,5 @@ async function load() {
 wireTaskActions();
 wireStart();
 wireFooter();
+fillShortcuts();
 load();

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Pickup",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Undo the interruption, not the mistake. Saves your place when you leave your work and hands it back when you return.",
   "minimum_chrome_version": "123",
   "permissions": [
@@ -48,18 +48,18 @@
   },
   "commands": {
     "park-task": {
-      "suggested_key": { "default": "Alt+P" },
+      "suggested_key": { "default": "Alt+P", "windows": "Alt+P", "linux": "Alt+P", "chromeos": "Alt+P", "mac": "MacCtrl+Shift+P" },
       "description": "Park this task with an optional next step"
     },
     "resume-task": {
-      "suggested_key": { "default": "Alt+R" },
+      "suggested_key": { "default": "Alt+R", "windows": "Alt+R", "linux": "Alt+R", "chromeos": "Alt+R", "mac": "MacCtrl+Shift+R" },
       "description": "Jump back to your task"
     },
     "wrap-up": {
       "description": "Wrap up for today (Pickup shows where to start tomorrow)"
     },
     "toggle-voice": {
-      "suggested_key": { "default": "Alt+V" },
+      "suggested_key": { "default": "Alt+V", "windows": "Alt+V", "linux": "Alt+V", "chromeos": "Alt+V", "mac": "MacCtrl+Shift+V" },
       "description": "Open the Pickup panel"
     }
   }

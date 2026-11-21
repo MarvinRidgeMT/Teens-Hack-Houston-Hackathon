@@ -1,8 +1,10 @@
 import { ArrowDownToLine, ExternalLink, FolderGit2 } from 'lucide-react';
 import { LiquidGlass } from '../components/glass/LiquidGlass';
 import { GlassButton } from '../components/glass/GlassButton';
-import { BrandMark, SectionHead, ShortcutHint } from '../components/ui';
-import { INSTALL_STEPS, LINKS, SHORTCUTS } from '../content/site';
+import { BrandMark, KeyHint, SectionHead, ShortcutHint } from '../components/ui';
+import { INSTALL_STEPS, LINKS, PLATFORM_NAME, SHORTCUTS, SHORTCUTS_NOTE, WORKS_ON, type Platform } from '../content/site';
+
+const TABLE_PLATFORMS: readonly Platform[] = ['mac', 'other'];
 
 /** The download CTA: real link when the release is public, an honest pending state until then. */
 export function DownloadCta({ size = 'lg' }: { size?: 'md' | 'lg' }) {
@@ -29,6 +31,7 @@ export function Install() {
             {LINKS.repoPublic && <GlassButton href={LINKS.repo} tone="pearl" size="lg" target="_blank" rel="noopener noreferrer" icon={<FolderGit2 size={18} />}>View on GitHub</GlassButton>}
           </div>
           {!LINKS.downloadLive && <p className="install__fine">The zip will be on our GitHub release page once the repo is public. It isn't there yet.</p>}
+          <p className="install__fine"><strong>Works on:</strong> {WORKS_ON}</p>
         </div>
         <ol className="install__steps" role="list">
           {INSTALL_STEPS.map((s, i) => (
@@ -46,14 +49,23 @@ export function Install() {
         <LiquidGlass variant="pearl" text radius={30} className="legend">
           <table className="legend__table">
             <caption className="sr-only">Keyboard shortcuts and the other way to do each</caption>
-            <thead><tr><th scope="col">Keys</th><th scope="col">What it does</th><th scope="col">Without the keyboard</th></tr></thead>
+            <thead><tr>{TABLE_PLATFORMS.map((p) => <th key={p} scope="col">{PLATFORM_NAME[p]}</th>)}<th scope="col">What it does</th><th scope="col">Without the keyboard</th></tr></thead>
             <tbody>
               {SHORTCUTS.map((s) => (
-                <tr key={s.label}><td><ShortcutHint keys={s.keys} /></td><th scope="row">{s.label}</th><td>{s.alt}</td></tr>
+                <tr key={s.label}>
+                  {TABLE_PLATFORMS.map((p) => (
+                    <td key={p} className="legend__keys">
+                      <span className="legend__os">{PLATFORM_NAME[p]}</span>
+                      {s.id ? <KeyHint id={s.id} platform={p} /> : <ShortcutHint keys={s.keys ?? []} />}
+                    </td>
+                  ))}
+                  <th scope="row">{s.label}</th><td>{s.alt}</td>
+                </tr>
               ))}
             </tbody>
           </table>
         </LiquidGlass>
+        <p className="shortcuts__tip">{SHORTCUTS_NOTE}</p>
         <p className="shortcuts__tip">Try it without your own data: open the dashboard and click <strong>Load sample data</strong>.</p>
       </div>
     </section>

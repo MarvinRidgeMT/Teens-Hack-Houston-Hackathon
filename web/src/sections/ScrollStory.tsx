@@ -5,8 +5,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Check, Layers, PlayCircle, Bell, FolderClosed } from 'lucide-react';
 import { LiquidGlass } from '../components/glass/LiquidGlass';
 import { LaptopStage, DeviceFrame } from '../components/Stage';
-import { ShortcutHint } from '../components/ui';
-import { STORY } from '../content/site';
+import { KeyHint, ShortcutHint } from '../components/ui';
+import { STORY, withKeys } from '../content/site';
+import { usePlatform } from '../hooks/platform';
 import { story } from '../three/story';
 import { SCREEN_ALT } from '../three/screens';
 import { useCan3D } from '../hooks/motion';
@@ -90,8 +91,8 @@ function Pinned({ reduced }: { reduced: boolean }) {
             <div className="story__caps">
               {STORY.map((s, i) => (
                 <div key={s.id} className="story__cap" aria-hidden={scene !== i}>
-                  <p className="h2 story__cap-title">{s.title} {s.keys.length > 0 && <ShortcutHint keys={s.keys} />}</p>
-                  <p className="lede story__cap-body">{s.body}</p>
+                  <p className="h2 story__cap-title">{s.title} <StepKeys s={s} /></p>
+                  <p className="lede story__cap-body"><Keyed text={s.body} /></p>
                 </div>
               ))}
             </div>
@@ -134,14 +135,14 @@ function Stacked() {
             <li key={s.id} className="story-stack__item">
               <div className="story-stack__copy">
                 <p className="label tnum">Step {i + 1}</p>
-                <h3 className="h3">{s.title} {s.keys.length > 0 && <ShortcutHint keys={s.keys} />}</h3>
-                <p>{s.body}</p>
+                <h3 className="h3">{s.title} <StepKeys s={s} /></h3>
+                <p><Keyed text={s.body} /></p>
               </div>
               {s.id === 'interrupted' ? (
                 <LiquidGlass variant="pearl" text radius={22} className="story-stack__nudge" role="img" aria-label="Pickup's one nudge per break, shown only if you wrote a next step">
                   <span className="label">Pickup · one nudge per break</span>
                   <strong>Your next step for Climate Essay</strong>
-                  <span>Next: Find a source for the 2023 rainfall number · Alt+R takes you back</span>
+                  <span><Keyed text="Next: Find a source for the 2023 rainfall number · {resume} takes you back" /></span>
                 </LiquidGlass>
               ) : (
                 <DeviceFrame src={SHOT[s.id]} alt={SCREEN_ALT[s.id]} />
@@ -158,4 +159,15 @@ export function ScrollStory({ reduced }: { reduced: boolean }) {
   const can3D = useCan3D();
   // One stable element carries the anchor id, so the nav's observer and deep links survive the swap.
   return <div id="story">{!reduced && can3D ? <Pinned reduced={reduced} /> : <Stacked />}</div>;
+}
+
+type Step = (typeof STORY)[number];
+/** A step's key caps: Pickup's own keys follow the visitor's platform; Enter is Enter everywhere. */
+function StepKeys({ s }: { s: Step }) {
+  if ('key' in s) return <KeyHint id={s.key} />;
+  return s.keys.length > 0 ? <ShortcutHint keys={s.keys} /> : null;
+}
+/** Copy with {park} / {resume} / {panel} filled in for the visitor's platform. */
+function Keyed({ text }: { text: string }) {
+  return <>{withKeys(text, usePlatform())}</>;
 }

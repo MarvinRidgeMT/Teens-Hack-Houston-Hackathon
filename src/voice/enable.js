@@ -5,6 +5,7 @@
 // Owner: Anish.
 
 import { MSG } from '../shared/messages.js';
+import { shortcuts, keyText } from '../shared/shortcuts.js';
 import { initLog, log, errText } from './spike-log.js';
 import { onDeviceStatus, installOnDevice } from './recognizer.js';
 
@@ -38,7 +39,7 @@ async function enable() {
 
   const r = await chrome.runtime.sendMessage({ type: MSG.setVoiceSettings, voiceEnabled: true }).catch(() => null);
   log('setVoiceSettings ->', r);
-  status('Voice is ready. Open the Pickup side panel (Alt+V) to talk. This tab closes in 3 s.');
+  status(`Voice is ready. Open the Pickup side panel (${keyText((await shortcuts()).panel)}) to talk. This tab closes in 3 s.`);
   setTimeout(() => window.close(), 3000);
 }
 

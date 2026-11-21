@@ -63,6 +63,9 @@ export function makeChrome({ now }) {
   const storageChanged = evt();
   const badge = { text: '', color: null, title: 'Pickup' };
   const menus = new Map(); // id -> createProperties (contextMenus)
+  // chrome.commands.getAll() / runtime.getPlatformInfo(): Windows with the manifest keys by default.
+  let platform = 'win';
+  let bindings = { 'park-task': 'Alt+P', 'resume-task': 'Alt+R', 'wrap-up': '', 'toggle-voice': 'Alt+V' };
   const c = {
     storage: { local: area('local', storageChanged), session: area('session', storageChanged), onChanged: storageChanged },
     action: {
@@ -75,6 +78,7 @@ export function makeChrome({ now }) {
     runtime: {
       onInstalled: evt(), onStartup: evt(), onMessage: evt(),
       async openOptionsPage() {}, getURL: (p) => `chrome-extension://x/${p}`,
+      async getPlatformInfo() { return { os: platform, arch: 'x86-64', nacl_arch: 'x86-64' }; },
       async getContexts({ contextTypes = [] } = {}) {
         return popupOpen && contextTypes.includes('POPUP') ? [{ contextType: 'POPUP' }] : [];
       },
@@ -165,7 +169,10 @@ export function makeChrome({ now }) {
       async create(id, o) { notifications.push({ id, ...o }); return id; },
       async clear() { return true; },
     },
-    commands: { onCommand: evt() },
+    commands: {
+      onCommand: evt(),
+      async getAll() { return Object.entries(bindings).map(([name, shortcut]) => ({ name, shortcut, description: name })); },
+    },
     contextMenus: {
       onClicked: evt(),
       async removeAll() { menus.clear(); },
@@ -196,6 +203,8 @@ export function makeChrome({ now }) {
     },
     closeTab(id) { const t = tabs.get(id); tabs.delete(id); children.delete(id); c.tabs.onRemoved.fire(id, { windowId: t.windowId }); },
     setPopupOpen(v) { popupOpen = v; },
+    // os: 'mac' | 'win' | 'linux' | 'cros'; keys: { 'park-task': '⌃⇧P', ... } as Chrome formats them ('' = not set).
+    setShortcuts(os, keys) { platform = os; bindings = { ...bindings, ...keys }; },
     // Content script not injected yet in pages whose URL contains `s` (late injection).
     blockContent(s, on) { if (on) blockedContent.add(s); else blockedContent.delete(s); },
     setHoldLoads(v) { holdLoads = v; },

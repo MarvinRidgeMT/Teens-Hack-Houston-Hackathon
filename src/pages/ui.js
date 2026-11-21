@@ -43,7 +43,7 @@ export function h(tag, props, ...children) {
   return node;
 }
 
-// A button with an optional key hint: button('Resume', { kind: 'primary', key: 'Alt+R' })
+// A button with an optional key hint: button('Resume', { kind: 'primary', key: chipText(keys.resume) })
 export function button(label, { kind = '', key = '', small = false, id } = {}) {
   const b = h('button', { className: ['pk-btn', kind && `pk-btn--${kind}`, small && 'pk-btn--sm'].filter(Boolean).join(' '), id });
   b.type = 'button';

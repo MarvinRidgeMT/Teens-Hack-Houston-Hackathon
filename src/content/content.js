@@ -121,7 +121,7 @@
     const handler = (e) => {
       if (UI && UI.isOwnEvent && UI.isOwnEvent(e)) return; // card/overlay input is not work
       if (e.type === 'keydown' && ['Shift', 'Control', 'Alt', 'Meta', 'CapsLock'].includes(e.key)) return;
-      if (e.type === 'keydown' && e.altKey && (e.key === 'p' || e.key === 'P' || e.code === 'KeyP')) return; // Alt+P is ours
+      if (e.type === 'keydown' && e.altKey && (e.key === 'p' || e.key === 'P' || e.code === 'KeyP')) return; // the Windows/Linux park key (park-task) is ours
       const id = armed && armed.eventId;
       if (armed) armed.off();
       armed = null;

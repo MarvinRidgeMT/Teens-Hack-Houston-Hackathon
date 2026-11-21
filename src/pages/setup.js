@@ -9,6 +9,7 @@ import { DEFAULT_SETTINGS, KEYS } from '../shared/constants.js';
 import { $, h, send, hasChrome, getLocal, button, badge } from './ui.js';
 import { FEATURE_DEFAULTS, featuresOf, cleanSite, originsFor, matchesFor, mergeSettings, validate } from './setup-logic.js';
 import { plural } from './format.js';
+import { fillShortcuts } from '../shared/shortcuts.js';
 import { urlMatches } from '../shared/sites.js';
 
 const SCRIPT_ID = 'pickup-content';
@@ -206,6 +207,8 @@ $('shortcuts').addEventListener('click', (e) => {
 });
 
 // ---------- load ----------
+fillShortcuts().catch(() => {});
+
 (async () => {
   const stored = await getLocal(KEYS.settings);
   const s = { ...DEFAULT_SETTINGS, ...(stored[KEYS.settings] || {}) };

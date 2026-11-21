@@ -107,7 +107,7 @@ async function currentTask() {
     const latest = Object.values(crumbs).sort((a, b) => (b.leftAt || 0) - (a.leftAt || 0))[0];
     threadId = latest && latest.threadId;
   }
-  if (!threadId) threadId = await events.pickResumeTarget(); // same order as Alt+R: then the last work tab's task
+  if (!threadId) threadId = await events.pickResumeTarget(); // same order as the resume key: then the last work tab's task
   const thread = threadId ? await store.getThread(threadId) : null;
   return { ob, thread, crumb: threadId ? crumbs[threadId] || null : null };
 }
@@ -140,7 +140,7 @@ export async function handleVoiceCommand(msg, settings) {
 
     case 'resume':
       if (thread) {
-        // Same path as Alt+R: resume(), so return detection and the coin flip still happen.
+        // Same path as the resume key: resume(), so return detection and the coin flip still happen.
         // The voice marker is set only when a left break of this task is open.
         const r = await events.resumeTask(thread.id, { via });
         state.ok = !!(r && r.ok);

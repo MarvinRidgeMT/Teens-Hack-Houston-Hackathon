@@ -94,7 +94,7 @@ export async function refreshTabUrls(thread) {
   return thread;
 }
 
-// Popup "Start task" (and Alt+P with a task name). Puts the tab in a named group.
+// Popup "Start task" (and the park key with a task name). Puts the tab in a named group.
 export async function startTask(tabId, name, taskType) {
   const tab = await getTab(tabId);
   if (!tab) return { ok: false, error: 'tab not found' };

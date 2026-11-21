@@ -4,6 +4,8 @@ import { CornerDownLeft, RotateCcw, Undo2 } from 'lucide-react';
 import { LiquidGlass } from '../components/glass/LiquidGlass';
 import { GlassButton } from '../components/glass/GlassButton';
 import { SectionHead } from '../components/ui';
+import { keyText } from '../content/site';
+import { usePlatform } from '../hooks/platform';
 import { SPRING_CARD, SPRING_PRESS } from '../styles/motion';
 
 type State = 'card' | 'resumed' | 'dismissed';
@@ -38,8 +40,9 @@ export function ReturnDemo({ reduced }: { reduced: boolean }) {
     else if (e.key === 'Escape') { e.preventDefault(); setState('dismissed'); }
   };
 
+  const platform = usePlatform();
   const status = state === 'resumed' ? 'Resumed: back at the highlighted sentence, scroll restored.'
-    : state === 'dismissed' ? 'Card closed. Your place is still saved; Alt+R takes you back from any tab.'
+    : state === 'dismissed' ? `Card closed. Your place is still saved; ${keyText(platform, 'resume')} takes you back from any tab.`
     : tidied ? 'Tidied: the video tab moved into a collapsed "Later" group. Nothing was closed.' : 'Return card open.';
 
   return (

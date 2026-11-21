@@ -279,7 +279,7 @@ function wire() {
   document.addEventListener('visibilitychange', () => log(`visibility -> ${document.visibilityState}`));
   window.addEventListener('focus', () => log('window focus'));
   window.addEventListener('blur', () => log('window blur'));
-  // Alt+V ("toggle-voice") while this page is open: try opening the panel from the command.
+  // The panel key ("toggle-voice") while this page is open: try opening the panel from the command.
   chrome.commands.onCommand.addListener((command, tab) => {
     if (command !== 'toggle-voice') return;
     const wid = (tab && tab.windowId) || windowId;

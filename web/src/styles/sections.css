@@ -161,12 +161,21 @@
 .legend__table td, .legend__table tbody th { padding: 14px 12px 14px 0; border-top: 1px solid var(--line); text-align: left; vertical-align: middle; }
 .legend__table tbody th { font: 650 16px/1.35 var(--font-ui); }
 .legend__table td:last-child { color: var(--plum-2); }
+.legend__os { display: none; }
+/* platform toggle (Features head): switches every key hint on the page */
+.ptoggle { display: inline-flex; align-items: center; gap: 4px; margin-top: var(--space-4); padding: 4px; border-radius: 99px; background: var(--glass-fill-strong); box-shadow: inset 0 0 0 1px var(--glass-border); }
+.ptoggle__label { padding-inline: 10px 4px; font: 600 var(--fs-label) / 1.2 var(--font-ui); color: var(--plum-2); }
+.ptoggle__btn { min-height: 32px; padding: 0 14px; border: 0; border-radius: 99px; background: transparent; font: 600 14px/1 var(--font-ui); color: var(--plum-2); cursor: pointer; }
+.ptoggle__btn[aria-pressed="true"] { background: var(--surface-elevated); color: var(--plum); box-shadow: inset 0 0 0 1px var(--line); }
+.ptoggle__btn:focus-visible { outline: 2px solid var(--plum); outline-offset: 2px; }
 @media (max-width: 640px) {
   .legend { padding: 4px 16px; }
   .legend__table thead { display: none; }
   .legend__table tr { display: grid; gap: 4px; padding: 12px 0; border-top: 1px solid var(--line); }
   .legend__table tr:first-child { border-top: 0; }
   .legend__table td, .legend__table tbody th { border: 0; padding: 0; }
+  .legend__keys { display: flex; align-items: center; gap: 8px; }
+  .legend__os { display: inline; min-width: 13ch; font: 600 var(--fs-label) / 1.2 var(--font-ui); color: var(--plum-2); }
 }
 /* Return demo: a tinted page under the card, so the crystal has something to bend */
 .rdemo { background: linear-gradient(160deg, var(--surface-elevated) 30%, var(--canvas-2) 60%, var(--lavender) 100%); }

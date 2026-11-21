@@ -16,6 +16,33 @@ export const LINKS = {
   videoId: null as string | null,
 };
 
+// shortcuts-table:start (the only place on the site that names Pickup's keys; check-integration allows it)
+// Must match manifest.json `suggested_key`: mac MacCtrl+Shift+P/R/V, everywhere else Alt+P/R/V.
+export type Platform = 'mac' | 'other';
+export type KeyId = 'park' | 'resume' | 'panel';
+export const PLATFORM_KEYS: Record<Platform, Record<KeyId, readonly string[]>> = {
+  mac: { park: ['⌃', '⇧', 'P'], resume: ['⌃', '⇧', 'R'], panel: ['⌃', '⇧', 'V'] },
+  other: { park: ['Alt', 'P'], resume: ['Alt', 'R'], panel: ['Alt', 'V'] },
+};
+// shortcuts-table:end
+export const PLATFORM_NAME: Record<Platform, string> = { mac: 'Mac', other: 'Windows, Linux, ChromeOS' };
+const SPOKEN: Record<string, string> = { '⌃': 'Control', '⇧': 'Shift' };
+
+/** Mac glyphs run together, other systems join with "+": for keys inside a sentence. */
+export function keyText(platform: Platform, id: KeyId): string {
+  return PLATFORM_KEYS[platform][id].join(platform === 'mac' ? '' : '+');
+}
+/** "Control + Shift + P": what a screen reader says for the key caps. */
+export function keySpoken(platform: Platform, id: KeyId): string {
+  return PLATFORM_KEYS[platform][id].map((k) => SPOKEN[k] ?? k).join(' + ');
+}
+/** Fills {park}, {resume} and {panel} in site copy with the visitor's keys. */
+export function withKeys(text: string, platform: Platform): string {
+  return text.replace(/\{(park|resume|panel)\}/g, (_, id: KeyId) => keyText(platform, id));
+}
+
+export const WORKS_ON = 'Chrome or Edge on Windows, Mac, Linux and ChromeOS. Not on phones: mobile browsers don\'t support extensions.';
+
 export const NAV_ITEMS = [
   { href: '#story', label: 'How it works' },
   { href: '#return-card', label: 'Try the card' },
@@ -51,8 +78,9 @@ export const STORY = [
   {
     id: 'park',
     title: 'Park',
-    body: 'Press Alt+P first and leave yourself one line: your next step, in your own words. Or skip it; your place is saved either way.',
-    keys: ['Alt', 'P'],
+    body: 'Press {park} first and leave yourself one line: your next step, in your own words. Or skip it; your place is saved either way.',
+    keys: [] as string[],
+    key: 'park' as KeyId,
   },
   {
     id: 'return',
@@ -75,12 +103,14 @@ export const INSTALL_STEPS = [
   { title: 'Load unpacked', body: 'Pick the unzipped folder. The setup page opens: add your work sites and distraction sites.' },
 ] as const;
 
-export const SHORTCUTS = [
-  { keys: ['Alt', 'P'], label: 'Park before you go', alt: 'or the Park button in the toolbar popup' },
-  { keys: ['Alt', 'R'], label: 'Back to your task from any tab', alt: 'or Resume in the popup' },
-  { keys: ['Alt', 'V'], label: 'Open the Pickup panel', alt: 'or the panel button in the popup' },
+/** The install-section table lists both sets; `keys` is for keys that are the same everywhere. */
+export const SHORTCUTS: readonly { id?: KeyId; keys?: readonly string[]; label: string; alt: string }[] = [
+  { id: 'park', label: 'Park before you go', alt: 'or the Park button in the toolbar popup' },
+  { id: 'resume', label: 'Back to your task from any tab', alt: 'or Resume in the popup' },
+  { id: 'panel', label: 'Open the Pickup panel', alt: 'or the panel button in the popup' },
   { keys: ['Enter'], label: 'Resume, on the return card', alt: 'or click Resume' },
-] as const;
+];
+export const SHORTCUTS_NOTE = 'Change any of them at chrome://extensions/shortcuts. A new key only applies to a fresh install: if you had Pickup before, remove it and load the new version, or set the keys there.';
 
 export const PRIVACY = [
   {
