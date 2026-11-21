@@ -58,6 +58,19 @@ for (const theme of ['light', 'dark']) {
   }
 }
 
+// Calm colours (settings.calm): lower-saturation accent, resume and spark, same rules.
+const CALM = tokens.color.calm || {};
+const calmVal = (name, theme) => (CALM[name] && CALM[name][theme]) || ({ 'focus-ring': CALM.resume, periwinkle: CALM.resume }[name] || {})[theme] || val(name, theme);
+const CALM_PAIRS = PAIRS.filter(([fg, bg]) => [fg, bg].some((n) => ['accent', 'resume', 'spark', 'focus-ring', 'on-accent'].includes(n)));
+for (const theme of ['light', 'dark']) {
+  if (!CALM.accent || !CALM.resume || !CALM.spark) { out(false, 'tokens.json has no calm accent/resume/spark'); break; }
+  for (const [fg, bg, min, what] of CALM_PAIRS) {
+    const a = calmVal(fg, theme), b = calmVal(bg, theme);
+    const r = ratio(a, b);
+    out(r >= min, `calm ${theme}: ${fg} ${a} on ${bg} ${b} = ${r.toFixed(2)}:1 (min ${min}) ${what}`);
+  }
+}
+
 // spark and reward are fills only: never a text colour.
 function walk(dir) {
   if (!fs.existsSync(dir)) return [];

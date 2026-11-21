@@ -148,3 +148,12 @@
   --fs-chip: 14px; --lh-chip: 20px;
   --fs-kbd: 13px;
 }
+
+/* Calm colours (settings.calm, set as data-calm on <html> by src/shared/theme.js):
+   lower-saturation accent, resume and spark (design/tokens.json "calm"). mist,
+   periwinkle and focus-ring follow resume. Decorative motion is off under it. */
+:root[data-calm] { --accent: #2f6e67; --resume: #57539a; --spark: #9fd6cc; }
+@media (prefers-color-scheme: dark) {
+  :root[data-calm]:not([data-theme="light"]) { --accent: #86c7be; --resume: #b0abdd; --spark: #8ccabf; }
+}
+:root[data-calm][data-theme="dark"] { --accent: #86c7be; --resume: #b0abdd; --spark: #8ccabf; }

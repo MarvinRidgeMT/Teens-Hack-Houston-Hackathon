@@ -40,6 +40,7 @@ export const DEFAULT_SETTINGS = Object.freeze({
   voiceEnabled: false,     // voice side panel may use the mic (push-to-talk)
   wakeWord: false,         // listen for "Hey Pickup" while the panel is open
   readAloud: true,         // Pickup panel: speak replies (only while voice is on)
+  calm: false,             // "Calm colours": lower-saturation accents on extension pages (tokens.css [data-calm])
   features: {},            // redesign feature flags; read through featuresOf() (DEFAULT_FEATURES fill the gaps)
 });
 

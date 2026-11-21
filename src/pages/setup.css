@@ -73,3 +73,6 @@ html, body { margin: 0; background: var(--paper); }
   .st-brand { position: static; }
   .st-meadow { height: 220px; }
 }
+
+/* Calm colours: the meadow stays still (no fireflies or fog drift). */
+:root[data-calm] .fly, :root[data-calm] .st-fog, :root[data-calm] .st-wm { animation: none !important; }
