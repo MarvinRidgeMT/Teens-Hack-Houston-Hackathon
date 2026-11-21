@@ -36,16 +36,15 @@ export function Hero({ reduced }: { reduced: boolean }) {
     return () => { removeEventListener('pointermove', on); story.pointerX = 0; story.pointerY = 0; };
   }, [reduced]);
 
-  // Opening: light settles, headline lines rise, the context objects settle in, then the CTAs.
-  // Everything is interactive from the first frame; nothing waits on this timeline.
+  // Opening: the headline, lede and buttons are in the prerendered HTML and never hidden (they are the
+  // first paint). Only decoration plays in: the light volumes settle, then the context objects.
+  // index.html adds .js-intro before first paint (motion allowed), which starts those at opacity 0.
   useGSAP(() => {
-    if (reduced) return;
     const q = gsap.utils.selector(root);
-    const tl = gsap.timeline({ defaults: { ease: EASE.hero } });
-    tl.from(q('.atmo__light'), { opacity: 0, scale: 0.85, duration: 1.4, stagger: 0.12 }, 0)
-      .from(q('.hero__line'), { yPercent: 105, duration: 0.8, stagger: 0.07 }, 0.1)
-      .from(q('.hero__lede, .hero__ctas, .hero__facts'), { autoAlpha: 0, y: 14, duration: 0.7, stagger: 0.07 }, 0.45)
-      .from(q('.hero-obj'), { autoAlpha: 0, y: 18, scale: 0.94, duration: 0.9, stagger: 0.09, ease: EASE.enter }, 0.7);
+    if (reduced) { document.documentElement.classList.remove('js-intro'); return; }
+    const tl = gsap.timeline({ defaults: { ease: EASE.hero }, onComplete: () => document.documentElement.classList.remove('js-intro') });
+    tl.fromTo(q('.atmo__light'), { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 1.4, stagger: 0.12 }, 0)
+      .fromTo(q('.hero-obj'), { autoAlpha: 0, y: 18, scale: 0.94 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.9, stagger: 0.09, ease: EASE.enter }, 0.5);
   }, { scope: root, dependencies: [reduced] });
 
   return (

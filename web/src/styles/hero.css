@@ -60,3 +60,5 @@
 }
 /* the base is 7% wider than the lid; keep that inside the frame on narrow screens */
 .device { padding-inline: 6%; }
+/* set by an inline script before first paint when motion is allowed; the hero timeline fades these in */
+.js-intro .hero .atmo__light, .js-intro .hero-obj { opacity: 0; }

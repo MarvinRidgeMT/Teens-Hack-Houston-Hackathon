@@ -9,10 +9,11 @@ export function DeviceFrame({ src, alt, poster = false, children }: { src: strin
   if (poster) {
     return (
       <figure className="device device--poster">
-        <img src="assets/laptop/laptop-poster.webp" alt={alt} width={2560} height={1600} decoding="async"
+        <img src="assets/laptop/laptop-poster.webp" srcSet="assets/laptop/laptop-poster-1280.webp 1280w, assets/laptop/laptop-poster.webp 2560w"
+          sizes="(max-width: 1080px) 92vw, 56vw" alt={alt} width={2560} height={1600} decoding="async" fetchPriority="high"
           onError={(e) => { (e.currentTarget.closest('figure') as HTMLElement).classList.add('device--noposter'); }} />
         <div className="device__fallback">
-          <div className="device__lid"><img src={src} alt="" width={1600} height={1000} /></div>
+          <div className="device__lid"><img src={src} alt="" width={1600} height={1000} loading="lazy" /></div>
           <div className="device__base" />
         </div>
       </figure>

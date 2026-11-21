@@ -5,7 +5,7 @@
   "description": "Pickup download website: React + TypeScript + Vite + React Three Fiber. Builds static files into ../site.",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/check-tokens.mjs && node scripts/contrast.mjs > /dev/null && tsc --noEmit && vite build",
+    "build": "node scripts/check-tokens.mjs && node scripts/contrast.mjs > /dev/null && tsc --noEmit && vite build && node scripts/prerender.mjs",
     "preview": "vite preview --outDir ../site",
     "check": "node scripts/check-tokens.mjs && node scripts/contrast.mjs"
   },

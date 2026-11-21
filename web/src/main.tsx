@@ -1,5 +1,5 @@
 import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
+import { createRoot, hydrateRoot } from 'react-dom/client';
 import './styles/tokens.css';
 import './styles/base.css';
 import './styles/glass.css';
@@ -11,8 +11,11 @@ import { App } from './App';
 
 const root = document.getElementById('root');
 if (!root) throw new Error('#root missing from index.html');
-createRoot(root).render(
+const app = (
   <StrictMode>
     <App />
-  </StrictMode>,
+  </StrictMode>
 );
+// The production build ships prerendered HTML (scripts/prerender.mjs): hydrate it. Dev renders fresh.
+if (root.firstElementChild) hydrateRoot(root, app);
+else createRoot(root).render(app);
