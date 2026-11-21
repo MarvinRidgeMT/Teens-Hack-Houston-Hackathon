@@ -360,6 +360,10 @@ await step('Badge colours are the V4 light state values; glyphs unchanged', () =
     assert.match(run({ 'c.md': 'Press Option+R to resume.' }), /FAIL.*c\.md/);
     assert.match(run({ 'd.ts': "keys: ['Alt', 'R']," }), /FAIL.*d\.ts/);
     assert.match(run({ 'e.tsx': '<span>⌃⇧R takes you back</span>' }), /FAIL.*e\.tsx/);
+    assert.match(run({ 'h.tsx': "keys={['⌃', '⇧', 'R']}" }), /FAIL.*h\.tsx/);
+    assert.match(run({ 'i.md': 'Press Ctrl+Shift+P or Control+Shift+V.' }), /FAIL.*i\.md/);
+    assert.match(run({ 'j.js': "// press alt+p" }), /FAIL.*j\.js/);
+    assert.match(run({ 'k.html': '<p>⌃ ⇧ P</p>' }), /FAIL.*k\.html/);
   });
   await step('check-integration allows shared/shortcuts.js, marked tables and other keys', () => {
     assert.match(run({ 'shared/shortcuts.js': "export const FALLBACK = { park: 'Alt+P', mac: '⌃⇧P' };" }), /ok.*no hard-coded shortcut/);

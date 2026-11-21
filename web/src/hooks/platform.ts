@@ -8,7 +8,7 @@ const listeners = new Set<() => void>();
 
 function detect(): Platform {
   const nav = navigator as Navigator & { userAgentData?: { platform?: string } };
-  const p = nav.userAgentData?.platform ?? nav.platform ?? '';
+  const p = nav.userAgentData?.platform || nav.platform || '';
   return /mac|iphone|ipad/i.test(p) ? 'mac' : 'other';
 }
 function get(): Platform {

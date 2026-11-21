@@ -9,7 +9,7 @@ Pickup is a Chrome extension that saves your place when you leave your work and 
 1. Download `pickup-v1.0.0.zip` from this repo's [Releases](../../releases/latest) page and unzip it.
 2. Open `chrome://extensions` in Chrome (or `edge://extensions` in Edge).
 3. Turn on **Developer mode** (top right).
-4. Click **Load unpacked** and pick the unzipped `pickup-v1.0.0` folder.
+4. Click **Load unpacked** and pick the unzipped `pickup-v1.0.0` folder (the one that contains `manifest.json`; Windows' Extract All may nest it one level down).
 
 Pickup isn't on the Chrome Web Store. It needs Chrome 123 or newer.
 
@@ -46,7 +46,7 @@ Chrome or Edge on Windows, Mac, Linux and ChromeOS. Not on phones: mobile browse
 ## Privacy
 
 - Everything Pickup saves stays in `chrome.storage.local` in your browser profile.
-- No account, no servers, no analytics. The extension makes no network requests at all; `test/check-integration.mjs` fails the build if any file tries to.
+- No account, no servers, no analytics. The extension makes no network requests at all; `test/check-integration.mjs` fails if any file tries to.
 - It stores a page's address, your scroll position and at most 200 characters you highlighted. It never stores the page's text.
 - For the pilot, Pickup keeps a small event log (for example "came back after 7 min") in the same local storage. It only leaves your computer if you export it as a CSV yourself.
 - Voice is off by default. When you turn it on, speech is recognised on your device (Chrome's on-device mode); no audio or transcripts are kept.
@@ -86,7 +86,7 @@ To build the release zip: `scripts/make-release.sh` (writes `pickup-v1.0.0.zip` 
 
 ## Credits and licences
 
-- **Inter** (extension UI), **Plus Jakarta Sans**, **Geist** and **Bricolage Grotesque**: SIL Open Font License 1.1 (`assets/fonts/*OFL.txt`).
+- Fonts: **Plus Jakarta Sans** and **Geist** (extension pages and website), with **Inter** and **Bricolage Grotesque** also bundled in `assets/fonts/`: all SIL Open Font License 1.1 (`assets/fonts/*OFL.txt`).
 - **Motion** (MIT, `src/vendor/MOTION-LICENSE.md`) and **Anime.js** (MIT, `src/vendor/ANIME-LICENSE.md`).
 - The setup headline's blur effect follows React Bits' BlurText (David Haz, MIT + Commons Clause, `src/vendor/REACT-BITS-LICENSE.md`).
 - Website: **three.js** (MIT), React Three Fiber and drei (MIT), React (MIT), **Lenis** (MIT), **Motion** (MIT), **Lucide** icons (ISC), and **GSAP** under GreenSock's "Standard 'no charge' license" (https://gsap.com/standard-license), as stated in its package.

@@ -13,6 +13,13 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
+# Ship only committed files: a local edit or scratch file in src/ or assets/ must not slip in.
+if [ -n "$(git status --porcelain -- manifest.json src assets)" ] && [ "${ALLOW_DIRTY:-}" != 1 ]; then
+  echo "manifest.json, src/ or assets/ has uncommitted changes; commit them first (or ALLOW_DIRTY=1):" >&2
+  git status --short -- manifest.json src assets >&2
+  exit 1
+fi
+
 VERSION="$(node -p "require('./manifest.json').version")"
 NAME="pickup-v${VERSION}"
 STAGE="build/${NAME}"

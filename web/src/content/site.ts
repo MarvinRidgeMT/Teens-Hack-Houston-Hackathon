@@ -32,7 +32,7 @@ const SPOKEN: Record<string, string> = { '⌃': 'Control', '⇧': 'Shift' };
 export function keyText(platform: Platform, id: KeyId): string {
   return PLATFORM_KEYS[platform][id].join(platform === 'mac' ? '' : '+');
 }
-/** "Control + Shift + P": what a screen reader says for the key caps. */
+/** The spoken names of the caps (Control, Shift, the letter): what a screen reader says. */
 export function keySpoken(platform: Platform, id: KeyId): string {
   return PLATFORM_KEYS[platform][id].map((k) => SPOKEN[k] ?? k).join(' + ');
 }

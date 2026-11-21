@@ -21,7 +21,7 @@ Pickup is a Chrome extension that saves your place when you leave your work and 
 1. Download `pickup-v1.0.0.zip` below and unzip it.
 2. Open `chrome://extensions` (Edge: `edge://extensions`).
 3. Turn on **Developer mode**.
-4. Click **Load unpacked** and pick the unzipped `pickup-v1.0.0` folder.
+4. Click **Load unpacked** and pick the unzipped `pickup-v1.0.0` folder (the one that contains `manifest.json`).
 
 The setup page opens: add your work sites and distraction sites, then **Save and start**. Chrome 123 or newer, on Windows, Mac, Linux or ChromeOS (also Edge). Not on phones: mobile browsers don't support extensions.
 

@@ -17,7 +17,7 @@ import os from 'node:os';
 import path from 'node:path';
 import http from 'node:http';
 import { fileURLToPath } from 'node:url';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { launch, sleep, activatePid, CFT_BUNDLE } from './cdp-driver.mjs';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
@@ -88,6 +88,12 @@ function unzip() {
   execFileSync('unzip', ['-q', ZIP, '-d', UNZIP]);
   const [dir] = fs.readdirSync(UNZIP);
   const ext = path.join(UNZIP, dir);
+  // The zip as shipped must pass the static checks before the test edits its manifest.
+  const r = spawnSync(process.execPath, [path.join(REPO, 'test/check-integration.mjs'), '--root', ext], { encoding: 'utf8' });
+  const summary = r.stdout.trim().split('\n').at(-1);
+  check(r.status === 0, `check-integration on the unzipped release: ${summary}\n${r.stdout.split('\n').filter((l) => l.startsWith('FAIL')).join('\n')}`);
+  results.push(['ok  ', 'check-integration --root <unzipped zip>', summary]);
+  log(`ok    check-integration --root <unzipped zip> — ${summary}`);
   const mfPath = path.join(ext, 'manifest.json');
   const mf = JSON.parse(fs.readFileSync(mfPath, 'utf8'));
   mf.host_permissions = ['http://essay.test/*', 'http://*.essay.test/*', 'http://video.test/*'];

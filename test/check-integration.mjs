@@ -17,6 +17,7 @@ import { MSG, TO_ENGINE, TO_CONTENT, OPTIONAL_TO_CONTENT, CARD_ACTIONS } from '.
 const arg = (name, def) => { const i = process.argv.indexOf(name); return i > 0 ? process.argv[i + 1] : def; };
 // --root: check another copy of the extension (the unzipped release) instead of this repo.
 const ROOT = path.resolve(arg('--root', path.resolve(path.dirname(new URL(import.meta.url).pathname), '..')));
+if (!fs.existsSync(path.join(ROOT, 'manifest.json'))) { console.error(`check-integration: no manifest.json in ${ROOT}`); process.exit(2); }
 const CONTENT_DIR = path.resolve(ROOT, arg('--content', 'src/content'));
 const PAGES_DIR = path.resolve(ROOT, arg('--pages', 'src/pages'));
 const SRC_DIR = path.resolve(ROOT, arg('--src', 'src')); // repo-wide rules; a test points it at a fixture
@@ -146,7 +147,13 @@ const srcCss = walk(SRC_DIR, ['.css']);
     ? [SRC_DIR]
     : ['src', 'web/src', 'README.md', 'docs/RELEASE_NOTES.md'].map((r) => path.join(ROOT, r));
   const files = roots.flatMap((r) => (fs.existsSync(r) && fs.statSync(r).isFile() ? [r] : walk(r, ['.js', '.mjs', '.html', '.css', '.md', '.ts', '.tsx'])));
-  const KEY = /⌥\s?[PRV]\b|⌃⇧[PRV]\b|\b(?:Alt|Option|MacCtrl\+Shift)\s?\+\s?[PRV]\b|['"`](?:Alt|Option)['"`]\s*,\s*['"`][PRV]['"`]/;
+  const Q = '[\'"`]';
+  const KEY = new RegExp([
+    '⌥\\s?[PRV]\\b', '⌃\\s*⇧\\s*[PRV]\\b',                                          // ⌥P, ⌃⇧P, ⌃ ⇧ P
+    '\\b(?:Alt|Option|MacCtrl\\s?\\+\\s?Shift|Ctrl\\s?\\+\\s?Shift|Control\\s?\\+\\s?Shift)\\s?\\+\\s?[PRV]\\b', // Alt+P, Ctrl+Shift+P
+    `${Q}(?:Alt|Option)${Q}\\s*,\\s*${Q}[PRV]${Q}`,                                   // ['Alt', 'P']
+    `${Q}⌃${Q}\\s*,\\s*${Q}⇧${Q}\\s*,\\s*${Q}[PRV]${Q}`,                              // ['⌃', '⇧', 'P']
+  ].join('|'), 'i');
   let bad = 0;
   for (const f of files) {
     if (/(^|[\\/])shared[\\/]shortcuts\.js$/.test(f)) continue;

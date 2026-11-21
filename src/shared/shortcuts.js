@@ -72,7 +72,18 @@ async function load() {
 
 // Fills every [data-shortcut="park|resume|panel|wrapUp"] under root. A .pk-kbd chip
 // gets the short text; anything else gets the full text.
+// Labels refresh when the page comes back into view (e.g. after the user rebinds a key
+// at chrome://extensions/shortcuts and returns to the setup page or the side panel).
+let refreshing = false;
 export async function fillShortcuts(root = document) {
+  if (!refreshing && globalThis.document) {
+    refreshing = true;
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState !== 'visible') return;
+      cached = null;
+      fillShortcuts(root).catch(() => {});
+    });
+  }
   const s = await shortcuts();
   for (const el of root.querySelectorAll('[data-shortcut]')) {
     const key = s[el.dataset.shortcut] || '';

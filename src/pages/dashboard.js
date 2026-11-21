@@ -38,9 +38,13 @@ function conditionChip(c) {
 
 // How the user came back (event.returnVia), in words.
 const VIA = {
-  tab: 'Switched tabs', resumeKey: `Resume key (${chipText((await shortcuts()).resume)})`, notification: 'Notification', idle: 'Back at the keyboard',
+  tab: 'Switched tabs', resumeKey: 'Resume key', notification: 'Notification', idle: 'Back at the keyboard',
   voice: 'Voice', panel: 'Pickup panel', timer: 'Break timer',
 };
+// The resume key in the "how you came back" column, once the engine has answered.
+let resumeChip = '';
+shortcuts().then((s) => { resumeChip = chipText(s.resume); }, () => {});
+const viaText = (v) => (v === 'resumeKey' && resumeChip ? `${VIA.resumeKey} (${resumeChip})` : VIA[v] || v);
 const SOURCE = { typed: 'You wrote it', selected: 'You picked it', spoken: 'You said it' };
 
 const dash = (label = 'none') => h('span', { className: 'db-muted' }, '–', h('span', { className: 'pk-sr' }, label));
@@ -99,7 +103,7 @@ function renderEvents(events, names) {
       h('td', null, conditionChip(e.condition)),
       h('td', { className: 'db-nowrap' }, bucket ? `${bucket} min` : dash(), away !== null ? h('span', { className: 'db-muted' }, ` · ${durationText(away)}`) : null),
       h('td', { className: 'num' }, secs === null ? dash('no interaction recorded') : formatSeconds(secs)),
-      h('td', null, e.returnVia ? (VIA[e.returnVia] || e.returnVia) : dash()),
+      h('td', null, e.returnVia ? viaText(e.returnVia) : dash()),
       h('td', { className: 'num' }, Number.isFinite(e.plannedBreakMin) ? `${e.plannedBreakMin} min` : dash()),
       h('td', null, e.nextStepSource ? (SOURCE[e.nextStepSource] || e.nextStepSource) : dash('not recorded')));
     body.append(row);

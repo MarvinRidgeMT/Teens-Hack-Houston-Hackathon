@@ -207,3 +207,13 @@ Branch `redesign/v4` (V4 extension restyle: calm pastel tokens, v4 badge colours
 `main` at `8a675d9` (V4 merged in PR #4, plus the site-only story framing fix). Chrome for Testing 157.0.8103.78, visible run, isolated profile.
 - **23 pass, 0 fail, 1 skipped** (Docs row: needs a Google login). Return after 32 s with card, task, next step and highlight; Resume restored scroll 0 → 1713 (saved 1758, within the step's tolerance; run 17 was 1197 of 1200); first interaction 0.3 s after return; Tidy into "Later"; focus loss; worker stop; Chrome restart recovery; Alt+R via the resumeTask message; badge `P` → `•` → empty.
 - Same caveat as run 17: this harness drives `test/dev/stub-content.js`; Sidd's real card and overlay were exercised headless (`site-shots.mjs`, `palette-shots.mjs`).
+
+## Run 19: release/v1.0 (Sat Nov 21, ~12:30 PM ET)
+
+Branch `release/v1.0` at `b3e0dfc` (per-platform shortcuts, `getShortcuts`, labels from `chrome.commands`; manifest 1.0.0). Chrome for Testing 157.0.8103.78 on macOS, visible run, isolated profile.
+- **Gate: 23 pass, 0 fail, 1 skipped** (Docs row: needs a Google login). Return after 32 s with card, task, next step and highlight; Resume restored scroll 0 → 1197 (saved 1200); first interaction 0.3 s after return; Tidy into "Later"; focus loss; worker stop; Chrome restart recovery; resume via the resumeTask message.
+- **N1 shortcuts (fresh install on a Mac):** park-task ⌃⇧P, resume-task ⌃⇧R, toggle-voice ⌃⇧V, wrap-up none. Run 16 on the old manifest showed ⌥P / ⌥R / ⌥V.
+- **N4 badge tooltip** now reads "Pickup: away from Drought Essay · ⌃⇧R takes you back" (the key comes from `getShortcuts`).
+- Same caveat as runs 17–18: this harness drives `test/dev/stub-content.js`.
+
+**Release smoke (real content scripts):** `scripts/make-release.sh && node test/dev/release-smoke.mjs` on the unzipped `pickup-v1.0.0.zip` (only change: test host_permissions so CDP needn't click the site-access prompt). 13 ok, 0 fail: setup page opens on install; real Save click registers Sidd's content scripts; start task; park overlay with typed next step; leave 12 s; Sidd's real card shows task and next step; Enter restores scroll 0 → 159 (saved 161); popup and setup show ⌃⇧R / ⌃⇧P / ⌃⇧V; **0 console errors**. Screenshots in `docs-shots/release/` (including `chrome://extensions/shortcuts`). `node test/check-integration.mjs --root <clean unzip>`: 0 fail.

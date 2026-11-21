@@ -1,5 +1,5 @@
 // The user's real keyboard shortcuts, for every label Pickup shows. Owner: Anish (Engine).
-// chrome.commands.getAll() formats each key for the OS (a glyph string such as Control-Shift-R on a Mac)
+// chrome.commands.getAll() formats each key for the OS (glyphs on a Mac, "Alt+…" text elsewhere)
 // and follows rebinding at chrome://extensions/shortcuts; '' means no key is set.
 
 import { fromCommands, fallbackFor, backHint } from '../shared/shortcuts.js';
