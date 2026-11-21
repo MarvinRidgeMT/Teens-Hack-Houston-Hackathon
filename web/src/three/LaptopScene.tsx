@@ -9,9 +9,9 @@ import { story } from './story';
 
 // Pose per story step: laptop yaw/pitch and camera position / target.
 const POSES = {
-  hero: { x: 0.2, yaw: -0.36, pitch: 0.05, cam: [0.2, 2.3, 8.1], look: [0, 0.62, 0] },
-  step: { x: 0.55, yaw: -0.14, pitch: 0.02, cam: [0, 2.1, 7.8], look: [0, 0.7, -0.3] },
-  close: { x: 0.45, yaw: 0, pitch: 0, cam: [0, 1.75, 5.4], look: [0, 0.95, -0.55] },
+  hero: { x: -0.15, yaw: -0.36, pitch: 0.05, cam: [0.2, 2.3, 8.1], look: [0, 0.62, 0] },
+  step: { x: 0.05, yaw: -0.14, pitch: 0.02, cam: [0, 2.15, 8.2], look: [0, 0.7, -0.3] },
+  close: { x: -0.05, yaw: 0, pitch: 0, cam: [0, 1.8, 6.1], look: [0, 0.95, -0.55] },
 } as const;
 
 function poseFor(step: number) {
@@ -58,7 +58,8 @@ function Rig({ reduced }: { reduced: boolean }) {
     <group ref={group} position={[0, -0.35, 0]}>
       <Laptop />
       {/* grounding: a soft neutral shadow right under the base; it moves with the laptop */}
-      <ContactShadows position={[0, -0.046, 0.25]} opacity={0.42} scale={[3.5, 2.6]} blur={2.6} far={0.7} resolution={512} color="#000000" />
+      {/* a plane well larger than the laptop, so the blurred shadow fades out before its edges (no straight-edged wedge) */}
+      <ContactShadows position={[0, -0.046, 0.25]} opacity={0.36} scale={6} blur={3} far={0.55} resolution={512} color="#000000" />
     </group>
   );
 }

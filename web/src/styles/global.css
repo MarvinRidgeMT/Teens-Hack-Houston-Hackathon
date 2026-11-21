@@ -277,8 +277,8 @@ code { font-family: var(--font-mono); font-size: 0.88em; padding: 2px 6px; borde
 .gallery { display: grid; gap: var(--space-5); grid-template-columns: minmax(0, 1fr); align-items: start; }
 @media (min-width: 900px) {
   .gallery { grid-template-columns: repeat(12, minmax(0, 1fr)); }
-  .g-park { grid-column: span 5; }
-  .g-tabs { grid-column: span 7; }
+  .g-park { grid-column: span 5; align-self: stretch; }
+  .g-tabs { grid-column: span 7; align-self: stretch; }
   .g-drift { grid-column: 1 / -1; }
   .g-altr { grid-column: span 4; }
   .g-list { grid-column: span 8; margin-top: 0 !important; }
@@ -326,6 +326,7 @@ code { font-family: var(--font-mono); font-size: 0.88em; padding: 2px 6px; borde
 .tabstrip__later { padding: 6px 12px; border-radius: 999px; background: var(--midnight); color: var(--cyan); font-size: 0.8125rem; font-weight: 700; }
 .demo__actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .demo__actions .btn { min-height: 44px; padding: 0 16px; font-size: 0.9375rem; }
+.demo__idle { display: grid; gap: 12px; justify-items: start; }
 .demo__fine { min-height: 1.5em; font-size: var(--fs-small); color: var(--midnight); } /* 6.6:1 even on pink */
 
 .feat-list { list-style: none; margin: var(--space-8) 0 0; padding: 0; display: grid; gap: 0 var(--space-7); grid-template-columns: minmax(0, 1fr); }

@@ -33,8 +33,9 @@ function ParkDemo({ reduced }: { reduced: boolean }) {
             <Check size={16} aria-hidden="true" /> Parked: {saved}
           </motion.p>
         ) : (
-          <motion.div key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          <motion.div key="idle" className="demo__idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <Button variant="secondary" onClick={start}>Open the park prompt</Button>
+            <p className="demo__fine">It asks once and gets out of the way: Enter parks it, Esc skips it, and either way your place is saved.</p>
           </motion.div>
         )}
       </AnimatePresence>

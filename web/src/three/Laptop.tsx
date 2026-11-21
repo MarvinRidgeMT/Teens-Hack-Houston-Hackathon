@@ -127,7 +127,8 @@ export function Laptop() {
     () => new THREE.MeshPhysicalMaterial({ color: '#d6d9e0', metalness: 0.72, roughness: 0.36, clearcoat: 0.15, clearcoatRoughness: 0.5, envMapIntensity: 1.1 }),
     [],
   );
-  const darkGlass = useMemo(() => new THREE.MeshPhysicalMaterial({ color: '#08080c', roughness: 0.08, metalness: 0.1, clearcoat: 1 }), []);
+  // Bezel: black glass that stays black at every pose (it barely takes the studio reflections).
+  const darkGlass = useMemo(() => new THREE.MeshStandardMaterial({ color: '#040406', roughness: 0.55, metalness: 0, envMapIntensity: 0.12 }), []);
   const wellGeo = useMemo(() => roundedRect(KB_W + 0.1, KB_D + 0.1, 0.05), []);
   const padRim = useMemo(() => roundedRect(1.3, 0.8, 0.07), []);
   const pad = useMemo(() => roundedRect(1.28, 0.78, 0.065), []);
