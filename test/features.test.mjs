@@ -301,13 +301,13 @@ await step('Feature flags default on (readable card off); a partial settings.fea
   assert.equal(C.featuresOf({ features: { videoReplay: false } }).youWereHere, true);
   assert.equal(C.featuresOf({ features: { videoReplay: false } }).videoReplay, false);
 });
-await step('Badge colours are the Warm Desk, Teal Spark light state values; glyphs unchanged', () => {
-  assert.equal(C.BADGE.parked.color, '#5b4be0');
-  assert.equal(C.BADGE.away.color, '#5c6170');
-  assert.equal(C.BADGE.wrapped.color, '#1e2230');
-  assert.equal(C.BADGE.timer.color, '#5b4be0');
-  assert.equal(C.BADGE.flash['✓'], '#0d7c72');
-  assert.equal(C.BADGE.flash.default, '#5c6170');
+await step('Badge colours are the Sage & Ink light state values; glyphs unchanged', () => {
+  assert.equal(C.BADGE.parked.color, '#3f57a0');
+  assert.equal(C.BADGE.away.color, '#5b625d');
+  assert.equal(C.BADGE.wrapped.color, '#1f2421');
+  assert.equal(C.BADGE.timer.color, '#3f57a0');
+  assert.equal(C.BADGE.flash['✓'], '#3b6b57');
+  assert.equal(C.BADGE.flash.default, '#5b625d');
   assert.deepEqual([C.BADGE.parked.text, C.BADGE.away.text, C.BADGE.wrapped.text], ['P', '•', '☾']);
 });
 

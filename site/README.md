@@ -1,8 +1,8 @@
 # Pickup download page
 
-One static page: `index.html`, `styles.css`, `assets/`. No build step, no scripts, no trackers, no third-party requests.
+One static page: `index.html`, `styles.css`, `assets/`. No build step, no trackers, no third-party requests. One optional motion script, `assets/site.js`, runs on local copies of GSAP 3.13 + ScrollTrigger and Lenis 1.3.11 in `assets/vendor/` (smooth scroll, the hero headline's blur-in ported from React Bits' BlurText, a subtle section reveal). It does nothing under reduced motion, and the page is complete without it.
 
-- **Look:** the Pickup design system (`design/`): Paper (light) and Blue hour (dark), following the visitor's system setting, with the Driftbar meadow footer. Tokens and component styles are copied into `styles.css` from `src/shared/tokens.css` and `src/shared/pk.css`, so `site/` works on its own. Fireflies and fog move only when reduced motion is off.
+- **Look:** the site's own "Highlighter" palette (last block of `styles.css`): an electric-violet hero, lime/yellow/pink/cyan highlighter fills with ink text, an ink privacy band and a pink demo band, in light and dark. The extension keeps the calmer Sage & Ink palette from `design/`. The Driftbar meadow footer stays. Tokens and component styles are copied into `styles.css` from `src/shared/tokens.css` and `src/shared/pk.css`, so `site/` works on its own. Fireflies and fog move only when reduced motion is off.
 - **Font:** Inter, self-hosted in `assets/fonts/` (SIL OFL 1.1, `assets/fonts/OFL.txt`).
 
 - **Edit before Saturday:** the `PILOT RESULTS` block (never invent numbers), the `VIDEO` comment (unlisted YouTube id, no autoplay), the `DEVPOST` link, and `assets/install.gif` when Sidd's GIF exists.

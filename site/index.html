@@ -6,8 +6,8 @@
   <title>Pickup: undo the interruption</title>
   <meta name="description" content="Pickup is a free Chrome extension that saves your place when you get pulled away and hands it back when you return. No account. Nothing leaves your computer.">
   <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" content="#faf8f4" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#14171f" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f2f4f1" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#121614" media="(prefers-color-scheme: dark)">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icon32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="assets/icon16.png">
   <link rel="apple-touch-icon" href="assets/icon128.png">
@@ -38,10 +38,10 @@
 
   <main id="main">
     <!-- 1. Hero -->
-    <section class="hero" id="top" aria-labelledby="hero-title">
+    <section class="hero band" id="top" aria-labelledby="hero-title">
       <div class="hero-copy">
         <span class="pk-mark logo" role="img" aria-label="Pickup logo"></span>
-        <h1 id="hero-title">Undo the interruption, not the mistake.</h1>
+        <h1 id="hero-title">Undo <mark class="hl">the interruption,</mark> not the mistake.</h1>
         <p class="lede">A Chrome extension that saves your place when you get pulled away and hands it back when you return.</p>
         <div class="ctas">
           <a class="btn primary" href="https://github.com/MarvinRidgeMT/Teens-Hack-Houston-Hackathon/releases/latest">
@@ -66,7 +66,7 @@
     <!-- 2. The problem -->
     <section class="problem" aria-labelledby="problem-title">
       <h2 id="problem-title" class="micro">The problem</h2>
-      <p class="big">You open a tab to check one thing.<br>Twenty minutes later you're somewhere else.<br>Getting back means remembering where you were.</p>
+      <p class="big">You open a tab to check one thing.<br>Twenty minutes later you're <mark>somewhere else</mark>.<br>Getting back means remembering where you were.</p>
       <p class="note">For context, not a promise: Gloria Mark's field studies of office workers found that interrupted work was typically resumed about 23 minutes later, often after two other tasks in between. <a href="https://news.gallup.com/businessjournal/23146/too-many-interruptions-work.aspx">Source: Gallup Business Journal interview with Gloria Mark</a>.</p>
     </section>
 
@@ -116,7 +116,7 @@
     </section>
 
     <!-- 5. Privacy -->
-    <section id="privacy" class="privacy" aria-labelledby="privacy-title">
+    <section id="privacy" class="privacy band" aria-labelledby="privacy-title">
       <h2 id="privacy-title">Privacy</h2>
       <ul class="checks">
         <li>Everything stays in Chrome's local storage on your computer.</li>
@@ -165,7 +165,7 @@
     </section>
 
     <!-- 8. Demo video -->
-    <section id="demo" aria-labelledby="demo-title">
+    <section id="demo" class="band" aria-labelledby="demo-title">
       <h2 id="demo-title">Demo</h2>
       <!-- VIDEO: unlisted YouTube id goes here. Replace the poster block with:
            <iframe src="https://www.youtube-nocookie.com/embed/VIDEO_ID" title="Pickup demo video" loading="lazy"
@@ -205,6 +205,9 @@
         <!-- DEVPOST: link goes here --><span>Devpost (coming)</span>
         <a href="https://github.com/motiondivision/motion/blob/main/LICENSE.md">Motion (MIT licence)</a>
         <a href="https://github.com/juliangarnier/anime/blob/master/LICENSE.md">Anime.js (MIT licence)</a>
+        <a href="https://gsap.com/standard-license">GSAP (standard licence)</a>
+        <a href="https://github.com/darkroomengineering/lenis/blob/main/LICENSE">Lenis (MIT licence)</a>
+        <a href="https://github.com/DavidHDev/react-bits">React Bits BlurText (MIT + Commons Clause)</a>
       </p>
     </div>
     <div class="meadow" aria-hidden="true">
@@ -233,5 +236,10 @@
       <div class="fog-drift"></div>
     </div>
   </footer>
+  <!-- Optional motion, local files only (see assets/site.js). Off under reduced motion. -->
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script src="assets/vendor/ScrollTrigger.min.js"></script>
+  <script src="assets/vendor/lenis.min.js"></script>
+  <script src="assets/site.js"></script>
 </body>
 </html>

@@ -76,3 +76,6 @@ html, body { margin: 0; background: var(--paper); }
 
 /* Calm colours: the meadow stays still (no fireflies or fog drift). */
 :root[data-calm] .fly, :root[data-calm] .st-fog, :root[data-calm] .st-wm { animation: none !important; }
+
+/* Headline blur-in (setup-motion.js, from React Bits' BlurText on Motion). */
+.st-bt { display: inline-block; will-change: transform, filter, opacity; }

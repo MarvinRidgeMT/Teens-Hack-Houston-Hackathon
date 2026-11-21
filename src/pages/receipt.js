@@ -7,9 +7,9 @@ import { receiptText, weekStart } from '../shared/stats.js';
 // Paper theme tokens (src/shared/tokens.css). The image is always Paper so it reads
 // the same wherever it is shared.
 const C = {
-  // Warm Desk, Teal Spark, Paper values (design/tokens.json).
-  paper: '#faf8f4', surface: '#ffffff', mist: '#eeebff', ink: '#1e2230', inkBody: '#5c6170',
-  border: 'rgba(30, 34, 48, 0.12)', accent: '#0d7c72', onAccent: '#ffffff', periwinkle: '#5b4be0', saved: '#0d7c72',
+  // Sage & Ink, Paper values (design/tokens.json).
+  paper: '#f2f4f1', surface: '#ffffff', mist: '#e9edf8', ink: '#1f2421', inkBody: '#5b625d',
+  border: 'rgba(31, 36, 33, 0.12)', accent: '#3b6b57', onAccent: '#ffffff', periwinkle: '#3f57a0', saved: '#3b6b57',
 };
 const FONT = '"Inter", system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif';
 const W = 1200;
@@ -61,7 +61,7 @@ export async function drawReceipt(events, now = Date.now()) {
   ctx.fillStyle = C.paper;
   ctx.fillRect(0, 0, W, H);
   ctx.save();
-  ctx.shadowColor = 'rgba(91, 75, 224, 0.12)';
+  ctx.shadowColor = 'rgba(63, 87, 160, 0.10)';
   ctx.shadowBlur = 32;
   ctx.shadowOffsetY = 12;
   roundRect(ctx, 48, 48, W - 96, H - 96, 32);

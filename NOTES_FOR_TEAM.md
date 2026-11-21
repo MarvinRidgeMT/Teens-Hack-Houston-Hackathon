@@ -160,6 +160,7 @@ Copy two pure files as they are into your scripts. Both are tested in `test/feat
 - The card itself is **unchanged tonight** (no "card v2" yet).
 - Notification copy v2 and badge colours: merged into main **Fri 8:23 PM ET**, both conditions (see `test/REAL_CHROME_LOG.md`). Each pilot laptop's reload time goes there too.
 - Palette badge colours (`release/v1`, tag `v1.0-rc`): merged into main **Fri 9:43 PM ET**, both conditions. The card is unchanged, so there's no "card v2 (palette)".
+- "Sage & Ink" palette (branch `palette/v2`, Fri ~11:30 PM ET): **not merged, not on any pilot laptop.** It changes the badge colours again (parked slate blue `#3f57a0`, saved sage `#3b6b57`, away/neutral `#5b625d`, wrapped `#1f2421`), so if it ever merges, log the exact time here and in `test/REAL_CHROME_LOG.md` like the 9:43 PM entry. The card is still unchanged. Details: `design/SOURCE.md`.
 
 ## Pages (redesign/pages)
 
