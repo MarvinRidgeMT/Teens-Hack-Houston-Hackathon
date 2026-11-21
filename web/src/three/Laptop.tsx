@@ -35,6 +35,27 @@ const ROWS: { h: number; keys: number[] }[] = [
 const KB_W = 14.5 * U;
 const KB_D = ROWS.reduce((sum, r) => sum + r.h, 0) * U;
 
+/**
+ * Outer corners of the open laptop in its parent's space: the base footprint and the top edge of the lid.
+ * The camera rig uses them to keep the whole laptop inside the canvas.
+ */
+export function laptopHull(): THREE.Vector3[] {
+  const z0 = 0.25; // the Laptop group's own offset
+  const hingeY = TOP + 0.02;
+  const hingeZ = z0 - BASE_D / 2 + 0.03;
+  const tilt = Math.PI - OPEN; // the lid's angle up from the deck, measured backwards
+  const lidY = hingeY + LID_D * Math.sin(tilt) + LID_H;
+  const lidZ = hingeZ - LID_D * Math.cos(tilt);
+  const pts: THREE.Vector3[] = [];
+  for (const sx of [-1, 1]) {
+    const x = (sx * BASE_W) / 2;
+    pts.push(new THREE.Vector3(x, -BASE_H / 2, z0 + BASE_D / 2));
+    pts.push(new THREE.Vector3(x, -BASE_H / 2, z0 - BASE_D / 2));
+    pts.push(new THREE.Vector3(x, lidY, lidZ));
+  }
+  return pts;
+}
+
 function roundedRect(w: number, d: number, r: number) {
   const s = new THREE.Shape();
   const x = -w / 2, y = -d / 2;
