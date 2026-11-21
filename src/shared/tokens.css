@@ -1,4 +1,4 @@
-/* Pickup design tokens: Paper (light) and Blue hour (dark).
+/* Pickup design tokens: Paper (light) and Blue hour (dark), palette "Warm Desk, Teal Spark".
    Source: design/tokens.json (see design/SOURCE.md). Every Pickup page loads this
    file first. The theme follows prefers-color-scheme; data-theme="light" or "dark"
    on <html> (or the shadow host) forces one. data-readable turns on the
@@ -14,27 +14,36 @@
 }
 
 :root, :host {
-  /* Paper */
-  --paper: #f1f1ee;
-  --surface: #fbfbf9;
-  --mist: #e4e5f2;
-  --ink: #0c0c0c;
-  --ink-body: #55555a;
-  --border: rgba(12, 12, 12, 0.12);
-  --border-strong: #8a8a90;
-  --accent: #0c0c0c;
+  /* Paper (Warm Desk, Teal Spark). Generated from design/tokens.json. */
+  --paper: #faf8f4;
+  --surface: #ffffff;
+  --ink: #1e2230;
+  --ink-body: #5c6170;
+  --border: rgba(30, 34, 48, 0.12);
+  --border-strong: #8a8f9c;
+  --accent: #0d7c72;
   --on-accent: #ffffff;
-  --periwinkle: #4347b8;
-  --focus-ring: #4347b8;
-  --state-parked: #4347b8;
-  --state-away: #b45309;
-  --state-wrapped: #6d28d9;
-  --state-saved: #15803d;
-  --state-neutral: #57534e;
+  --state-parked: #5b4be0;
+  --state-away: #5c6170;
+  --state-wrapped: #1e2230;
+  --state-saved: #0d7c72;
+  --state-neutral: #5c6170;
   --on-state: #ffffff;
-  --shadow-card: 0 1px 2px rgba(12, 12, 12, 0.06), 0 12px 32px rgba(67, 71, 184, 0.16);
-  --shadow-tile: 0 1px 2px rgba(0, 0, 0, 0.25);
-  --glow: rgba(67, 71, 184, 0.35);
+  --accent-tint: #e3f4f1;
+  --accent-tint-ink: #0b6e65;
+  --resume: #5b4be0;
+  --resume-tint: #eeebff;
+  --spark: #2dd4bf;
+  --reward: #ffb547;
+  --rest: #8a8f9c;
+  --danger: #b42318;
+  --on-spark: #1e2230;
+  --on-reward: #1e2230;
+  --mist: var(--resume-tint);
+  --periwinkle: var(--resume);
+  --focus-ring: var(--resume);
+  --shadow-card: 0 1px 2px rgba(30, 34, 48, 0.06), 0 12px 32px rgba(91, 75, 224, 0.12);
+  --glow: rgba(91, 75, 224, 0.35);
 
   --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
@@ -62,48 +71,68 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]), :host(:not([data-theme="light"])) {
-    --paper: #0d0e1a;
-    --surface: #161829;
-    --mist: #22253d;
-    --ink: #f1f1ee;
-    --ink-body: #b3b5c9;
-    --border: rgba(241, 241, 238, 0.14);
-    --border-strong: #6c6f8c;
-    --accent: #f1f1ee;
-    --on-accent: #0c0c0c;
-    --periwinkle: #a9acf5;
-    --focus-ring: #a9acf5;
-    --state-parked: #7c80ee;
-    --state-away: #f59e0b;
-    --state-wrapped: #a78bfa;
-    --state-saved: #4ade80;
-    --state-neutral: #a8a29e;
-    --on-state: #0c0c0c;
+    --paper: #14171f;
+    --surface: #1c2029;
+    --ink: #e6e8ee;
+    --ink-body: #9aa0ae;
+    --border: rgba(230, 232, 238, 0.14);
+    --border-strong: #717785;
+    --accent: #3dd6c4;
+    --on-accent: #14171f;
+    --state-parked: #a99cff;
+    --state-away: #9aa0ae;
+    --state-wrapped: #e6e8ee;
+    --state-saved: #3dd6c4;
+    --state-neutral: #9aa0ae;
+    --on-state: #14171f;
+    --accent-tint: #173b38;
+    --accent-tint-ink: #7ee8da;
+    --resume: #a99cff;
+    --resume-tint: #2a2750;
+    --spark: #3dd6c4;
+    --reward: #ffc46b;
+    --rest: #9aa0ae;
+    --danger: #f97066;
+    --on-spark: #14171f;
+    --on-reward: #14171f;
+    --mist: var(--resume-tint);
+    --periwinkle: var(--resume);
+    --focus-ring: var(--resume);
     --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 16px 40px rgba(0, 0, 0, 0.55);
-    --glow: rgba(169, 172, 245, 0.4);
+    --glow: rgba(169, 156, 255, 0.4);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"], :host([data-theme="dark"]) {
-  --paper: #0d0e1a;
-  --surface: #161829;
-  --mist: #22253d;
-  --ink: #f1f1ee;
-  --ink-body: #b3b5c9;
-  --border: rgba(241, 241, 238, 0.14);
-  --border-strong: #6c6f8c;
-  --accent: #f1f1ee;
-  --on-accent: #0c0c0c;
-  --periwinkle: #a9acf5;
-  --focus-ring: #a9acf5;
-  --state-parked: #7c80ee;
-  --state-away: #f59e0b;
-  --state-wrapped: #a78bfa;
-  --state-saved: #4ade80;
-  --state-neutral: #a8a29e;
-  --on-state: #0c0c0c;
+  --paper: #14171f;
+  --surface: #1c2029;
+  --ink: #e6e8ee;
+  --ink-body: #9aa0ae;
+  --border: rgba(230, 232, 238, 0.14);
+  --border-strong: #717785;
+  --accent: #3dd6c4;
+  --on-accent: #14171f;
+  --state-parked: #a99cff;
+  --state-away: #9aa0ae;
+  --state-wrapped: #e6e8ee;
+  --state-saved: #3dd6c4;
+  --state-neutral: #9aa0ae;
+  --on-state: #14171f;
+  --accent-tint: #173b38;
+  --accent-tint-ink: #7ee8da;
+  --resume: #a99cff;
+  --resume-tint: #2a2750;
+  --spark: #3dd6c4;
+  --reward: #ffc46b;
+  --rest: #9aa0ae;
+  --danger: #f97066;
+  --on-spark: #14171f;
+  --on-reward: #14171f;
+  --mist: var(--resume-tint);
+  --periwinkle: var(--resume);
+  --focus-ring: var(--resume);
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 16px 40px rgba(0, 0, 0, 0.55);
-  --glow: rgba(169, 172, 245, 0.4);
+  --glow: rgba(169, 156, 255, 0.4);
   color-scheme: dark;
 }
 
