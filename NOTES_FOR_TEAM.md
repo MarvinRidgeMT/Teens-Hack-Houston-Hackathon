@@ -94,3 +94,68 @@ One static page in `site/` for judges (preview: `python3 -m http.server -d site 
 - **The Download button needs two things by Saturday:** a **v1.0 GitHub release with the zip** (it links to `/releases/latest`), and the **repo public** (a private repo's releases and Pages are invisible to judges).
 - **Abhinav:** fill the `PILOT RESULTS` block Saturday 10 AM (real numbers only), the `VIDEO` id and the `DEVPOST` link. The page says "open the dashboard and click Load sample data": that button must exist.
 - **Sidd:** drop the 30-second install GIF at `site/assets/install.gif` and swap it in for `install-poster.jpg` (comment in `index.html`).
+
+## Redesign + research features (Fri night, branch `redesign/engine-panel`)
+
+Design system imported into `design/` (source and version in `design/SOURCE.md`). Every Pickup UI loads `src/shared/tokens.css` (Paper / Blue hour, follows `prefers-color-scheme`, bundled Inter) and `src/shared/pk.css` (Button, Chip, Badge, Card, Toast, Field). No font comes from the network; `check-integration` now FAILs any `fonts.googleapis.com` / `fonts.gstatic.com` reference.
+
+**Engine changes (all additive; the event schema is unchanged):**
+- `BADGE` uses the Paper state colours (parked `#4347b8`, away `#b45309`, wrapped `#6d28d9`, saved `#15803d`, neutral `#57534e`). Glyphs unchanged.
+- Notification copy names the key and drops "is waiting": nudge "Your next step for <task>" / "Next: … · Alt+R takes you back"; break-over and Start here messages end in "· Alt+R takes you back". This reaches **both** conditions equally.
+- `settings.features` flags, read with `featuresOf(settings)`: `readyNote`, `youWereHere`, `videoReplay`, `adaptiveCard`, `receipt` default on, `readableCard` off.
+- `parkNote` takes optional `stoppedAt`, `stuckOn` (stored on the breadcrumb, 120 chars, only together with a next step). `showCard` and `startHere` pass them, plus `features`.
+- `restoreScroll` is now `{ scrollY, highlight?, video? }`. `snapshot` / `state` replies may include `video: { currentTime, duration, src }`.
+- `manifest.json`: `assets/fonts/InterVariable.woff2` is web-accessible (`use_dynamic_url`), so a Shadow DOM can load it with `chrome.runtime.getURL`.
+
+### For Sidd (`src/content/`): change list. Not done, because you haven't signed off on me editing your folder
+
+Copy two pure files as they are into your scripts. Both are tested in `test/features.test.mjs`.
+- `src/shared/card-logic.js`: `cardVariant`, `compactLine`, `checklistItems`, `stoppedAtDefault`, `replayFrom`, `clockText`, `videoChipText`.
+- `src/shared/find-text.js`: `locateHighlight`, `rawIndexToNode`, `canSearchText`.
+
+1. **Theme (D1).**
+   - Swap `TOKENS` in `card.js` for the token values in `src/shared/tokens.css`: Paper by default, and Blue hour under `@media (prefers-color-scheme: dark)` on `:host`.
+   - Load Inter at **document level**, not inside the shadow root: Chrome ignores `@font-face` in shadow trees. Use `const f = new FontFace('Pickup Inter', `url(${chrome.runtime.getURL('assets/fonts/InterVariable.woff2')})`); document.fonts.add(f); f.load()`. The unique family name means a page's own "Inter" can't collide. Fall back to `system-ui`. Check in Chrome that the `getURL` URL loads (the manifest entry uses `use_dynamic_url`).
+   - Put the tokens on an inner wrapper inside the shadow root, or prefix them `--pk-`. Names like `--border` set on `:host` lose to page rules that match the host element.
+   - Restyle the three surfaces: return card → ReturnCard (`design/components/ReturnCard/`); overlay → ParkPrompt; parked pill → Toast with the drawn check.
+   - Keep the same keys (Enter, T, Esc), the same messages, your `TOP` guards and `isOwnEvent` (card clicks never count as work interaction).
+   - Motion: keep your vendored `src/vendor/motion.js` as the only copy. The design system's copy is v11.18.2 and a different build; check that `animate`, `stagger` and the spring options it uses exist in yours. Only animate opacity and transforms.
+2. **F1, ParkPrompt plan.**
+   - Add three fields: **Stopped at…**, prefilled with `stoppedAtDefault(document.title, <nearest h1–h3 above the viewport>)` and editable; **Next I'll…**, placeholder "When I'm back, I'll first ___"; **Stuck on…**, optional.
+   - Fast path: typing and pressing Enter saves at once with the next step only. Tab reveals the other two fields. Esc cancels.
+   - Send `{ type: 'parkNote', nextStep, stoppedAt, stuckOn, taskName? }`. The plan belongs to its next step: the engine drops it when a different next step is written later, and never sends it without one. Skip the extra fields when `features.readyNote` is false (read `settings.features` from storage when the overlay opens).
+3. **F4, adaptive card.**
+   - Choose the variant with `cardVariant(msg.awayMs, { adaptive: msg.features.adaptiveCard })`.
+   - `compact` is one line, `compactLine(msg)`, with the same keys.
+   - `full` is the ReturnCard with this order: Stopped at → Next (in `mist`, "you wrote this") → Stuck on, omitting empty lines. Below it, the `checklistItems(msg)` list as tickable checkboxes. Ticking sends nothing.
+   - Start here (the `startHere` message) uses the Start here variant and also shows `stoppedAt` / `stuckOn`.
+4. **F2, "You were here".**
+   - On `restoreScroll` with `highlight` (and `canSearchText(location.href)`):
+     - TreeWalker over the visible text nodes; join their text; record each node's start index.
+     - Call `locateHighlight(joined, msg.highlight, { yAt, savedY: msg.scrollY })`, where `yAt` maps an index to its text node's `getBoundingClientRect().top + scrollY`.
+     - Turn the result into a `Range` with `rawIndexToNode` (for the end, map `end - 1` and add 1 to the offset), scroll it to the centre, and mark it with `CSS.highlights.set('pickup-here', new Highlight(range))`.
+     - Inject `::highlight(pickup-here) { background: rgba(67,71,184,.22); }` in the page (`<style>` with an id, removed on clear); don't wrap DOM nodes.
+     - Show a one-time ring glow of about 2 s in a fixed shadow-DOM box over the range rect (a static outline under reduced motion).
+     - Clear the mark on the next scroll or keypress.
+   - `null`, or no `CSS.highlights`: restore `scrollY` exactly as today, silently. In Google Docs keep the scroll restore only.
+5. **F3, video.**
+   - On `snapshot` and `state`: if the top frame has a `<video>` with `currentTime > 5`, add `video: { currentTime, duration, src: location.href }`.
+   - On `restoreScroll` with `video`: re-query the `<video>` at that moment (YouTube is a single-page app). Apply it only when there is exactly one candidate video, then set `currentTime = replayFrom(video.currentTime)`. The engine sends `video` only when the tab's URL is exactly the saved one, query included, and never on an Alt+R while you're already on the task.
+   - Leave it paused (never call `play()`, never unmute).
+   - Show a Chip near the player with `videoChipText(video.currentTime)` ("Replaying from 12:40 · you left at 12:50 · Space to play").
+   - Panopto, Kaltura and Canvas iframes are roadmap (they need extra host permissions).
+6. **F5, accessibility.**
+   - Card and ParkPrompt: `role="dialog"` with `aria-labelledby` / `aria-describedby` (the card already has them). Focus Resume on open and keep focus inside the card (Tab wraps). Esc means Not now.
+   - Announce the next step with `aria-live="polite"`.
+   - **Readable card** (`features.readableCard`): set `data-readable` on the shadow host. `tokens.css` has the `:host([data-readable])` sizes: larger text, 1.5× line height, extra letter spacing, body copy in full ink.
+7. **Pilot fairness.**
+   - Don't touch the coin flip, `armTimer` / `firstInteraction` timing, or the "card clicks don't count" rule.
+   - The moment the new card ships, add **"card v2 from <time>"** to `test/REAL_CHROME_LOG.md` and here. The compact variant can be worked out later from `awayMs` (< 300000), so no new event field is needed.
+
+**For Abhinav:**
+- F4 variant for stats: `awayMs < 300000` is compact (pickup condition only); no schema change.
+- `stats.js`, popup, setup and dashboard are on `redesign/pages` for your review.
+
+**Treatment change log:**
+- The card itself is **unchanged tonight** (no "card v2" yet).
+- The notification copy and badge colours change for both conditions at the moment `redesign/engine-panel` merges. Anish adds that time to `test/REAL_CHROME_LOG.md` when merging.

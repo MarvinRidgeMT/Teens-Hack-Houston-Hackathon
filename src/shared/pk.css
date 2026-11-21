@@ -1,0 +1,95 @@
+/* Pickup components (from design/components/bundle.css). Load after tokens.css.
+   Every value reads a token. Motion is CSS here (the tokens' easings stand in for
+   Motion's springs); it animates only opacity and transforms and is off under
+   prefers-reduced-motion, which shows the end state. */
+
+.pk { font-family: var(--font-sans); color: var(--ink); -webkit-font-smoothing: antialiased; font-optical-sizing: auto; }
+.pk *, .pk *::before, .pk *::after { box-sizing: border-box; }
+.pk p { margin: 0; }
+/* Component display rules (.pk-card is flex, .pk-row is flex…) must never beat the hidden attribute. */
+[hidden] { display: none !important; }
+.pk :focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.pk-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* Card */
+.pk-card { background: var(--surface); color: var(--ink); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card); padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-3); }
+.pk-card--flat { box-shadow: none; }
+.pk-eyebrow { font: 500 var(--fs-caption)/var(--lh-caption) var(--font-sans); letter-spacing: .01em; color: var(--ink-body); }
+.pk-task { font: 600 var(--fs-title)/var(--lh-title) var(--font-sans); letter-spacing: -.045em; color: var(--ink); overflow-wrap: anywhere; }
+.pk-heading { font: 600 var(--fs-heading)/var(--lh-heading) var(--font-sans); letter-spacing: -.03em; color: var(--ink); margin: 0; }
+.pk-body { font: 400 var(--fs-body)/var(--lh-body) var(--font-sans); letter-spacing: var(--ls-body); color: var(--ink-body); }
+.pk-meta { font: 400 var(--fs-caption)/var(--lh-caption) var(--font-sans); letter-spacing: .01em; color: var(--ink-body); }
+.pk-step { background: var(--mist); border-radius: var(--radius-md); padding: 10px var(--space-3);
+  font: 400 var(--fs-body)/var(--lh-body) var(--font-sans); letter-spacing: var(--ls-body); color: var(--ink); overflow-wrap: anywhere; }
+.pk-step small { display: block; font: 400 var(--fs-caption)/var(--lh-caption) var(--font-sans); letter-spacing: .01em; color: var(--ink-body); margin-bottom: 2px; }
+.pk-row { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+
+/* Button: primary (one per view), quiet, ghost; key hint after the label */
+.pk-btn { appearance: none; display: inline-flex; align-items: center; gap: 5px; min-height: 34px; padding: 0 11px;
+  font: 500 var(--fs-label)/1 var(--font-sans); letter-spacing: -.01em; border-radius: var(--radius-md);
+  border: 1px solid var(--border-strong); background: var(--surface); color: var(--ink); cursor: pointer;
+  transition: transform var(--duration-fast) var(--ease-out); text-decoration: none; }
+.pk-btn:hover { transform: translateY(-1px); }
+.pk-btn:active { transform: scale(.96); transition-timing-function: var(--ease-spring); }
+.pk-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.pk-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+.pk-btn--primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.pk-btn--ghost { border-color: transparent; background: transparent; color: var(--ink-body); }
+.pk-btn--sm { min-height: 28px; padding: 0 9px; }
+.pk-kbd { font: 500 var(--fs-kbd)/16px var(--font-mono); padding: 0 4px; border-radius: var(--radius-sm); border: 1px solid currentColor; white-space: nowrap; }
+
+/* Brand tile */
+.pk-mark { position: relative; display: inline-block; width: 30px; height: 30px; border-radius: var(--radius-md); background: var(--accent); box-shadow: var(--shadow-tile); flex: none; }
+.pk-mark::after { content: ""; position: absolute; left: 13%; right: 13%; bottom: 14%; height: 19%; border-radius: var(--radius-pill); background: var(--on-accent); }
+.pk-logo { display: inline-flex; align-items: center; gap: 10px; font: 500 17px/1 var(--font-sans); letter-spacing: -.02em; color: var(--ink); }
+
+/* Chip: states a fact, not interactive */
+.pk-chip { display: inline-flex; align-items: center; gap: 6px; min-height: 26px; padding: 0 10px; border: 1px solid var(--border);
+  border-radius: var(--radius-pill); background: var(--surface); font: 500 var(--fs-chip)/var(--lh-chip) var(--font-sans);
+  letter-spacing: -.01em; color: var(--ink); white-space: nowrap; }
+.pk-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--state-saved); box-shadow: 0 0 0 2.5px var(--border); flex: none; }
+.pk-dot--away { background: var(--state-away); animation: pk-breathe 2.4s ease-in-out infinite; }
+.pk-dot--parked { background: var(--state-parked); }
+.pk-dot--wrapped { background: var(--state-wrapped); }
+.pk-dot--neutral { background: var(--state-neutral); }
+
+/* Badge: the toolbar states, always paired with text or an aria-label */
+.pk-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; padding: 0 6px;
+  border-radius: var(--radius-pill); font: 700 13px/1 var(--font-sans); color: var(--on-state); flex: none; }
+.pk-badge--parked { background: var(--state-parked); }
+.pk-badge--away { background: var(--state-away); }
+.pk-badge--wrapped { background: var(--state-wrapped); }
+.pk-badge--saved { background: var(--state-saved); }
+.pk-badge--neutral { background: var(--state-neutral); }
+
+/* Field */
+.pk-label { font: 500 var(--fs-label)/var(--lh-label) var(--font-sans); color: var(--ink); }
+.pk-input { width: 100%; min-height: 38px; font: 400 var(--fs-body)/var(--lh-body) var(--font-sans); padding: 0 var(--space-3);
+  border-radius: var(--radius-md); border: 1px solid var(--border-strong); background: var(--surface); color: var(--ink); }
+.pk-input::placeholder { color: var(--ink-body); }
+.pk-input:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+/* Toast */
+.pk-toast { display: inline-flex; align-items: center; gap: 10px; padding: 10px 14px 10px 10px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius-pill); box-shadow: var(--shadow-card);
+  font: 500 var(--fs-label)/var(--lh-label) var(--font-sans); color: var(--ink); }
+.pk-check path { stroke-dasharray: 1; stroke-dashoffset: 0; animation: pk-draw var(--duration-slow) var(--ease-out) both; }
+
+/* Links */
+.pk-link { color: var(--periwinkle); text-decoration: none; }
+.pk-link:hover { text-decoration: underline; }
+
+/* Motion */
+.pk-enter { animation: pk-enter 450ms var(--ease-spring) both; }
+.pk-rise { animation: pk-rise var(--duration-base) var(--ease-out) both; animation-delay: calc(var(--i, 0) * var(--stagger)); }
+.pk-glow { animation: pk-glow calc(var(--duration-slow) * 2) ease-in-out 1 both; }
+@keyframes pk-enter { from { opacity: 0; transform: translateY(-10px) scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes pk-rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes pk-glow { 0%, 100% { box-shadow: 0 0 0 0 transparent; } 50% { box-shadow: 0 0 0 3px var(--glow); } }
+@keyframes pk-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes pk-breathe { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .pk *, .pk *::before, .pk *::after, .pk { animation: none !important; transition: none !important; }
+}

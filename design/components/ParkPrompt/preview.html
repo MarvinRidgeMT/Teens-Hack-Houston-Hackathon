@@ -1,0 +1,41 @@
+<!-- @dsCard group="Cards" height=280 subtitle="Alt+P: type a step and press Park" -->
+<div class="pk" style="padding:20px;background:var(--paper);min-height:250px">
+  <form class="pk-card" role="dialog" aria-label="Park this task" id="park">
+    <div id="fields" style="display:flex;flex-direction:column;gap:12px;overflow:hidden">
+      <p class="pk-task" style="font-size:16px;line-height:20px;letter-spacing:-.03em">Park this task</p>
+      <label class="pk-label" for="step">Your next step <span style="color:var(--ink-body);font-weight:400">(optional)</span></label>
+      <input class="pk-input" id="step" placeholder="e.g. find a second source for paragraph 3">
+      <div class="pk-row">
+        <button class="pk-btn pk-btn--primary" type="submit">Park <span class="pk-kbd">Enter</span></button>
+        <button class="pk-btn pk-btn--ghost" type="button" id="cancel">Cancel <span class="pk-kbd">Esc</span></button>
+      </div>
+    </div>
+    <div id="done" role="status" style="display:none;align-items:center;gap:8px">
+      <span class="pk-badge pk-badge--saved" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path id="tick" d="M4 12.5l5 5L20 6.5" pathLength="1" style="stroke-dasharray:1"/></svg></span>
+      <span class="pk-label">Parked. Alt+R brings you back.</span>
+    </div>
+  </form>
+</div>
+<script>
+const M = window.Motion || {};
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const go = (el, k, o) => (M.animate && !reduce ? M.animate(el, k, o) : Promise.resolve());
+const OUT = [0.22, 1, 0.36, 1], IN = [0.4, 0, 1, 1];
+const form = document.getElementById("park"), fields = document.getElementById("fields"), done = document.getElementById("done");
+function enter() {
+  fields.style.display = "flex"; fields.style.height = ""; fields.style.opacity = ""; done.style.display = "none";
+  go(form, { opacity: [0, 1], y: [-10, 0], scale: [0.98, 1] }, { type: "spring", bounce: 0.25, duration: 0.45 });
+}
+enter();
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  await go(fields, { height: [fields.offsetHeight + "px", "0px"], opacity: 0 }, { duration: 0.22, ease: IN });
+  fields.style.display = "none"; done.style.display = "flex";
+  go(done, { opacity: [0, 1], scale: [0.8, 1] }, { type: "spring", bounce: 0.45, duration: 0.45 });
+  await go(document.getElementById("tick"), { strokeDashoffset: [1, 0] }, { duration: 0.42, ease: OUT });
+  await new Promise((r) => setTimeout(r, 1200));
+  await go(form, { opacity: 0, y: -6 }, { duration: 0.12, ease: IN });
+  setTimeout(enter, 600);
+});
+document.getElementById("cancel").addEventListener("click", async () => { await go(form, { opacity: 0, y: -6 }, { duration: 0.12, ease: IN }); setTimeout(enter, 500); });
+</script>

@@ -1,0 +1,31 @@
+<!-- @dsCard group="Cards" height=330 subtitle="Welcome back: spring, stagger, next-step glow. Click a button to replay" -->
+<div class="pk" style="padding:20px;background:var(--paper);min-height:300px">
+  <section class="pk-card" role="dialog" aria-label="Welcome back to History essay draft" id="card">
+    <div class="pk-row" data-r><span class="pk-chip"><span class="pk-dot pk-dot--away" aria-hidden="true"></span>Away 7 min</span><span class="pk-chip">3 tabs</span></div>
+    <div data-r><p class="pk-eyebrow">Welcome back</p><p class="pk-task">History essay draft</p></div>
+    <p class="pk-step" id="step" data-r><small>Your next step (you wrote this)</small>Finish the paragraph on the 1836 convention.</p>
+    <div class="pk-row" data-r>
+      <button class="pk-btn pk-btn--primary" type="button" id="resume">Resume <span class="pk-kbd">Enter</span></button>
+      <button class="pk-btn" type="button">Tidy <span class="pk-kbd">T</span></button>
+      <button class="pk-btn pk-btn--ghost" type="button">Not now <span class="pk-kbd">Esc</span></button>
+    </div>
+  </section>
+</div>
+<script>
+const M = window.Motion || {};
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const go = (el, k, o) => (M.animate && !reduce ? M.animate(el, k, o) : Promise.resolve());
+const OUT = [0.22, 1, 0.36, 1], IN = [0.4, 0, 1, 1];
+const card = document.getElementById("card"), rows = card.querySelectorAll("[data-r]"), step = document.getElementById("step");
+async function enter() {
+  go(card, { opacity: [0, 1], y: [-10, 0], scale: [0.98, 1] }, { type: "spring", bounce: 0.25, duration: 0.45 });
+  await go(rows, { opacity: [0, 1], y: [6, 0] }, { duration: 0.22, ease: OUT, delay: M.stagger ? M.stagger(0.04, { startDelay: 0.08 }) : 0 });
+  go(step, { boxShadow: ["0 0 0 0px rgba(67,71,184,0)", "0 0 0 3px rgba(67,71,184,0.35)", "0 0 0 0px rgba(67,71,184,0)"] }, { duration: 0.42 * 2, ease: "easeInOut" });
+  document.getElementById("resume").focus({ preventScroll: true });
+}
+enter();
+card.querySelectorAll("button").forEach((b) => b.addEventListener("click", async () => {
+  await go(card, { opacity: 0, scale: 0.98, y: -6 }, { duration: 0.12, ease: IN });
+  setTimeout(enter, 500);
+}));
+</script>

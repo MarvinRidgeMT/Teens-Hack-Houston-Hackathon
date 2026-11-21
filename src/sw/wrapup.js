@@ -4,7 +4,7 @@
 
 import * as store from '../shared/store.js';
 import { MSG } from '../shared/messages.js';
-import { START_HERE_DEBUG_MS, START_HERE_PREFIX, DAY_STARTS_AT_HOUR } from '../shared/constants.js';
+import { START_HERE_DEBUG_MS, START_HERE_PREFIX, DAY_STARTS_AT_HOUR, featuresOf } from '../shared/constants.js';
 import { ensureThreadForTab } from './threads.js';
 import { snapshot, writeBreadcrumb, resume } from './events.js';
 import { cancelNudge } from './nudge.js';
@@ -77,7 +77,7 @@ export async function checkStartHere() {
     type: 'basic',
     iconUrl: chrome.runtime.getURL('assets/icon128.png'),
     title: `Start here: ${thread.name}`,
-    message: step.nextStep ? `Next: ${step.nextStep}` : 'Pick up where you stopped yesterday',
+    message: step.nextStep ? `Next: ${step.nextStep} · Alt+R takes you back` : 'Pick up where you stopped yesterday · Alt+R takes you back',
     priority: 0,
   });
   log('start here shown', thread.name);
@@ -94,6 +94,11 @@ export async function onStartHereClicked(threadId) {
   const step = await nextStepFor({ ...(wu && wu.threadId === threadId ? wu : {}), threadId });
   const msg = { type: MSG.startHere, threadName: thread.name, wrappedAt: wu && wu.threadId === threadId ? wu.at : null };
   if (step.nextStep) { msg.nextStep = step.nextStep; msg.nextStepSource = step.nextStepSource || 'typed'; }
+  // Additive (F1/F4): the plan from the breadcrumb, and which features the card may use.
+  const crumb = await store.getBreadcrumb(threadId);
+  if (crumb && crumb.nextStep && crumb.stoppedAt) msg.stoppedAt = crumb.stoppedAt; // only with its next step
+  if (crumb && crumb.nextStep && crumb.stuckOn) msg.stuckOn = crumb.stuckOn;
+  msg.features = featuresOf(await store.getSettings());
   await sendToTab(r.tabId, msg);
   return r;
 }

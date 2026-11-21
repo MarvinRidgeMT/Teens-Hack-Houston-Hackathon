@@ -132,7 +132,7 @@ export function makeChrome({ now }) {
         sent.push({ tabId: id, frameId: 0, ...clone(msg) });
         if (childReply) return { url: childReply.url, scrollY: 0, highlight: '' };
         const p = page.get(id) || { scrollY: 0, highlight: '' };
-        if (msg.type === 'snapshot') return { url: t.url, scrollY: p.scrollY, highlight: p.highlight };
+        if (msg.type === 'snapshot') return { url: t.url, scrollY: p.scrollY, highlight: p.highlight, ...(p.extra || {}) };
         if (msg.type === 'restoreScroll') { p.scrollY = msg.scrollY; page.set(id, p); }
         return undefined;
       },
@@ -243,7 +243,7 @@ export function makeChrome({ now }) {
     navigate(id, url) { const t = tabs.get(id); t.url = url; c.tabs.onUpdated.fire(id, { url }, clone(t)); },
     blurChrome() { for (const w of windows.values()) w.focused = false; c.windows.onFocusChanged.fire(-1); },
     focusChrome,
-    setPage(id, scrollY, highlight) { page.set(id, { scrollY, highlight }); },
+    setPage(id, scrollY, highlight, extra) { page.set(id, { scrollY, highlight, extra }); }, // extra: more snapshot fields (video)
     idle(state) { c.idle.onStateChanged.fire(state); },
     command(name) { const t = [...tabs.values()].find((x) => x.active); c.commands.onCommand.fire(name, clone(t)); },
     fireAlarm(name) { const a = alarms.get(name); if (a) { alarms.delete(name); c.alarms.onAlarm.fire({ name }); } },

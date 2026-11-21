@@ -265,7 +265,7 @@ async function main() {
   await step('S2', 'Dev setup Apply (real click): settings, register + inject stub', async () => {
     await cdp.send('Target.activateTarget', { targetId: [...sessions.entries()].find(([, v]) => v === ctlSid)[0] });
     await bringFront();
-    const pos = await evalIn(ctlSid, `(() => { document.getElementById('forceCard').checked = true; const r = document.getElementById('apply').getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; })()`);
+    const pos = await evalIn(ctlSid, `(() => { document.getElementById('forceCard').checked = true; const real = document.getElementById('useReal'); if (real) real.checked = false; /* this harness drives the dev stub (Sidd's dev setup defaults to his real scripts) */ const r = document.getElementById('apply').getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; })()`);
     await click(ctlSid, pos.x, pos.y);
     const out = await waitFor(() => evalIn(ctlSid, `document.getElementById('out').textContent.includes('Done.') && document.getElementById('out').textContent`), 10000);
     check(out, 'Apply did not finish: ' + (await evalIn(ctlSid, `document.getElementById('out').textContent`)));

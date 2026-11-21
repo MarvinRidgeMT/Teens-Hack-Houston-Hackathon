@@ -1,0 +1,22 @@
+<!-- @dsCard group="Feedback" height=110 subtitle="Click to replay" -->
+<div class="pk" id="stage" style="padding:24px;background:var(--paper);min-height:90px;cursor:pointer">
+  <div class="pk-toast" role="status" id="toast">
+    <span class="pk-badge pk-badge--saved" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path id="tick" d="M4 12.5l5 5L20 6.5" pathLength="1" style="stroke-dasharray:1;stroke-dashoffset:0"/></svg></span>
+    Parked · next step saved
+  </div>
+</div>
+<script>
+const M = window.Motion || {};
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const go = (el, k, o) => (M.animate && !reduce ? M.animate(el, k, o) : Promise.resolve());
+const OUT = [0.22, 1, 0.36, 1], IN = [0.4, 0, 1, 1];
+const t = document.getElementById("toast"), tick = document.getElementById("tick");
+async function show() {
+  go(t, { opacity: [0, 1], y: [-12, 0] }, { type: "spring", bounce: 0.3, duration: 0.45 });
+  await go(tick, { strokeDashoffset: [1, 0] }, { duration: 0.42, delay: 0.12, ease: OUT });
+  await new Promise((r) => setTimeout(r, 2400));
+  await go(t, { opacity: 0, y: -8 }, { duration: 0.12, ease: IN });
+}
+show();
+document.getElementById("stage").addEventListener("click", show);
+</script>

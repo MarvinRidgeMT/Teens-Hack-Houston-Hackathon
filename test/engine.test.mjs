@@ -99,8 +99,8 @@ await step('5. Switch to YouTube: break starts, nudge scheduled; nudge fires onc
   advance(5 * 60000);
   sim.fireAlarm('nudge:' + b.eventId); await flush();
   assert.equal(sim.notifications.length, 1);
-  assert.equal(sim.notifications[0].title, 'Climate Essay is waiting.');
-  assert.equal(sim.notifications[0].message, 'Next: Find a source for the drought statistic');
+  assert.equal(sim.notifications[0].title, 'Your next step for Climate Essay');
+  assert.equal(sim.notifications[0].message, 'Next: Find a source for the drought statistic · Alt+R takes you back');
 });
 
 await step('6. Return to Wikipedia: event created; pickup shows card with facts', async () => {
@@ -722,19 +722,19 @@ await step('Schema: returnVia has panel and timer values', async () => {
 
 // Feature 4: toolbar badge
 const badgeNow = async () => { await flush(); await sleep(5); await flush(); return { ...sim.badge }; };
-await step('F4: badge shows P (teal) while parked, • (amber) while away, and clears on return', async () => {
+await step('F4: badge shows P (periwinkle) while parked, • (amber) while away, and clears on return', async () => {
   await settle();
   assert.equal((await badgeNow()).text, '');
   await sim.send({ type: 'parkNote', nextStep: 'Write the intro' }, wikiA); await flush();
   let b = await badgeNow();
   assert.equal(b.text, 'P');
-  assert.equal(b.color, '#0D9488');
+  assert.equal(b.color, '#4347b8');
   assert.equal(b.title, "Pickup: Climate Essay parked: leave when you're ready");
   sim.activate(yt); await flush();
   b = await badgeNow();
   assert.equal(b.text, '•');
-  assert.equal(b.color, '#D97706');
-  assert.equal(b.title, 'Pickup: Climate Essay is waiting');
+  assert.equal(b.color, '#b45309');
+  assert.equal(b.title, 'Pickup: away from Climate Essay · Alt+R takes you back');
   advance(3 * 60000);
   sim.activate(wikiA); await flush();
   b = await badgeNow();
@@ -940,7 +940,7 @@ await step('F2: Start here shows once on the first activity the next day, and ne
   assert.equal(shown.length, 1);
   assert.equal(shown[0].id, 'starthere:' + thread.id);
   assert.equal(shown[0].title, 'Start here: Climate Essay');
-  assert.equal(shown[0].message, 'Next: Write the conclusion');
+  assert.equal(shown[0].message, 'Next: Write the conclusion · Alt+R takes you back');
   assert.equal((await wrapNow()).shown, true);
   sim.activate(wikiA); await flush(); sim.blurChrome(); sim.focusChrome(1); await flush();
   assert.equal(startHereShown().length, 1, 'never twice');
@@ -974,7 +974,7 @@ await step('F2: with debug on, Start here comes 60 s after wrap-up (demo path)',
   assert.equal(startHereShown().length, before);
   advance(31000); sim.activate(wikiA); await flush();
   assert.equal(startHereShown().length, before + 1);
-  assert.equal(startHereShown().at(-1).message, 'Next: Write the conclusion', 'kept the existing next step');
+  assert.equal(startHereShown().at(-1).message, 'Next: Write the conclusion · Alt+R takes you back', 'kept the existing next step');
   await setSettings({ debug: false });
 });
 

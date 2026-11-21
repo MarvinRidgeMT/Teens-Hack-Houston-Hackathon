@@ -1,0 +1,17 @@
+<!-- @dsCard group="Status" height=96 subtitle="Status chips with stagger" -->
+<div class="pk" id="chips" style="padding:20px;display:flex;gap:8px;flex-wrap:wrap;background:var(--paper);cursor:pointer">
+  <span class="pk-chip"><span class="pk-dot" aria-hidden="true"></span>Saved just now</span>
+  <span class="pk-chip"><span class="pk-dot pk-dot--parked" aria-hidden="true"></span>2 tasks parked</span>
+  <span class="pk-chip"><span class="pk-dot pk-dot--away" aria-hidden="true"></span>Away 7 min</span>
+  <span class="pk-chip"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z"/><path d="M19 11a7 7 0 0 1-14 0M12 18v3"/></svg>Voice on · Alt+V</span>
+</div>
+<script>
+const M = window.Motion || {};
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const go = (el, k, o) => (M.animate && !reduce ? M.animate(el, k, o) : Promise.resolve());
+const OUT = [0.22, 1, 0.36, 1], IN = [0.4, 0, 1, 1];
+const chips = document.querySelectorAll(".pk-chip");
+const run = () => go(chips, { opacity: [0, 1], y: [6, 0] }, { duration: 0.22, ease: OUT, delay: M.stagger ? M.stagger(0.04) : 0 });
+run();
+document.getElementById("chips").addEventListener("click", run);
+</script>

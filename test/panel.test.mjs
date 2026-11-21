@@ -107,7 +107,7 @@ await step('the break-over alarm shows one notification; clicking it returns wit
   assert.equal(notes.length, 1);
   assert.equal(notes[0].id, 'breakend:' + b.eventId);
   assert.equal(notes[0].title, "Break's over: Drought Essay");
-  assert.equal(notes[0].message, 'Next: Find a source for the drought statistic');
+  assert.equal(notes[0].message, 'Next: Find a source for the drought statistic · Alt+R takes you back');
   sim.fireAlarm('breakend:' + b.eventId); await flush();
   assert.equal(breakNotes().length, 1, 'never twice');
   chrome.notifications.onClicked.fire('breakend:' + b.eventId); await flush();

@@ -96,7 +96,7 @@ export async function onAlarm(alarm) {
     type: 'basic',
     iconUrl: chrome.runtime.getURL('assets/icon128.png'),
     title: `Break's over: ${thread ? thread.name : 'your task'}`,
-    message: crumb && crumb.nextStep ? `Next: ${crumb.nextStep}` : 'Pick up where you left off',
+    message: crumb && crumb.nextStep ? `Next: ${crumb.nextStep} · Alt+R takes you back` : 'Pick up where you left off · Alt+R takes you back',
     priority: 1,
   });
   await store.setOpenBreak({ ...ob, breakOverShown: true });
@@ -159,7 +159,7 @@ export async function setNextStep({ threadId, nextStep } = {}, settings) {
   const text = String(nextStep || '').replace(/\s+/g, ' ').trim().slice(0, HIGHLIGHT_MAX);
   const crumb = await store.getBreadcrumb(threadId);
   if (!text) {
-    if (crumb) { const { nextStep: _a, nextStepSource: _b, ...rest } = crumb; await store.putBreadcrumb(rest); }
+    if (crumb) { const { nextStep: _a, nextStepSource: _b, stoppedAt: _c, stuckOn: _d, ...rest } = crumb; await store.putBreadcrumb(rest); } // the plan goes with its step
     return { ok: true };
   }
   if (crumb) { await noteNextStep(thread, null, text, NEXT_STEP_SOURCE.typed, settings); return { ok: true }; }
