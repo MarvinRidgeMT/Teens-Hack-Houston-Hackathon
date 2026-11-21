@@ -77,6 +77,15 @@
         "value": "georgia",
         "createdAt": "2026-11-21T06:27:12.594Z",
         "reason": "Claude triage: .essay is the mock third-party article inside the .browser demo frame; serif signals 'someone else's page', not site type"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "src/pages/dashboard.html"
+        ],
+        "createdAt": "2026-11-21T06:32:27.672Z",
+        "reason": "False positive from the static scan: .pk-chip pills get their inset from min-height 26px, and the bordered .db-scroll table wrappers hold cells with their own padding; neither is visible to an HTML-only scan; predates this session"
       }
     ]
   }
