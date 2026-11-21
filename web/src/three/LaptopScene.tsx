@@ -149,6 +149,13 @@ export default function LaptopScene({ mode, reduced, onFail, margin }: {
   const wrap = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(true);
   const [dpr, setDpr] = useState(1.75);
+  // R3F calls forceContextLoss() when the Canvas unmounts (e.g. the window drops below 900px).
+  // That fires webglcontextlost after we're gone; only a loss while mounted means WebGL really died.
+  const mounted = useRef(false);
+  useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; };
+  }, []);
 
   useEffect(() => {
     const el = wrap.current;
@@ -170,7 +177,7 @@ export default function LaptopScene({ mode, reduced, onFail, margin }: {
           gl.toneMapping = THREE.AgXToneMapping;
           gl.toneMappingExposure = 1.2;
           gl.outputColorSpace = THREE.SRGBColorSpace;
-          gl.domElement.addEventListener('webglcontextlost', (e) => { e.preventDefault(); onFail(); }, { once: true });
+          gl.domElement.addEventListener('webglcontextlost', (e) => { e.preventDefault(); if (mounted.current) onFail(); }, { once: true });
         }}
       >
         <PerformanceMonitor onDecline={() => setDpr(1.1)} onIncline={() => setDpr(1.75)} />
