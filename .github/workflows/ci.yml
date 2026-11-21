@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  extension:
+    name: Extension checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - run: npm test
+      - run: node test/check-integration.mjs
+
+  website:
+    name: Website build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci --no-audit --no-fund
+        working-directory: web
+      - run: npm audit --audit-level=high --omit=dev
+        working-directory: web
+      - run: npm run build
+        working-directory: web
+      - name: site/ matches a fresh build of web/
+        run: |
+          if ! git diff --quiet -- site/ || [ -n "$(git ls-files --others --exclude-standard site/)" ]; then
+            echo "::error::site/ is out of date. Run 'npm --prefix web run build' and commit site/."
+            git status --short site/
+            exit 1
+          fi

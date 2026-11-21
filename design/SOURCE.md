@@ -53,7 +53,7 @@ Anish asked for the download page to be lively, with vibrant, bright, contrastin
 
 ## v3: "Energy outside, calm inside" (branch `redesign/v3`, Sat Nov 21 early hours)
 
-Replaces Sage & Ink and the Highlighter site layer on that branch. Product truth lives in `PRODUCT.md`; the website's direction contract in `.impeccable/surfaces/web-index-html.md`; the finished system is documented in `DESIGN.md`.
+Replaces Sage & Ink and the Highlighter site layer on that branch. Product truth lives in `docs/PRODUCT.md`; the website's direction contract in `docs/internal/impeccable/surfaces/web-index-html.md`; the finished system is documented in `DESIGN.md`.
 
 - **Brand primitives** (new `brand` key in `tokens.json`), from Anish's brief: violet `#6038ff`, lime `#c9ff38`, cyan `#42ddf4`, pink `#ff5cb8`, yellow `#ffe15a`, midnight `#121126`, off-white `#f7f6fb`, lavender `#ece7ff`. Text on violet is white (6.0:1; midnight on violet is only 3.1:1); the four bright colours are fills under midnight text, never text on light grounds.
 - **Website** (`web/`, loud rendition): violet hero and close, midnight walkthrough and privacy, one highlighter colour per idea (lime = your place, cyan = tabs, pink = interruptions, yellow = notes). Bricolage Grotesque (OFL) for display, Inter for text, both self-hosted.

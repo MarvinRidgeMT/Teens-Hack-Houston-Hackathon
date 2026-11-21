@@ -54,6 +54,10 @@ Chrome or Edge on Windows, Mac, Linux and ChromeOS. Not on phones: mobile browse
 - Voice is off by default. When you turn it on, speech is recognised on your device (Chrome's on-device mode); no audio or transcripts are kept.
 - The dashboard's **Delete all** removes every task, note and log entry.
 
+## Security
+
+To report a vulnerability, use **Report a vulnerability** on this repo's Security tab rather than a public issue. [SECURITY.md](SECURITY.md) covers what's supported, the security model and why Pickup needs each permission.
+
 ## Honest limits
 
 - Pickup can't see your phone. It only knows what happens in Chrome.
@@ -76,9 +80,19 @@ npm test
 node test/check-integration.mjs
 ```
 
-`npm test` runs the engine, voice, panel, feature and contrast checks against a fake Chrome in Node. `check-integration` checks the content scripts and pages against the engine contract plus product rules (no network calls, bundled fonts, on-device voice, no hard-coded shortcut labels). `test/dev/real-chrome-gate.mjs` is a real-Chrome smoke test on macOS with Chrome for Testing; results are logged in `test/REAL_CHROME_LOG.md`.
+`npm test` runs the engine, voice, panel, feature and contrast checks against a fake Chrome in Node. `check-integration` checks the content scripts and pages against the engine contract plus product rules (no network calls, bundled fonts, on-device voice, no hard-coded shortcut labels). `test/dev/real-chrome-gate.mjs` is a real-Chrome smoke test on macOS with Chrome for Testing; results are logged in `docs/internal/testing/REAL_CHROME_LOG.md`.
 
 To build the release zip: `scripts/make-release.sh` (writes `pickup-v1.0.1.zip` with only what the extension needs).
+
+GitHub Actions runs these checks on every push and pull request ([CI](.github/workflows/ci.yml)), type-checks and builds the website, and fails if `site/` doesn't match a fresh build of `web/`. [CodeQL](.github/workflows/codeql.yml) scans the JavaScript and TypeScript, and Dependabot keeps the website's dependencies and Actions up to date.
+
+## Docs
+
+- [Product](docs/PRODUCT.md): who it's for, what's built, and the rules it keeps
+- [Design](docs/DESIGN.md) and [Motion](docs/MOTION.md): the design system and animation rules
+- [Release notes](docs/RELEASE_NOTES.md)
+- [Engine contract](src/sw/README.md): messages, events and storage
+- [Team notes](docs/internal/README.md): build-weekend notes, handoff prompts and real-Chrome test logs
 
 ## Team
 
