@@ -1,4 +1,4 @@
-// Pickup — Alt+P "park" overlay (Sid / Surface) · v3
+// Pickup — Alt+P "park" overlay (Sid / Surface) · v3 (V4 visuals: pearl bar, plum text, green save)
 // Classic content script. Needs card.js loaded first (uses PickupUI helpers).
 //
 // Built from what the reference libraries give us:
@@ -26,32 +26,38 @@
       width: min(600px, calc(100vw - 32px)); display: flex; justify-content: center;
       font-family: var(--pk-font); color: var(--pk-ink); font-size: 16px; -webkit-font-smoothing: antialiased; }
     .bar { width: 100%; box-sizing: border-box; background: var(--pk-bg); border-radius: 20px;
-      box-shadow: 0 0 0 1px var(--pk-line) inset, 0 1px 0 0 rgba(255,255,255,.06) inset, 0 30px 60px -20px rgba(0,0,0,.55);
+      -webkit-backdrop-filter: blur(16px) saturate(140%); backdrop-filter: blur(16px) saturate(140%);
+      box-shadow: var(--pk-shadow);
       padding: 12px 12px 10px 16px; transition: box-shadow .2s var(--pk-ease-out); }
-    .bar:focus-within { box-shadow: 0 0 0 1px var(--pk-accent) inset, 0 0 0 4px rgba(201,255,56,.16), 0 30px 60px -20px rgba(0,0,0,.55); }
+    /* Focus: a clear accent ring on the whole bar (the input itself has no outline). */
+    .bar:focus-within { box-shadow: 0 0 0 2px var(--pk-focus) inset, 0 0 0 5px var(--pk-focus-glow), 0 30px 60px -24px rgba(76, 52, 140, .42); }
+    /* Invalid (empty task name): a danger ring, plus the placeholder stays; never colour alone (the bar also shakes, and Enter does nothing). */
+    .bar:has(input[aria-invalid="true"]) { box-shadow: 0 0 0 2px var(--pk-danger) inset, 0 30px 60px -24px rgba(76, 52, 140, .42); }
     /* The input's label, in the text face (no mono caps). */
     .top { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: var(--pk-muted); }
-    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--pk-accent); }
-    .step { margin-left: auto; color: var(--pk-faint); }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--pk-dot); }
+    .step { margin-left: auto; color: var(--pk-faint); font-variant-numeric: tabular-nums; }
     .row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
     input { flex: 1; min-width: 0; box-sizing: border-box; font: inherit; font-size: 18px; letter-spacing: -.01em;
-      color: var(--pk-ink); background: transparent; border: 0; padding: 6px 0; outline: none; caret-color: var(--pk-accent); }
+      color: var(--pk-ink); background: transparent; border: 0; padding: 6px 0; outline: none; caret-color: var(--pk-link); }
     input::placeholder { color: var(--pk-faint); }
-    .go { flex: none; width: 36px; height: 36px; border-radius: 50%; border: 0; cursor: pointer; display: grid; place-items: center;
-      background: var(--pk-accent); color: var(--pk-accent-ink); transition: opacity .15s var(--pk-ease-out); }
-    .go[disabled] { opacity: .35; cursor: default; }
-    .go:focus-visible { outline: 2px solid var(--pk-accent); outline-offset: 3px; }
+    .go { flex: none; width: 38px; height: 38px; border-radius: 50%; border: 0; cursor: pointer; display: grid; place-items: center;
+      background: var(--pk-accent); color: var(--pk-accent-ink); box-shadow: 0 0 0 1px var(--pk-accent-edge) inset;
+      transition: opacity .15s var(--pk-ease-out), background-color .15s var(--pk-ease-out); }
+    .go:hover:not([disabled]) { background: var(--pk-accent-hi); }
+    .go[disabled] { opacity: .4; cursor: default; box-shadow: 0 0 0 1px var(--pk-line-strong) inset; }
+    .go:focus-visible { outline: 2px solid var(--pk-focus); outline-offset: 3px; }
     .hint { margin: 8px 0 0; display: flex; gap: 12px; font-size: 13px; color: var(--pk-muted); }
-    kbd { font-family: var(--pk-mono); font-size: 11px; padding: 2px 5px; border-radius: 5px; margin-right: 4px;
-      background: rgba(255,255,255,.08); box-shadow: 0 0 0 1px var(--pk-line) inset; color: var(--pk-muted); }
+    kbd { font-family: var(--pk-mono); font-size: 11px; padding: 2px 5px; border-radius: 6px; margin-right: 4px;
+      background: var(--pk-key-bg); box-shadow: 0 0 0 1px var(--pk-line-strong) inset; color: var(--pk-muted); }
 
     /* Save Status / Status Island pill */
     .pill { display: inline-flex; align-items: center; gap: 10px; padding: 9px 16px 9px 10px; border-radius: 999px;
-      background: var(--pk-bg); box-shadow: 0 0 0 1px var(--pk-line) inset, 0 20px 40px -16px rgba(0,0,0,.5);
+      background: var(--pk-bg); box-shadow: var(--pk-shadow);
       font-size: 14px; white-space: nowrap; max-width: 100%; }
-    .check { width: 22px; height: 22px; border-radius: 50%; background: var(--pk-accent); display: grid; place-items: center; flex: none; }
+    .check { width: 22px; height: 22px; border-radius: 50%; background: var(--pk-accent); box-shadow: 0 0 0 1px var(--pk-accent-edge) inset; display: grid; place-items: center; flex: none; }
     .check path { stroke: var(--pk-accent-ink); }
-    .pill .what { font-weight: 600; color: var(--pk-accent); }
+    .pill .what { font-weight: 650; color: var(--pk-link); }
     .pill .name { overflow: hidden; text-overflow: ellipsis; color: var(--pk-ink); }
   `;
 

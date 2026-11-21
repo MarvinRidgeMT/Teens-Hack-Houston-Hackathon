@@ -301,13 +301,13 @@ await step('Feature flags default on (readable card off); a partial settings.fea
   assert.equal(C.featuresOf({ features: { videoReplay: false } }).youWereHere, true);
   assert.equal(C.featuresOf({ features: { videoReplay: false } }).videoReplay, false);
 });
-await step('Badge colours are the v3 calm light state values; glyphs unchanged', () => {
-  assert.equal(C.BADGE.parked.color, '#6038ff');
-  assert.equal(C.BADGE.away.color, '#4d4b66');
-  assert.equal(C.BADGE.wrapped.color, '#121126');
-  assert.equal(C.BADGE.timer.color, '#6038ff');
-  assert.equal(C.BADGE.flash['✓'], '#0b7285');
-  assert.equal(C.BADGE.flash.default, '#4d4b66');
+await step('Badge colours are the V4 light state values; glyphs unchanged', () => {
+  assert.equal(C.BADGE.parked.color, '#5a3cc4');
+  assert.equal(C.BADGE.away.color, '#554868');
+  assert.equal(C.BADGE.wrapped.color, '#302545');
+  assert.equal(C.BADGE.timer.color, '#5a3cc4');
+  assert.equal(C.BADGE.flash['✓'], '#2c6b4c');
+  assert.equal(C.BADGE.flash.default, '#554868');
   assert.deepEqual([C.BADGE.parked.text, C.BADGE.away.text, C.BADGE.wrapped.text], ['P', '•', '☾']);
 });
 

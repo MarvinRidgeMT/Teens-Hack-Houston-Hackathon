@@ -1,4 +1,4 @@
-/* Pickup components (from design/components/bundle.css). Load after tokens.css.
+/* Pickup components (from design/components/bundle.css), V4 "Soft Liquid Future" calm rendition. Load after tokens.css.
    Every value reads a token. Motion is CSS here (the tokens' easings stand in for
    Motion's springs); it animates only opacity and transforms and is off under
    prefers-reduced-motion, which shows the end state. */
@@ -12,13 +12,14 @@
 .pk-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
 /* Card */
-.pk-card { background: var(--surface); color: var(--ink); border: 1px solid var(--border); border-radius: var(--radius-lg);
+.pk-card { background: var(--surface); color: var(--ink); border: 1px solid var(--rim); border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card); padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-3); }
 .pk-card--flat { box-shadow: none; }
 .pk-eyebrow { font: 500 var(--fs-caption)/var(--lh-caption) var(--font-sans); letter-spacing: .01em; color: var(--ink-body); }
-/* The task name is "your place": display type on a thin lime highlighter stroke (the brand's signature). */
-.pk-task { width: fit-content; max-width: 100%; font: 680 var(--fs-title)/var(--lh-title) var(--font-display); font-stretch: 94%; letter-spacing: -.025em; color: var(--ink); overflow-wrap: anywhere;
-  background: linear-gradient(var(--spark), var(--spark)) no-repeat 0 100% / 100% .3em; padding-bottom: 1px; }
+/* The task name is "your place": display-weight type over a soft, round-ended mint underlay (fill only, under plum text). */
+.pk-task { position: relative; isolation: isolate; width: fit-content; max-width: 100%; font: 760 var(--fs-title)/var(--lh-title) var(--font-display); letter-spacing: -.022em; color: var(--ink); overflow-wrap: anywhere; padding: 0 2px; margin-bottom: 2px; }
+.pk-task::after { content: ""; position: absolute; z-index: -1; left: -3px; right: -3px; bottom: .12em; height: .4em; border-radius: var(--radius-pill); background: var(--spark); }
+.pk-task:empty::after { display: none; }
 .pk-heading { font: 600 var(--fs-heading)/var(--lh-heading) var(--font-sans); letter-spacing: -.03em; color: var(--ink); margin: 0; }
 .pk-body { font: 400 var(--fs-body)/var(--lh-body) var(--font-sans); letter-spacing: var(--ls-body); color: var(--ink-body); }
 .pk-meta { font: 400 var(--fs-caption)/var(--lh-caption) var(--font-sans); letter-spacing: .01em; color: var(--ink-body); }
@@ -29,15 +30,15 @@
 
 /* Button: primary (one per view), quiet, ghost; key hint after the label */
 .pk-btn { appearance: none; display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 14px;
-  font: 600 var(--fs-label)/1 var(--font-sans); letter-spacing: -.01em; border-radius: 10px; corner-shape: squircle;
+  font: 600 var(--fs-label)/1 var(--font-sans); letter-spacing: -.005em; border-radius: 12px;
   border: 1px solid var(--border-strong); background: var(--surface); color: var(--ink); cursor: pointer;
   transition: transform var(--duration-fast) var(--ease-out); text-decoration: none; }
 .pk-btn:hover { transform: translateY(-1px); }
 .pk-btn:active { transform: scale(.96); transition-timing-function: var(--ease-spring); }
 .pk-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .pk-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
-.pk-btn--primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
-.pk-btn--primary:hover { background: var(--accent-tint-ink); border-color: var(--accent-tint-ink); }
+.pk-btn--primary { background: var(--cta); border-color: var(--cta-edge); color: var(--on-cta); box-shadow: 0 1px 0 rgba(255, 255, 255, .55) inset, 0 6px 14px -8px rgba(76, 52, 140, .35); }
+.pk-btn--primary:hover { background: var(--cta-hover); }
 .pk-btn:not(.pk-btn--primary):not(.pk-btn--ghost):hover { border-color: var(--ink); }
 .pk-btn--ghost { border-color: transparent; background: transparent; color: var(--ink-body); }
 .pk-btn--sm { min-height: 28px; padding: 0 9px; }
@@ -55,7 +56,7 @@
   border-radius: var(--radius-pill); background: var(--surface); font: 500 var(--fs-chip)/var(--lh-chip) var(--font-sans);
   letter-spacing: -.01em; color: var(--ink); white-space: nowrap; }
 .pk-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--state-saved); box-shadow: 0 0 0 2.5px var(--border); flex: none; }
-.pk-dot--away { background: var(--state-away); animation: pk-breathe 2.4s ease-in-out infinite; }
+.pk-dot--away { background: var(--state-away); } /* no breathing: the extension doesn't move all the time */
 .pk-dot--parked { background: var(--state-parked); }
 .pk-dot--wrapped { background: var(--state-wrapped); }
 .pk-dot--neutral { background: var(--state-neutral); }
@@ -72,7 +73,9 @@
 /* Field */
 .pk-label { font: 500 var(--fs-label)/var(--lh-label) var(--font-sans); color: var(--ink); }
 .pk-input { width: 100%; min-height: 38px; font: 400 var(--fs-body)/var(--lh-body) var(--font-sans); padding: 0 var(--space-3);
-  border-radius: var(--radius-md); border: 1px solid var(--border-strong); background: var(--surface); color: var(--ink); }
+  border-radius: 12px; border: 1px solid var(--border-strong); background: var(--surface); color: var(--ink);
+  transition: border-color var(--duration-fast) var(--ease-out); }
+.pk-input:hover { border-color: var(--ink-body); }
 .pk-input::placeholder { color: var(--ink-body); }
 .pk-input:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 
@@ -83,8 +86,8 @@
 .pk-check path { stroke-dasharray: 1; stroke-dashoffset: 0; animation: pk-draw var(--duration-slow) var(--ease-out) both; }
 
 /* Links */
-.pk-link { color: var(--periwinkle); text-decoration: none; }
-.pk-link:hover { text-decoration: underline; }
+.pk-link { color: var(--periwinkle); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+.pk-link:hover { text-decoration-thickness: 2px; }
 
 /* Motion */
 .pk-enter { animation: pk-enter 450ms var(--ease-spring) both; }
