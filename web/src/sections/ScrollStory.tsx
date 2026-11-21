@@ -80,7 +80,7 @@ function Pinned({ reduced }: { reduced: boolean }) {
         </div>
         <div className="wrap story__grid">
           <div className="story__copy">
-            <h2 id="story-title" className="label story__kicker">How it works</h2>
+            <h2 id="story-title" className="sr-only">How it works</h2>
             <div className="story__caps">
               {STORY.map((s, i) => (
                 <div key={s.id} className="story__cap" aria-hidden={scene !== i}>

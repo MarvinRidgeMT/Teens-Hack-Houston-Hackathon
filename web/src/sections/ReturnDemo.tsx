@@ -41,7 +41,7 @@ export function ReturnDemo({ reduced }: { reduced: boolean }) {
         <span className="atmo__light atmo__light--mint" style={{ width: '30vw', height: '30vw', left: '-6vw', bottom: '-4vw' }} />
       </div>
       <div className="wrap">
-        <SectionHead id="rd-title" align="center" label="Try the card" title={<>Every line is something <span className="soft">you did or wrote.</span></>}
+        <SectionHead id="rd-title" align="center" title={<>Every line is something <span className="soft">you did or wrote.</span></>}
           lede="This is the card Pickup shows when you come back to a work page. Press its buttons, or focus it and use Enter, T and Esc. A demo on this page; it doesn't touch your browser." />
 
         <div className="rdemo">

@@ -14,7 +14,7 @@
 .int__doc { color: var(--plum); max-width: 54ch; display: grid; gap: 10px; font-size: 16px; }
 .int__doc-h { font: 720 22px/1.2 var(--font-display); letter-spacing: -0.02em; }
 .int__hl { background: var(--mint-2); color: inherit; border-radius: 4px; padding: 0 2px; }
-.int__caret { display: inline-block; width: 2px; height: 20px; background: var(--plum); animation: blink 1.1s steps(1) infinite; }
+.int__caret { display: inline-block; width: 2px; height: 20px; background: var(--plum); animation: blink 1.1s steps(1) 4; }
 @keyframes blink { 50% { opacity: 0; } }
 .int__video { display: grid; place-items: center; gap: 10px; min-height: 200px; border-radius: var(--r-sm); background: linear-gradient(135deg, var(--violet-soft), var(--bubblegum)); color: var(--plum); font: 650 16px/1 var(--font-ui); }
 .int__card-wrap { position: absolute; top: 14px; right: 14px; width: min(320px, 78%); z-index: 3; }

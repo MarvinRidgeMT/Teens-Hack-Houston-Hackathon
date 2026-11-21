@@ -22,7 +22,7 @@ export function Install() {
     <section className="section install" id="install" aria-labelledby="install-title">
       <div className="wrap install__grid">
         <div>
-          <SectionHead id="install-title" label="Install" title={<>Set up in <span className="soft">about a minute.</span></>}
+          <SectionHead id="install-title" title={<>Set up in <span className="soft">about a minute.</span></>}
             lede="Chrome 123 or newer, on a laptop or desktop. Pickup loads unpacked from a zip; it isn't on the Chrome Web Store. Free, no account." />
           <div className="install__cta">
             <DownloadCta />

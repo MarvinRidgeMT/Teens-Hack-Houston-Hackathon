@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { AnimatePresence, LayoutGroup, motion } from 'motion/react';
-import { Check, Undo2 } from 'lucide-react';
+import { Check, CornerDownLeft, Undo2 } from 'lucide-react';
 import { LiquidGlass } from '../components/glass/LiquidGlass';
 import { GlassButton } from '../components/glass/GlassButton';
 import { SectionHead, ShortcutHint } from '../components/ui';
@@ -20,7 +20,7 @@ function ParkDemo({ reduced }: { reduced: boolean }) {
             <label htmlFor="park-in" className="park__label">Pickup · your next step <span>optional</span></label>
             <div className="park__row">
               <input id="park-in" ref={input} value={text} onChange={(e) => setText(e.target.value)} maxLength={120} placeholder="e.g. Outline paragraph 3" />
-              <button type="submit" className="park__go" aria-label="Park it">↵</button>
+              <button type="submit" className="park__go" aria-label="Park it"><CornerDownLeft size={20} aria-hidden="true" /></button>
             </div>
             <p className="park__hint"><ShortcutHint keys={['Enter']} /> park it · <ShortcutHint keys={['Esc']} /> skip</p>
           </motion.form>
@@ -117,7 +117,7 @@ export function Features({ reduced }: { reduced: boolean }) {
         <span className="atmo__light atmo__light--blush" style={{ width: '34vw', height: '34vw', right: '6vw', bottom: '-6%' }} />
       </div>
       <div className="wrap">
-        <SectionHead id="feat-title" label="Features" title={<>Everything in v1.0, <span className="soft">doing one job well.</span></>}
+        <SectionHead id="feat-title" title={<>Everything in v1.0, <span className="soft">doing one job well.</span></>}
           lede="What Pickup does today. Each demo below runs on this page only." />
 
         <div className="fgal">

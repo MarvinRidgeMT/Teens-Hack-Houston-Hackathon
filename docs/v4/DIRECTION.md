@@ -25,7 +25,7 @@
 Hero: canvas + lilac/mint light · lavender/mint glass objects · green CTA, blush capsule. Interrupted: canvas-2 · blush light grows (the distraction) · one blush chip. Story: pearl stage · mint "saved" capsule · green Resume. Return demo: lilac light · crystal card · green Resume. Features: canvas/ivory alternating · mint and lilac gel panels · blush/green accents per demo. Privacy: sage/mint wash · pearl panels · no accent but focus. Install: canvas · lilac steps · green CTA. Evidence: pearl · lavender table · none. Final CTA: lilac + mint + blush light, crystal surface, green CTA.
 
 ## Radius
-10 (chips, keycaps) · 14 (buttons, inputs) · 20 (cards) · 30 (large panels) · 40 (signature crystal panels, one larger corner allowed) · pill only for nav, CTA, capsules.
+10 (chips, keycaps) · 14 (buttons, inputs) · 20 (cards) · 30 (large panels) · 40 (signature crystal panels; one corner may differ from the other three, a deliberate asymmetry) · pill only for nav, CTA, capsules.
 
 ## Motion vocabulary
 Pointer 100–160 ms · hover 150–240 · press 100–180 · tooltip 150–250 · card 300–500 · nav 250–450 · modal 300–450 · hero key content within 1.2–1.8 s, inputs never blocked.
