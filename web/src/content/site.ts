@@ -154,4 +154,6 @@ export const PILOT_METHOD = [
   { label: 'How', value: 'Each time someone comes back to a task, a coin flip decides whether Pickup shows its card or stays quiet (the control).' },
   { label: 'What we measure', value: 'Time to first interaction: how long until your first click, key or scroll back on the task.' },
   { label: 'What it is not', value: 'Not a study of focus or productivity. Three people is a pilot, not proof.' },
+  // From test/REAL_CHROME_LOG.md (treatment log). Colours only each time; no behaviour, timing or schema changed.
+  { label: 'Card version', value: 'The card\'s colours changed at 9:38 AM (v2) for both conditions; a laptop got it only after reloading Pickup, and none logged a reload. The 11:19 AM restyle (v3) came after the pilot closed at 10:00 AM.' },
 ];

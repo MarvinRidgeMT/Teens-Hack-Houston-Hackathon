@@ -7,14 +7,14 @@ export function BrandMark({ size = 28 }: { size?: number }) {
   return <span className="pk-mark" style={{ width: size, height: size }} aria-hidden="true" />;
 }
 
-/** Keycaps for a shortcut. Pass the key names; "Alt" "P" renders as two caps joined by a plus. */
-export function ShortcutHint({ keys, label }: { keys: readonly string[]; label?: string }) {
+/** Keycaps for a shortcut. Pass the key names; "Alt" "P" renders as two caps joined by a plus (plus={false}: Mac style, no plus). */
+export function ShortcutHint({ keys, label, plus = true }: { keys: readonly string[]; label?: string; plus?: boolean }) {
   if (!keys.length) return null;
   return (
     <span className="keys" role="img" aria-label={label ?? keys.join(' + ')}>
       {keys.map((k, i) => (
         <span key={k + i} className="keys" aria-hidden="true">
-          {i > 0 && <span className="keys__plus">+</span>}
+          {i > 0 && plus && <span className="keys__plus">+</span>}
           <kbd className="keycap">{k}</kbd>
         </span>
       ))}
@@ -26,7 +26,7 @@ export function ShortcutHint({ keys, label }: { keys: readonly string[]; label?:
 export function KeyHint({ id, platform }: { id: KeyId; platform?: Platform }) {
   const current = usePlatform();
   const p = platform ?? current;
-  return <ShortcutHint keys={PLATFORM_KEYS[p][id]} label={keySpoken(p, id)} />;
+  return <ShortcutHint keys={PLATFORM_KEYS[p][id]} label={keySpoken(p, id)} plus={p !== 'mac'} />;
 }
 
 const PLATFORM_CHOICES: readonly { id: Platform; label: string }[] = [
