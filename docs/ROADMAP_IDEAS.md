@@ -9,14 +9,14 @@ A short, honest list for Devpost "What's next" and the Future slide. Nothing her
 - **A restrained reward moment.** A skippable apricot "first comeback today" mark, under 3 seconds and reduced-motion safe. No streaks and no guilt.
 
 ## Getting back into the work
-- **PDF reading position.** Restore the page and spot in Chrome's PDF viewer, where most readings live.
+- **PDF reading position.** Restore the page and spot in Chrome's PDF viewer, where many class readings live.
 - **Lecture resume inside Canvas.** Panopto and Kaltura players sit in iframes and need extra host permissions; v1 handles top-level videos only.
 - **Deadline-aware tasks.** Read due dates from pages the student is already on (Canvas, Classroom), with nothing sent anywhere.
 - **On-device AI recap, opt-in.** A short "where you were" summary from Chrome's built-in model, always labelled as a suggestion and never stored as the student's own words.
 - **Opt-in Google sync** across Chromebooks, clearly disclosed as stored on Google's servers.
 - **Quiet study-with-me mode.** Co-working presence with no chat and no feed.
 - **Weekly reflection.** A once-a-week look back built from the student's own next steps and comebacks.
-- **JSON export and import of everything.** Losing data is the top complaint about tab managers, so a backup students can trust is part of being reliable.
+- **JSON export and import of everything.** Losing saved tabs is a common complaint about tab managers, so a backup students can trust is part of being reliable.
 
 ## What we chose not to build, and why
 - **Pomodoro timers.** Plenty exist. Pickup is about the return, not the countdown; the break timer only plans one break.

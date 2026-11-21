@@ -203,7 +203,7 @@ Token values changed; no token names, components, layout, copy or IDs changed. S
 2. `--pk-panel: rgba(169, 156, 255, .08)`: the next-step box gets the violet tint.
 3. `--pk-line: rgba(230, 232, 238, .14)`; `--pk-line-strong: rgba(230, 232, 238, .26)`.
 4. `--pk-ink: #e6e8ee`; `--pk-muted: #9aa0ae`; `--pk-faint: #8a8f9c`.
-5. `--pk-accent: #2dd4bf` stays spark teal (it's a fill behind dark text): `--pk-accent-ink: #14171f`.
+5. `--pk-accent: #2dd4bf` stays spark teal as the Resume fill behind dark text: `--pk-accent-ink: #14171f`. The task name in the headline (`h2 .thread`) uses it as text; that's fine on the dark card, but to keep "spark never as text" switch it to `--pk-resume` or ink.
 6. Next-step label (`.label b`) → `#a99cff` (resume violet). Add a `--pk-resume: #a99cff` and use it there.
 7. The `.next` box border → `rgba(169, 156, 255, .28)`, so the violet "soft landing" reads.
 8. The overlay (`overlay.js`) uses the same `--pk-*` variables, so it follows. Its hard-coded focus glow `rgba(45,212,191,.15)` can stay.

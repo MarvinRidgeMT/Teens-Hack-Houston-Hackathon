@@ -41,7 +41,7 @@ html, body { margin: 0; background: var(--paper); }
 .st-meadow { position: relative; z-index: 0; flex: none; height: 360px; margin-top: 56px; overflow: hidden; pointer-events: none; }
 .st-sky, .st-flies { position: absolute; inset: 0; width: 100%; height: 100%; }
 .sky0 { stop-color: var(--paper); } .sky1 { stop-color: var(--mist); } .sky2 { stop-color: var(--periwinkle); stop-opacity: .55; }
-.h1 { fill: var(--periwinkle); opacity: .28; } .h2 { fill: var(--state-wrapped); opacity: .22; } .h3 { fill: var(--periwinkle); opacity: .45; }
+.h1 { fill: var(--periwinkle); opacity: .28; } .h2 { fill: var(--resume); opacity: .22; } .h3 { fill: var(--periwinkle); opacity: .45; }
 .fly { fill: #ffd27a; opacity: .7; transform-box: fill-box; transform-origin: center; }
 .st-haze { position: absolute; inset: 0; z-index: 1; background: linear-gradient(to bottom, var(--paper) 0%, transparent 38%); }
 .st-wm { position: absolute; left: 0; right: 0; bottom: -4px; z-index: 2; margin: 0; text-align: center; white-space: nowrap; user-select: none;

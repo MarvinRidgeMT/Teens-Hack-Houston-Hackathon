@@ -30,7 +30,7 @@
   --state-wrapped: #1e2230;
   --state-saved: #0d7c72;
   --on-state: #ffffff;
-  --shadow-card: 0 1px 2px rgba(12, 12, 12, 0.06), 0 12px 32px rgba(67, 71, 184, 0.16);
+  --shadow-card: 0 1px 2px rgba(30, 34, 48, 0.06), 0 12px 32px rgba(91, 75, 224, 0.12);
   --shadow-tile: 0 1px 2px rgba(0, 0, 0, 0.25);
   --firefly: #e09a2b;
 
@@ -236,7 +236,7 @@ main > section.hero { border-top: 0; padding-top: 40px; }
 .sky1 { stop-color: var(--mist); }
 .sky2 { stop-color: var(--periwinkle); stop-opacity: .55; }
 .h1 { fill: var(--periwinkle); opacity: .28; }
-.h2 { fill: var(--state-wrapped); opacity: .22; }
+.h2 { fill: var(--periwinkle); opacity: .22; }
 .h3 { fill: var(--periwinkle); opacity: .45; }
 /* Haze keeps every line of footer copy on near-solid paper */
 .haze { position: absolute; inset: 0; background: linear-gradient(to bottom, var(--paper) 0, var(--paper) calc(100% - var(--meadow-h) * .9), transparent calc(100% - var(--meadow-h) * .35)); }

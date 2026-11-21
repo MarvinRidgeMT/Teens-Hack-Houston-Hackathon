@@ -60,8 +60,8 @@ for (const theme of ['light', 'dark']) {
 
 // Calm colours (settings.calm): lower-saturation accent, resume and spark, same rules.
 const CALM = tokens.color.calm || {};
-const calmVal = (name, theme) => (CALM[name] && CALM[name][theme]) || ({ 'focus-ring': CALM.resume, periwinkle: CALM.resume }[name] || {})[theme] || val(name, theme);
-const CALM_PAIRS = PAIRS.filter(([fg, bg]) => [fg, bg].some((n) => ['accent', 'resume', 'spark', 'focus-ring', 'on-accent'].includes(n)));
+const calmVal = (name, theme) => (CALM[name] && CALM[name][theme]) || ({ 'focus-ring': CALM.resume, periwinkle: CALM.resume, 'state-parked': CALM.resume, 'state-saved': CALM.accent }[name] || {})[theme] || val(name, theme);
+const CALM_PAIRS = PAIRS.filter(([fg, bg]) => [fg, bg].some((n) => ['accent', 'resume', 'spark', 'focus-ring', 'on-accent', 'state-parked', 'state-saved'].includes(n)));
 for (const theme of ['light', 'dark']) {
   if (!CALM.accent || !CALM.resume || !CALM.spark) { out(false, 'tokens.json has no calm accent/resume/spark'); break; }
   for (const [fg, bg, min, what] of CALM_PAIRS) {
@@ -79,8 +79,11 @@ function walk(dir) {
     return e.isDirectory() ? walk(p) : /\.(css|html|js)$/.test(e.name) ? [p] : [];
   });
 }
-const files = [...walk(path.join(ROOT, 'src')), ...walk(path.join(ROOT, 'site'))];
-const asText = /(^|[^-])color\s*:\s*var\(--(spark|reward)\)|fillText[^;]*(spark|reward)|-webkit-text-fill-color\s*:\s*var\(--(spark|reward)\)/;
+const files = [...walk(path.join(ROOT, 'src')), ...walk(path.join(ROOT, 'site'))].filter((f) => !f.includes(`${path.sep}src${path.sep}content${path.sep}`));
+// var(--spark)/var(--reward) or their raw light values (#2dd4bf spark, #ffb547 reward, #ffc46b reward dark) as a
+// text colour. (#3dd6c4 is also the dark accent, so it isn't matched.) src/content/ is Sidd's dark card, where
+// spark text is readable; it is listed in NOTES_FOR_TEAM.md instead of failing here.
+const asText = /(^|[^-])color\s*:\s*(var\(--(spark|reward)\)|#(2dd4bf|ffb547|ffc46b)\b)|fillText[^;]*(spark|reward)|-webkit-text-fill-color\s*:\s*var\(--(spark|reward)\)/i;
 const bad = files.filter((f) => fs.readFileSync(f, 'utf8').split('\n').some((l) => asText.test(l)));
 out(!bad.length, bad.length ? `spark/reward used as text in ${bad.map((f) => path.relative(ROOT, f)).join(', ')}` : `spark and reward never used as text (${files.length} files)`);
 

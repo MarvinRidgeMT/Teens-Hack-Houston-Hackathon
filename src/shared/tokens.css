@@ -44,6 +44,7 @@
   --focus-ring: var(--resume);
   --shadow-card: 0 1px 2px rgba(30, 34, 48, 0.06), 0 12px 32px rgba(91, 75, 224, 0.12);
   --glow: rgba(91, 75, 224, 0.35);
+  --shadow-tile: 0 1px 2px rgba(0, 0, 0, 0.25);
 
   --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
@@ -152,8 +153,8 @@
 /* Calm colours (settings.calm, set as data-calm on <html> by src/shared/theme.js):
    lower-saturation accent, resume and spark (design/tokens.json "calm"). mist,
    periwinkle and focus-ring follow resume. Decorative motion is off under it. */
-:root[data-calm] { --accent: #2f6e67; --resume: #57539a; --spark: #9fd6cc; }
+:root[data-calm] { --accent: #2f6e67; --resume: #57539a; --spark: #9fd6cc; --state-parked: #57539a; --state-saved: #2f6e67; }
 @media (prefers-color-scheme: dark) {
-  :root[data-calm]:not([data-theme="light"]) { --accent: #86c7be; --resume: #b0abdd; --spark: #8ccabf; }
+  :root[data-calm]:not([data-theme="light"]) { --accent: #86c7be; --resume: #b0abdd; --spark: #8ccabf; --state-parked: #b0abdd; --state-saved: #86c7be; }
 }
-:root[data-calm][data-theme="dark"] { --accent: #86c7be; --resume: #b0abdd; --spark: #8ccabf; }
+:root[data-calm][data-theme="dark"] { --accent: #86c7be; --resume: #b0abdd; --spark: #8ccabf; --state-parked: #b0abdd; --state-saved: #86c7be; }
