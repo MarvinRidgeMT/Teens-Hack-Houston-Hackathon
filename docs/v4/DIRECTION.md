@@ -7,7 +7,7 @@
 - **OWN-WORLD:** "Soft Liquid Future". Pale lavender/pearl studio, mint and blush light, believable pastel liquid glass, a premium silver laptop showing the real extension.
 - **STORY:** Working → Interrupted → Park → Return → Resume, told once, on the laptop, in a pinned scroll stage; every other section demonstrates one real capability.
 - **FIRST VIEWPORT:** headline left ("Undo the interruption, not the mistake."), the Blender laptop at a three-quarter pose right, three context capsules (task, next step, time away) lit like the scene, two CTAs.
-- **FORM:** `seed: none (pinned)`. The brief pins the world and the first surface. From `handoff/CLAUDE_CODE_PROMPT_V4_LIQUID_GLASS.md`: "I want an immersive, tactile, light-themed, pastel-colored, liquid-glass product experience"; "Do not retain the giant saturated purple hero"; "Replace the model rather than trying to rescue it with extra shadows."
+- **FORM:** `seed: none (pinned)`. The brief pins the world and the first surface. From `handoff/CLAUDE_CODE_PROMPT_V4_LIQUID_GLASS.md` (§1, §4): "Don't keep the v3 laptop or the saturated purple hero." and "Picture frosted lavender glass, mint-green gel, blush-pink translucent bubbles, pearlescent white … A premium silver laptop sits among a few translucent pastel UI objects that **mean something**."
 - **FINISH:** award-level craft at 320–1920, reduced motion complete, contrast measured over the worst background behind glass.
 
 ## This, not that
