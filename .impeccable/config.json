@@ -62,6 +62,15 @@
         ],
         "createdAt": "2026-11-21T06:10:29.851Z",
         "reason": "Team rule (PRODUCT.md, handoff/CLAUDE_CODE_PROMPT_PALETTE.md): the bundled Inter stays; the site uses it for body text so it matches the extension, with Bricolage Grotesque as the display face"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "src/pages/popup.html"
+        ],
+        "createdAt": "2026-11-21T06:23:26.648Z",
+        "reason": "False positive from the static scan: the flagged .pk-chip status pill gets its vertical inset from min-height 26px (6px above and below 14px text), which the HTML-only scan cannot see; predates this session"
       }
     ]
   }
