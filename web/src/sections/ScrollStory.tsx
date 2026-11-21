@@ -22,7 +22,7 @@ const SHOT: Record<string, string> = {
 /** The pinned story (desktop with motion). One ScrollTrigger timeline with a label per scene. */
 function Pinned({ reduced }: { reduced: boolean }) {
   const root = useRef<HTMLElement>(null);
-  const [scene, setScene] = useState(0);
+  const [scene, setScene] = useState(story.scene);
   useEffect(() => story.subscribe(setScene), []);
 
   useGSAP(() => {
@@ -65,6 +65,8 @@ function Pinned({ reduced }: { reduced: boolean }) {
     q('.story__tick').forEach((tick, i) => {
       tl.to(tick, { '--on': 1, duration: 0.3 }, Math.max(0, i - 0.3));
     });
+    // unmount (resize below 900px, reduced motion, WebGL loss): the next mount starts clean
+    return () => { story.progress = 0; story.setScene(0); };
   }, { scope: root });
 
   const jump = (i: number) => {
@@ -75,7 +77,7 @@ function Pinned({ reduced }: { reduced: boolean }) {
   };
 
   return (
-    <section ref={root} className="story" id="story" aria-labelledby="story-title">
+    <section ref={root} className="story" aria-labelledby="story-title">
       <div className="story__pin">
         <div className="atmo" aria-hidden="true">
           <span className="atmo__light atmo__light--lilac" style={{ width: '50vw', height: '50vw', left: '-14vw', top: '-10vw' }} />
@@ -124,7 +126,7 @@ function Pinned({ reduced }: { reduced: boolean }) {
 /** Reduced motion, small screens and no-WebGL: five calm panels, real screenshots, no pin. */
 function Stacked() {
   return (
-    <section className="section story-stack" id="story" aria-labelledby="story-title">
+    <section className="section story-stack" aria-labelledby="story-title">
       <div className="wrap">
         <h2 id="story-title" className="h2 story-stack__title">How it works</h2>
         <ol className="story-stack__list" role="list">
@@ -154,5 +156,6 @@ function Stacked() {
 
 export function ScrollStory({ reduced }: { reduced: boolean }) {
   const can3D = useCan3D();
-  return !reduced && can3D ? <Pinned reduced={reduced} /> : <Stacked />;
+  // One stable element carries the anchor id, so the nav's observer and deep links survive the swap.
+  return <div id="story">{!reduced && can3D ? <Pinned reduced={reduced} /> : <Stacked />}</div>;
 }

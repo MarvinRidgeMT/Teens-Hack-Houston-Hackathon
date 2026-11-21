@@ -13,14 +13,15 @@ import { HERO_POSE, STORY_POSES, blendPose, fitCamera, type Margin, type Pose } 
 type Mode = 'hero' | 'story';
 const css = (n: string) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const FOV = 28;
+const HERO_SCREENS: Screen[] = ['return'];
 
-function useScreens() {
+function useScreens(wanted: Screen[]) {
   const [tex, setTex] = useState<Partial<Record<Screen, THREE.Texture>>>({});
   const gl = useThree((s) => s.gl);
   useEffect(() => {
     let alive = true;
     const made: THREE.Texture[] = [];
-    SCREENS.forEach(async (s) => {
+    wanted.forEach(async (s) => {
       try {
         const canvas = await drawScreen(s);
         if (!alive) return;
@@ -36,15 +37,16 @@ function useScreens() {
       }
     });
     return () => { alive = false; made.forEach((t) => t.dispose()); };
-  }, [gl]);
+  }, [gl, wanted]);
   return tex;
 }
 
 function Rig({ mode, reduced, margin }: { mode: Mode; reduced: boolean; margin: Margin }) {
   const group = useRef<THREE.Group>(null);
-  const open = useRef(reduced ? 1 : 0);
+  // only the hero plays the opening; the story's laptop is already open
+  const open = useRef(reduced || mode === 'story' ? 1 : 0);
   const { camera, size } = useThree();
-  const screens = useScreens();
+  const screens = useScreens(mode === 'hero' ? HERO_SCREENS : SCREENS);
   const [scene, setScene] = useState(mode === 'hero' ? 3 : story.scene);
   const look = useRef(new THREE.Vector3(...HERO_POSE.look));
   const started = useRef(0);
@@ -71,7 +73,8 @@ function Rig({ mode, reduced, margin }: { mode: Mode; reduced: boolean; margin: 
   useFrame((_, dt) => {
     const d = Math.min(dt, 1 / 20);
     // Opening on wall-clock time (ends in ~1.4 s even on a slow GPU): the lid opens and the laptop settles.
-    if (!reduced && open.current < 1) {
+    if (reduced) open.current = 1;
+    else if (open.current < 1) {
       if (!started.current) started.current = performance.now();
       const t = Math.min(1, (performance.now() - started.current) / 1400);
       open.current = THREE.MathUtils.smootherstep(t, 0, 1);

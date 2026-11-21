@@ -18,9 +18,17 @@ export function ReturnDemo({ reduced }: { reduced: boolean }) {
   const [state, setState] = useState<State>('card');
   const [tidied, setTidied] = useState(false);
   const resume = useRef<HTMLButtonElement>(null);
+  const again = useRef<HTMLSpanElement>(null);
   const t = reduced ? { duration: 0 } : SPRING_CARD;
 
-  useEffect(() => { if (state === 'card' && document.activeElement?.closest('.rdemo')) resume.current?.focus(); }, [state]);
+  // Focus follows the demo: back to Resume when the card returns, to "Show the card again" when it closes.
+  const wasInside = useRef(false);
+  useEffect(() => {
+    if (!wasInside.current) return;
+    if (state === 'card') resume.current?.focus();
+    else again.current?.querySelector('button')?.focus();
+  }, [state]);
+  const track = () => { wasInside.current = !!document.activeElement?.closest('.rdemo-sec'); };
 
   // Keys work only while focus is inside the card, like the real one (it never steals page keys).
   const keys = (e: React.KeyboardEvent) => {
@@ -65,7 +73,7 @@ export function ReturnDemo({ reduced }: { reduced: boolean }) {
             {state === 'card' && (
               <motion.div key="card" className="rdemo__card-wrap" initial={{ opacity: 0, y: -14, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -10, scale: 0.98 }} transition={t}>
                 <LiquidGlass as="section" variant="crystal" radius="36px 36px 36px 22px" text interactive className="rcard"
-                  role="dialog" aria-labelledby="rcard-t" aria-describedby="rcard-next" onKeyDown={keys}>
+                  role="dialog" aria-labelledby="rcard-t" aria-describedby="rcard-next" onKeyDown={(e) => { track(); keys(e); }} onClickCapture={track}>
                   <p className="rcard__meta tnum"><span className="rcard__dot" aria-hidden="true" />Pickup · away 12 min</p>
                   <h3 id="rcard-t" className="rcard__title">Welcome back to <span className="rcard__task">Climate Essay</span></h3>
                   <div className="rcard__next" id="rcard-next">
@@ -81,7 +89,7 @@ export function ReturnDemo({ reduced }: { reduced: boolean }) {
                     <button ref={resume} type="button" className="rcard__resume" onClick={() => setState('resumed')}>
                       Resume <kbd><CornerDownLeft size={13} aria-label="Enter" /></kbd>
                     </button>
-                    <button type="button" className="rcard__quiet" onClick={() => setTidied(true)} disabled={tidied}>
+                    <button type="button" className="rcard__quiet" onClick={() => setTidied(true)} aria-disabled={tidied}>
                       {tidied ? 'Tidied into Later' : <>Tidy distraction tabs? <kbd>T</kbd></>}
                     </button>
                     <button type="button" className="rcard__quiet" onClick={() => setState('dismissed')}>Not now <kbd>Esc</kbd></button>
@@ -95,7 +103,7 @@ export function ReturnDemo({ reduced }: { reduced: boolean }) {
         <div className="rdemo__status">
           <p role="status">{status}</p>
           {tidied && state === 'card' && <GlassButton tone="quiet" onClick={() => setTidied(false)} icon={<Undo2 size={15} />}>Undo tidy</GlassButton>}
-          {state !== 'card' && <GlassButton tone="pearl" onClick={() => { setState('card'); setTidied(false); }} icon={<RotateCcw size={15} />}>Show the card again</GlassButton>}
+          {state !== 'card' && <span ref={again}><GlassButton tone="pearl" onClick={() => { track(); setState('card'); setTidied(false); }} icon={<RotateCcw size={15} />}>Show the card again</GlassButton></span>}
         </div>
       </div>
     </section>

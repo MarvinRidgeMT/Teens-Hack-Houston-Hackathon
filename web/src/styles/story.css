@@ -27,6 +27,7 @@
 
 /* ---------- pinned story ---------- */
 .story { position: relative; background: var(--canvas); }
+#story { position: relative; }
 .story__pin { position: relative; height: 100svh; min-height: 640px; overflow: clip; }
 .story__grid { position: relative; z-index: 1; height: 100%; display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 32px; align-items: center; padding-top: calc(var(--nav-h) + 24px); }
 .story__kicker { margin-bottom: var(--space-5); }

@@ -44,6 +44,10 @@
   transition: opacity var(--dur-hover) var(--ease-out);
 }
 .gbtn:hover .gbtn__shine { opacity: 1; }
+/* the lift uses the `translate` property, so it never fights Motion's transform (magnet, press) */
+.gbtn { transition: translate var(--dur-hover) var(--ease-out); }
+@media (hover: hover) { .gbtn:not([disabled]):hover { translate: 0 -2px; } }
+@media (prefers-reduced-motion: reduce) { .gbtn:hover { translate: none; } }
 .gbtn__icon { display: inline-grid; place-items: center; }
 .gbtn--mint { --b-fill: var(--green); --b-fill-2: var(--green-2); --b-rim: rgba(255, 255, 255, 0.6); }
 .gbtn--blush { --b-fill: var(--blush); --b-fill-2: var(--bubblegum); --b-rim: rgba(255, 255, 255, 0.6); }

@@ -58,7 +58,6 @@ export function GlassButton(props: AsLink | AsButton) {
   const cls = `gbtn gbtn--${tone} gbtn--${size} ${className}`;
   const motionProps = {
     style: { x: sx, y: sy },
-    whileHover: { y: -2 },
     whileTap: { scale: 0.96 },
     transition: SPRING_PRESS,
     onPointerMove: (e: React.PointerEvent<HTMLElement>) => {

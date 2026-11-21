@@ -14,17 +14,26 @@ export function useReducedMotion() {
   return reduced;
 }
 
+let webgl: boolean | null = null;
+/** Probes WebGL once per page and releases the probe context (Chrome caps live contexts at ~16). */
+function hasWebGL(): boolean {
+  if (webgl !== null) return webgl;
+  try {
+    const c = document.createElement('canvas');
+    const ctx = (c.getContext('webgl2') || c.getContext('webgl')) as WebGLRenderingContext | null;
+    webgl = !!ctx;
+    ctx?.getExtension('WEBGL_lose_context')?.loseContext();
+  } catch { webgl = false; }
+  return webgl;
+}
+
 /** True on wide screens with a fine pointer and WebGL: where the 3D stage is worth its cost. */
 export function useCan3D() {
   const [ok, setOk] = useState(false);
   useEffect(() => {
     const mq = matchMedia('(min-width: 900px)');
     const check = () => {
-      let gl = false;
-      try {
-        const c = document.createElement('canvas');
-        gl = !!(c.getContext('webgl2') || c.getContext('webgl'));
-      } catch { gl = false; }
+      const gl = hasWebGL();
       const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
       setOk(mq.matches && gl && !saveData);
     };

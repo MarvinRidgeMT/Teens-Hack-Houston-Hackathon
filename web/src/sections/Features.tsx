@@ -19,7 +19,8 @@ function ParkDemo({ reduced }: { reduced: boolean }) {
             onSubmit={(e) => { e.preventDefault(); setSaved(text.trim()); }}>
             <label htmlFor="park-in" className="park__label">Pickup · your next step <span>optional</span></label>
             <div className="park__row">
-              <input id="park-in" ref={input} value={text} onChange={(e) => setText(e.target.value)} maxLength={120} placeholder="e.g. Outline paragraph 3" />
+              <input id="park-in" ref={input} value={text} onChange={(e) => setText(e.target.value)} maxLength={120} placeholder="e.g. Outline paragraph 3"
+                onKeyDown={(e) => { if (e.key === 'Escape') { e.preventDefault(); setSaved(''); } }} />
               <button type="submit" className="park__go" aria-label="Park it"><CornerDownLeft size={20} aria-hidden="true" /></button>
             </div>
             <p className="park__hint"><ShortcutHint keys={['Enter']} /> park it · <ShortcutHint keys={['Esc']} /> skip</p>
@@ -49,7 +50,7 @@ function TidyDemo({ reduced }: { reduced: boolean }) {
   const task = TABS.filter((x) => x.kind === 'task');
   const breaks = TABS.filter((x) => x.kind === 'break');
   return (
-    <div className="fdemo fdemo--tidy">
+    <div className="fdemo fdemo--tidy" onKeyDown={(e) => { if (e.key.toLowerCase() === 't' && !(e.target instanceof HTMLInputElement)) { e.preventDefault(); setTidy(true); } }}>
       <LayoutGroup>
         <ul className="tidy" aria-label="Example tabs">
           <motion.li layout transition={t} className="bf__group">Climate Essay</motion.li>

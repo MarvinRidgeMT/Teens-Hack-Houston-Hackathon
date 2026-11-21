@@ -19,12 +19,26 @@ export function App() {
 
   // A deep link (#return-card) scrolls before the story's pin adds its height, so it would land
   // inside the story. Once the pin exists, measure again and go to the real target.
+  // On reload, the prerendered (stacked) story swaps to the pinned one after mount, so the browser's
+  // own scroll restoration would land in the wrong place: restore our saved position instead.
   useEffect(() => {
-    const id = decodeURIComponent(location.hash.slice(1));
-    if (!id) return;
-    const go = () => { ScrollTrigger.refresh(); document.getElementById(id)?.scrollIntoView(); };
+    let id = '';
+    try { id = decodeURIComponent(location.hash.slice(1)); } catch { id = ''; }
+    let saved = NaN;
+    try {
+      history.scrollRestoration = 'manual';
+      saved = Number(sessionStorage.getItem('pk-scroll'));
+    } catch { /* storage blocked: start at the top */ }
+    const save = () => { try { sessionStorage.setItem('pk-scroll', String(Math.round(scrollY))); } catch { /* ignore */ } };
+    addEventListener('pagehide', save);
+    const go = () => {
+      ScrollTrigger.refresh();
+      const el = id ? document.getElementById(id) : null;
+      if (el) el.scrollIntoView();
+      else if (Number.isFinite(saved) && saved > 0) scrollTo(0, saved);
+    };
     const raf = requestAnimationFrame(() => requestAnimationFrame(go));
-    return () => cancelAnimationFrame(raf);
+    return () => { cancelAnimationFrame(raf); removeEventListener('pagehide', save); };
   }, []);
   return (
     <MotionConfig reducedMotion="user">

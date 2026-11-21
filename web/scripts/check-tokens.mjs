@@ -15,7 +15,7 @@ for (const f of fs.readdirSync(root, { recursive: true })) {
   fs.readFileSync(p, 'utf8').split('\n').forEach((line, i) => {
     for (const m of line.matchAll(hex)) {
       if (m[0] === '#000' && /mask|gradient\(#000/.test(line)) continue; // alpha masks
-      if (/url\(#|href="#|id="|'#|"#[a-z]/.test(line.slice(Math.max(0, m.index - 6), m.index + 1))) continue; // anchors and SVG refs
+      if (/(url\(|href=["']|id=["'])$/.test(line.slice(Math.max(0, m.index - 6), m.index))) continue; // anchors and SVG refs
       bad.push(`${path.relative(root, p)}:${i + 1}  ${m[0]}`);
     }
   });
