@@ -23,11 +23,11 @@ import crypto from 'node:crypto';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const SITE = 'https://marvinridgemt.github.io/Teens-Hack-Houston-Hackathon/';
-const SHA = '6423bc585b802b5ed1f32516ddbee4e6b5383ed9e7aab259faca2e1d880ca62f';
+const SHA = '1116fbe7a1a5c04e7a046cfbe39c41dd7a3d6b18b116caa996805a21f4f1e590'; // pickup-v1.0.1.zip (release notes)
 const DOCS = path.join(REPO, 'docs/v4/after');
 const SCRATCH = process.env.PICKUP_SCRATCH || path.join(os.tmpdir(), 'pickup-judge-path');
 const DL = path.join(SCRATCH + '-dl');
-const ZIP = path.join(DL, 'pickup-v1.0.0.zip');
+const ZIP = path.join(DL, 'pickup-v1.0.1.zip');
 const UNZIP = path.join(SCRATCH, 'unzipped');
 const PROFILE = path.join(SCRATCH, 'profile');
 const OUT = path.join(SCRATCH, 'out');
