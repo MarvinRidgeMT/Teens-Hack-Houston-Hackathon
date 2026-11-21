@@ -32,10 +32,14 @@ function Pinned({ reduced }: { reduced: boolean }) {
       defaults: { ease: 'power2.inOut', duration: 1 },
       scrollTrigger: {
         trigger: root.current, start: 'top top', end: `+=${(n - 1) * 95}%`, pin: q('.story__pin')[0], scrub: 0.7,
-        onUpdate: (self) => {
-          story.progress = self.progress;
-          story.setScene(Math.min(n - 1, Math.round(self.progress * (n - 1))));
-        },
+      },
+      // Read the timeline's own (scrubbed) progress, so the camera, the step pills and the captions
+      // always agree, instead of the raw scroll position, which leads them by the scrub lag.
+      onUpdate() {
+        // the timeline is laid out in scene units (label i at time i), plus a short tail
+        const s = Math.min(n - 1, Math.max(0, this.time()));
+        story.progress = s / (n - 1);
+        story.setScene(Math.round(s));
       },
     });
     // captions: one at a time, each rising into place

@@ -13,7 +13,7 @@ gsap.registerPlugin(ScrollTrigger);
 export function useSmoothScroll(reduced: boolean) {
   useEffect(() => {
     if (reduced) return;
-    const lenis = new Lenis({ autoRaf: false, anchors: { offset: -88 }, lerp: 0.12 });
+    const lenis = new Lenis({ autoRaf: false, anchors: { offset: 0 }, lerp: 0.12 });
     lenis.on('scroll', ScrollTrigger.update);
     const tick = (time: number) => lenis.raf(time * 1000);
     gsap.ticker.add(tick);

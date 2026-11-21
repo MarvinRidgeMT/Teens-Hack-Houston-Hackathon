@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { MotionConfig } from 'motion/react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { GlassNavbar } from './components/glass/GlassNavbar';
 import { GlassDefs } from './components/glass/LiquidGlass';
 import { Hero } from './sections/Hero';
@@ -14,6 +16,16 @@ import { useSmoothScroll } from './hooks/useSmoothScroll';
 export function App() {
   const reduced = useReducedMotion();
   useSmoothScroll(reduced);
+
+  // A deep link (#return-card) scrolls before the story's pin adds its height, so it would land
+  // inside the story. Once the pin exists, measure again and go to the real target.
+  useEffect(() => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    if (!id) return;
+    const go = () => { ScrollTrigger.refresh(); document.getElementById(id)?.scrollIntoView(); };
+    const raf = requestAnimationFrame(() => requestAnimationFrame(go));
+    return () => cancelAnimationFrame(raf);
+  }, []);
   return (
     <MotionConfig reducedMotion="user">
       <GlassDefs />
