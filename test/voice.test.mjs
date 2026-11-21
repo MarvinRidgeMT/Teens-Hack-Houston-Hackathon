@@ -222,17 +222,19 @@ await step('voice: with nothing saved, where was I / how long / today say so', a
   assert.equal(r.data.intent, 'unknown');
 });
 
-await step('voice: setVoiceSettings defaults off, stores booleans, wake word needs voice on', async () => {
+await step('voice: setVoiceSettings defaults off (both switches and talking back), stores booleans, wake word needs voice on', async () => {
   let r = await sim.send({ type: 'setVoiceSettings' });
-  assert.deepEqual(r, { ok: true, voiceEnabled: false, wakeWord: false, readAloud: true });
+  assert.deepEqual(r, { ok: true, voiceEnabled: false, wakeWord: false, readAloud: false });
   r = await sim.send({ type: 'setVoiceSettings', voiceEnabled: true, wakeWord: true, participant: 'hacked' });
-  assert.deepEqual(r, { ok: true, voiceEnabled: true, wakeWord: true, readAloud: true });
+  assert.deepEqual(r, { ok: true, voiceEnabled: true, wakeWord: true, readAloud: false });
   r = await sim.send({ type: 'setVoiceSettings', readAloud: false });
   assert.equal(r.readAloud, false, 'read replies aloud can be turned off');
   r = await sim.send({ type: 'setVoiceSettings', readAloud: true });
+  assert.equal(r.readAloud, true);
+  r = await sim.send({ type: 'setVoiceSettings', readAloud: false });
   assert.equal((await store.getSettings()).participant, 'anish', 'only voice keys are written');
   r = await sim.send({ type: 'setVoiceSettings', voiceEnabled: false });
-  assert.deepEqual(r, { ok: true, voiceEnabled: false, wakeWord: false, readAloud: true });
+  assert.deepEqual(r, { ok: true, voiceEnabled: false, wakeWord: false, readAloud: false });
 });
 
 await step('voice: "park it, next step ..." parks the active task with a spoken next step', async () => {

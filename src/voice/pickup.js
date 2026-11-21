@@ -45,15 +45,34 @@ let tick = null;
 async function startBreak(minutes) {
   const nextStep = $('timerStep').value.trim();
   const r = await send({ type: MSG.startBreak, minutes, nextStep: nextStep || undefined });
-  if (r && r.ok) { $('timerStep').value = ''; $('timerMin').value = ''; }
-  else if (!r) $('reply').textContent = "Pickup didn't answer. Try again.";
-  else if (r.error === 'no task to take a break from') $('reply').textContent = 'Open your work page first, then start the break.';
-  else $('reply').textContent = 'Pick a number of minutes from 1 to 120.';
+  if (r && r.ok) { $('timerStep').value = ''; showStep(false); }
+  else if (!r) note("Pickup didn't answer. Try again.");
+  else if (r.error === 'no task to take a break from') note('Open your work page first, then start the break.');
+  else note('Pick a number of minutes from 1 to 120.');
   refreshAll();
 }
 
+// A reply-area message from this page (not the engine): shows the reply box.
+function note(text) { $('reply').textContent = text; $('reply').closest('.talk')?.removeAttribute('data-empty'); }
+
+function showStep(open) {
+  $('stepWrap').hidden = !open;
+  $('stepToggle').setAttribute('aria-expanded', String(open));
+  $('stepToggle').hidden = open;
+  if (open) $('timerStep').focus();
+}
+
+function pickMinutes(n) {
+  $('timerMin').value = String(n);
+  for (const b of document.querySelectorAll('[data-min]')) b.setAttribute('aria-pressed', String(Number(b.dataset.min) === n));
+}
+
 function wireTimer() {
-  for (const b of document.querySelectorAll('[data-min]')) b.addEventListener('click', () => startBreak(Number(b.dataset.min)));
+  for (const b of document.querySelectorAll('[data-min]')) b.addEventListener('click', () => pickMinutes(Number(b.dataset.min)));
+  $('stepToggle').addEventListener('click', () => showStep(true));
+  $('timerStep').addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !$('timerStep').value) { e.preventDefault(); e.stopPropagation(); showStep(false); $('stepToggle').focus(); }
+  });
   $('timerForm').addEventListener('submit', (e) => { e.preventDefault(); startBreak(Number($('timerMin').value)); });
   $('timerBack').addEventListener('click', async () => {
     const { openBreak } = await chrome.storage.local.get('openBreak');
@@ -194,6 +213,32 @@ function renderTasks(rows, focusThread) {
   }
 }
 
+// ---------- header: one line about now ----------
+// "Away 12 min from X" > "X is parked" > "Working on X" (the active tab's task) > "No task yet".
+function whereLine(rows, current) {
+  const away = rows.find((r) => r.isOpenBreak);
+  if (away) return [`Away ${mins(Date.now() - away.awaySince)} min from `, away.name, ''];
+  const parked = rows.find((r) => r.isParked);
+  if (parked) return ['', parked.name, ' is parked'];
+  const here = current && rows.find((r) => r.threadId === current);
+  if (here) return ['Working on ', here.name, ''];
+  return rows.length ? ['', `${rows.length} task${rows.length === 1 ? '' : 's'} saved`, ''] : ['No task yet', '', ''];
+}
+function renderWhere(rows, current) {
+  const [a, b, c] = whereLine(rows, current);
+  const p = $('where');
+  p.replaceChildren(document.createTextNode(a));
+  if (b) p.append(el('b', null, b), document.createTextNode(c));
+}
+async function currentThread() {
+  try {
+    const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+    if (!tab) return null;
+    const info = await send({ type: MSG.getTabInfo, tabId: tab.id });
+    return (info && info.thread && info.thread.id) || null;
+  } catch { return null; }
+}
+
 // ---------- Today strip ----------
 function renderToday(t) {
   const p = $('today');
@@ -211,11 +256,13 @@ function renderToday(t) {
 // ---------- refresh ----------
 let pending = null;
 async function refreshAll(focusThread) {
-  const [{ openBreak = null, threads = {}, settings = {} }, rows, today] = await Promise.all([
+  const [{ openBreak = null, threads = {}, settings = {} }, rows, today, current] = await Promise.all([
     chrome.storage.local.get(['openBreak', 'threads', 'settings']),
     send({ type: MSG.listThreads }),
     send({ type: MSG.voiceCommand, intent: 'today', args: {}, via: 'panel' }),
+    currentThread(),
   ]);
+  renderWhere(Array.isArray(rows) ? rows : [], current);
   // Don't redraw under someone typing a next step.
   if (!editing.size || focusThread) renderTasks(Array.isArray(rows) ? rows : [], focusThread);
   // F5 "Readable card" setting: larger text, 1.5 line height, extra spacing.
@@ -235,3 +282,4 @@ chrome.storage.onChanged.addListener((changes, area) => {
 });
 setInterval(() => { if (!editing.size) soon(); }, 30000); // "Away 12 min" and "last here" stay current
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') soon(); });
+chrome.tabs.onActivated.addListener(() => soon()); // "Working on …" follows the tab you're on

@@ -61,7 +61,7 @@ const manifest = JSON.parse(read(path.join(ROOT, 'manifest.json')));
     if (fs.existsSync(path.join(ROOT, r))) pass('manifest', `${r} exists`);
     else fail('manifest', `${r} is referenced in manifest.json but missing (not landed yet?)`);
   }
-  const expected = ['tabs', 'tabGroups', 'idle', 'alarms', 'notifications', 'storage', 'scripting', 'contextMenus', 'sidePanel', 'tts'];
+  const expected = ['tabs', 'tabGroups', 'idle', 'alarms', 'notifications', 'storage', 'scripting', 'contextMenus', 'sidePanel'];
   const extra = (manifest.permissions || []).filter((p) => !expected.includes(p));
   if (extra.length) warn('manifest', `permissions beyond the plan: ${extra.join(', ')}`);
   if (manifest.host_permissions && manifest.host_permissions.length) fail('manifest', 'host_permissions present: work sites must be optional and requested on the setup page');
@@ -78,7 +78,10 @@ const srcCss = walk(SRC_DIR, ['.css']);
   let clean = true;
   for (const f of srcJs) {
     const s = read(f);
-    if (network.test(s)) { fail('rules', `network call in ${where(f, network)} (Never: any network request)`); clean = false; }
+    // The vendored voice runtime fetch()es its own files inside the extension; the voice-out
+    // section below holds it to a stricter rule (no URL at all except doc links in error text).
+    const voiceVendor = rel(f).startsWith('src/voice/vendor/');
+    if (!voiceVendor && network.test(s)) { fail('rules', `network call in ${where(f, network)} (Never: any network request)`); clean = false; }
     if (evalish.test(s)) { fail('rules', `eval/new Function in ${where(f, evalish)} (blocked by extension CSP)`); clean = false; }
     if (/pickup-dev-stub/.test(s)) { fail('rules', `${where(f, /pickup-dev-stub/)} uses the dev stub id`); clean = false; }
   }
@@ -135,6 +138,32 @@ const srcCss = walk(SRC_DIR, ['.css']);
     }
   }
   if (!bad) pass('voice', `${found} SpeechRecognition constructor(s) in src/, all set and check processLocally = true`);
+}
+
+// ---------------- voice output: Pickup's own voice only, nothing remote ----------------
+// System voices (speechSynthesis / chrome.tts) sound different on every OS, so they are
+// never used. Any model or wasm file must ship in the zip: no CDN or model-hub URL.
+{
+  let bad = 0;
+  const files = [...srcJs, ...srcHtml];
+  for (const f of files) {
+    const s = read(f);
+    for (const re of [/speechSynthesis\.speak\s*\(/, /chrome\.tts\.speak\s*\(/]) {
+      if (re.test(s)) { fail('voice-out', `${where(f, re)} uses a system voice (${re.source.replace(/\\/g, '')})`); bad++; }
+    }
+    for (const re of [/huggingface\.co/, /cdn\.jsdelivr/, /unpkg\.com/, /https?:\/\/[^\s'"`]+\.(?:onnx|wasm|bin|npy)\b/]) {
+      if (re.test(s)) { fail('voice-out', `${where(f, re)} references a remote model or runtime (${re.source})`); bad++; }
+    }
+  }
+  // The vendored runtime may only mention documentation sites (in its error messages).
+  const DOC_HOSTS = new Set(['web.dev', 'github.com', 'gist.github.com', 'developer.mozilla.org']);
+  for (const f of srcJs.filter((x) => rel(x).startsWith('src/voice/vendor/'))) {
+    for (const m of read(f).matchAll(/https?:\/\/([a-z0-9.-]+)/gi)) {
+      if (!DOC_HOSTS.has(m[1].toLowerCase())) { fail('voice-out', `${rel(f)} names ${m[0]} (only doc links are allowed in the vendored runtime)`); bad++; }
+    }
+  }
+  if ((JSON.parse(read(path.join(ROOT, 'manifest.json'))).permissions || []).includes('tts')) { fail('voice-out', 'manifest still asks for the tts permission (no code uses it)'); bad++; }
+  if (!bad) pass('voice-out', `no system-voice output and no remote model/wasm URLs in ${files.length} files`);
 }
 
 // ---------------- shortcuts: one source of truth ----------------

@@ -5,13 +5,16 @@
 // - Push-to-talk always works: hold the button or Space, click once, or the panel key (toggle-voice).
 // - "Listen for 'Hey Pickup'" is opt-in (default off) and runs only while this panel is open.
 // - Speech is recognised on this device only (recognizer.js enforces processLocally = true).
-// - The engine builds every reply (src/sw/voice.js); this page only shows and speaks it.
+// - The engine builds every reply (src/sw/voice.js); this page shows it as text.
+// - "Pickup talks back" (default off) uses Pickup's own voice (voice-out.js: Kokoro af_heart,
+//   on this device, the same on every OS). Never a system voice (speechSynthesis / chrome.tts).
 // - No audio and no transcripts are kept. Only a dictated next step is stored, by the engine.
 
 import { MSG } from '../shared/messages.js';
 import { fillShortcuts } from '../shared/shortcuts.js';
 import { parse, splitWake, tidyWords, wakeCommand } from './intents.js';
 import { createRecognizer, onDeviceStatus, micState } from './recognizer.js';
+import * as voice from './voice-out.js';
 
 const HOLD_MS = 300;            // pressed longer than this = hold-to-talk, else a click
 const ONE_SHOT_MAX_MS = 8000;   // a click or the panel key listens this long at most
@@ -20,10 +23,12 @@ const SHORTCUT_FRESH_MS = 4000; // the panel key that opened this panel
 const FATAL = new Set(['not-allowed', 'service-not-allowed', 'language-not-supported', 'audio-capture']);
 const NOT_AVAILABLE = "On-device speech isn't available in this Chrome, so voice is off. Pickup never sends your voice to a server.";
 const WAKE_AT_START = /^\s*(?:hey,?\s+)?pick\s?-?up\b/i;
+const VOICE_READYING = "Getting Pickup's voice ready…";
+const VOICE_TOO_SLOW = "Pickup's voice needs a newer computer. Replies are shown as text.";
 
 const $ = (id) => document.getElementById(id);
 const S = {
-  ready: false, device: 'missing', mic: 'unknown', voiceEnabled: false, wakeOn: false, readAloud: true,
+  ready: false, device: 'missing', mic: 'unknown', voiceEnabled: false, wakeOn: false, readAloud: false, voiceShownReady: false,
   mode: 'off',            // 'off' | 'talk' | 'wake'
   rec: null, speaking: false, busy: false,
   talk: { finals: [], interim: '', pressing: false, downAt: 0, oneShot: false, timer: null },
@@ -32,26 +37,20 @@ const S = {
 
 // ---------- status ----------
 function render() {
-  let text = 'Off', state = 'off';
-  if (S.device === 'missing' || S.device === 'unavailable') text = 'On-device speech not available';
-  else if (S.speaking) { text = 'Speaking'; state = 'speaking'; }
-  else if (S.mode === 'talk') { text = 'Listening (on this device)'; state = 'listening'; }
-  else if (S.mode === 'wake') {
-    state = 'listening';
-    text = S.wake.awaitUntil > Date.now() ? 'Listening (on this device): say your command' : 'Listening for "Hey Pickup" (on this device)';
-  } else if (!S.ready) text = 'Voice off';
-  else text = 'Voice ready';
-  $('status').textContent = text;
-  $('status').dataset.state = state;
+  // The pill shows only while the mic is actually listening; otherwise the header shows the task line.
+  const listening = S.mode === 'talk' || S.mode === 'wake';
+  let text = 'Listening…';
+  if (S.mode === 'wake') text = S.wake.awaitUntil > Date.now() ? 'Listening… say your command' : 'Listening for "Hey Pickup"…';
+  $('status').hidden = !listening;
+  $('statusText').textContent = text;
   const mic = $('mic');
   mic.disabled = !S.ready;
+  mic.title = S.ready ? 'Hold to talk' : 'Set up the microphone in Voice settings to talk';
   mic.setAttribute('aria-pressed', String(S.mode === 'talk'));
   $('micLabel').textContent = S.mode === 'talk' ? (S.talk.oneShot ? 'Listening... click to stop' : 'Listening... let go to send') : 'Hold to talk';
   $('wake').disabled = !S.ready;
   $('wake').checked = S.wakeOn;
-  $('readAloud').disabled = !S.ready;
-  $('readAloud').checked = S.ready && S.readAloud;
-  document.querySelector('.hints').dataset.voice = S.ready ? 'on' : 'off';
+  $('readAloud').checked = S.readAloud;
 }
 
 let firstRefresh = true;
@@ -59,7 +58,9 @@ async function refresh() {
   const { settings = {} } = await chrome.storage.local.get('settings');
   S.voiceEnabled = !!settings.voiceEnabled;
   S.wakeOn = S.voiceEnabled && !!settings.wakeWord;
-  S.readAloud = settings.readAloud !== false;
+  const wasOn = S.readAloud;
+  S.readAloud = settings.readAloud === true;
+  if (S.readAloud && !wasOn) warmVoice();
   S.device = await onDeviceStatus();
   S.mic = await micState();
   S.ready = S.voiceEnabled && S.device === 'available' && S.mic === 'granted';
@@ -75,10 +76,10 @@ async function refresh() {
     if (S.device === 'downloadable') why.push('the on-device English speech model');
     if (S.device === 'downloading') why.push('the on-device speech model (downloading now, this can take a few minutes)');
     $('setupText').textContent = why.length ? `Voice needs a one-time setup: ${why.join(' and ')}.` : 'Voice is off.';
-    $('btnSetup').textContent = why.length ? 'Set up voice' : 'Turn voice on';
+    $('btnSetup').textContent = why.length ? 'Set up the microphone' : 'Turn voice on';
     $('btnSetup').hidden = false;
   }
-  if (firstRefresh) { firstRefresh = false; $('voice').open = !S.ready && S.device !== 'missing' && S.device !== 'unavailable' && S.voiceEnabled; }
+  firstRefresh = false; // Voice settings stays closed until the user opens it.
   if (!S.ready) stopEverything({ keepWakeSetting: true });
   else if (S.wakeOn && S.mode === 'off' && !S.speaking) startWake();
   else if (!S.wakeOn && S.mode === 'wake') stopWake();
@@ -89,50 +90,52 @@ function sendEngine(msg) {
   return chrome.runtime.sendMessage(msg).catch(() => null);
 }
 
-// ---------- speaking (local voices only) ----------
-let voicePick = null;
-async function pickVoice() {
-  if (voicePick) return voicePick;
+// ---------- speaking: Pickup's own voice ----------
+// Loads when the panel opens with talking back on (or when it is turned on), with a warm-up,
+// so the first real reply is quick. "Getting Pickup's voice ready…" shows the first time only.
+async function warmVoice() {
+  const note = $('voiceNote');
+  let shown = false;
+  const t = setTimeout(() => { if (!S.voiceShownReady) { note.textContent = VOICE_READYING; shown = true; } }, 300);
   try {
-    const list = (await chrome.tts.getVoices()).filter((v) => v.remote === false && /^en/i.test(v.lang || ''));
-    const v = list.find((x) => /^en-US$/i.test(x.lang)) || list[0];
-    if (v) return (voicePick = { kind: 'tts', name: v.voiceName, lang: v.lang });
-  } catch { /* fall through */ }
-  const ss = (globalThis.speechSynthesis ? speechSynthesis.getVoices() : []).filter((v) => v.localService && /^en/i.test(v.lang));
-  const v = ss.find((x) => /^en-US$/i.test(x.lang)) || ss[0];
-  return v ? (voicePick = { kind: 'ss', voice: v }) : null; // never a remote voice; null = text only
+    await voice.load();
+    S.voiceShownReady = true;
+    if (shown) note.textContent = '';
+    return true;
+  } catch (e) {
+    await voiceFailed(e);
+    return false;
+  } finally { clearTimeout(t); }
 }
 
-async function speak(text) {
-  if (!S.ready || !S.readAloud) return; // replies are always shown; spoken only if voice and "Read aloud" are on
-  const v = await pickVoice();
-  if (!v) return;
+// Can't load, or too slow twice: talking back goes off, one honest line, everything else keeps working.
+async function voiceFailed(err) {
+  if (err) console.warn('Pickup voice unavailable:', err);
+  voice.stop();
+  S.readAloud = false;
+  $('voiceNote').textContent = VOICE_TOO_SLOW;
+  render();
+  await sendEngine({ type: MSG.setVoiceSettings, readAloud: false });
+}
+
+async function speak(text, { force = false, startedAt } = {}) {
+  if (!S.readAloud && !force) return; // replies are always shown as text; spoken only if "Pickup talks back" is on
   S.speaking = true;
   if (S.rec && S.mode === 'wake') { try { S.rec.abort(); } catch { /* ended */ } S.rec = null; } // don't hear ourselves
   render();
-  await new Promise((resolve) => {
-    const done = () => { clearTimeout(guard); resolve(); };
-    const guard = setTimeout(resolve, 20000);
-    if (v.kind === 'tts') {
-      chrome.tts.speak(text, {
-        voiceName: v.name, lang: v.lang, rate: 1.05,
-        onEvent: (e) => { if (['end', 'interrupted', 'cancelled', 'error'].includes(e.type)) done(); },
-      });
-    } else {
-      const u = new SpeechSynthesisUtterance(text);
-      u.voice = v.voice; u.rate = 1.05; u.onend = done; u.onerror = done;
-      speechSynthesis.speak(u);
-    }
-  });
-  S.speaking = false;
-  render();
-  setTimeout(() => { if (S.mode === 'wake' && !S.rec && !S.speaking) wakeSession(); }, 250);
+  try {
+    const r = await voice.say(text, { startedAt });
+    if (r.giveUp) await voiceFailed(new Error(`first sound took ${r.firstSoundMs} ms, twice`));
+  } catch (e) {
+    await voiceFailed(e);
+  } finally {
+    S.speaking = false;
+    render();
+    setTimeout(() => { if (S.mode === 'wake' && !S.rec && !S.speaking) wakeSession(); }, 250);
+  }
 }
 
-function stopSpeaking() {
-  try { chrome.tts.stop(); } catch { /* none */ }
-  try { speechSynthesis.cancel(); } catch { /* none */ }
-}
+function stopSpeaking() { voice.stop(); }
 
 function chime() {
   try {
@@ -158,6 +161,7 @@ export async function runCommand(raw, { typed = false } = {}) {
   if (!command) { showReply(typed ? 'Type a question, like "where was I?"' : "I didn't catch that."); return null; }
   if (S.busy) return null; // one command at a time: a second one while answering is dropped
   S.busy = true;
+  const startedAt = performance.now(); // time to first sound is measured from the ask
   try {
     const { intent, args } = parse(command);
     if (intent === 'stop' && !typed) await setWake(false);
@@ -166,7 +170,7 @@ export async function runCommand(raw, { typed = false } = {}) {
     const r = await sendEngine(msg);
     const say = (r && r.say) || "Pickup didn't answer. Try again.";
     showReply(say);
-    await speak(say);
+    speak(say, { startedAt }); // never blocks typing: the next ask cuts this one off
     return r;
   } finally { S.busy = false; }
 }
@@ -342,9 +346,14 @@ function wire() {
   $('wake').addEventListener('change', (e) => setWake(e.target.checked));
   $('readAloud').addEventListener('change', async (e) => {
     S.readAloud = e.target.checked;
-    if (!S.readAloud) stopSpeaking();
+    if (S.readAloud) { $('voiceNote').textContent = ''; warmVoice(); } else stopSpeaking();
     await sendEngine({ type: MSG.setVoiceSettings, readAloud: S.readAloud });
   });
+  $('sample').addEventListener('click', async () => {
+    $('sample').disabled = true;
+    try { if (await warmVoice()) await speak(voice.SAMPLE, { force: true }); } finally { $('sample').disabled = false; }
+  });
+  $('listenStop').addEventListener('click', () => { if (S.mode === 'talk') cancelTalk(); else setWake(false); });
   $('btnSetup').addEventListener('click', async () => {
     if (S.mic === 'granted' && S.device === 'available') {
       await sendEngine({ type: MSG.setVoiceSettings, voiceEnabled: true });

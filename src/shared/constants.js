@@ -39,7 +39,7 @@ export const DEFAULT_SETTINGS = Object.freeze({
   forceCard: false,        // testing only (needs debug): every return shows the card
   voiceEnabled: false,     // voice side panel may use the mic (push-to-talk)
   wakeWord: false,         // listen for "Hey Pickup" while the panel is open
-  readAloud: true,         // Pickup panel: speak replies (only while voice is on)
+  readAloud: false,        // "Pickup talks back": off by default (hidden in v1.0.1 until Pickup's own voice ships)
   calm: false,             // "Calm colours": lower-saturation accents on extension pages (tokens.css [data-calm])
   features: {},            // redesign feature flags; read through featuresOf() (DEFAULT_FEATURES fill the gaps)
 });

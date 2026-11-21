@@ -252,5 +252,5 @@ export async function setVoiceSettings(msg) {
   if (patch.voiceEnabled === false) patch.wakeWord = false; // wake word needs voice on
   if (Object.keys(patch).length) await store.setSettings(patch);
   const s = await store.getSettings();
-  return { ok: true, voiceEnabled: !!s.voiceEnabled, wakeWord: !!s.wakeWord, readAloud: s.readAloud !== false };
+  return { ok: true, voiceEnabled: !!s.voiceEnabled, wakeWord: !!s.wakeWord, readAloud: s.readAloud === true };
 }

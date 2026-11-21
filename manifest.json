@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Pickup",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Undo the interruption, not the mistake. Saves your place when you leave your work and hands it back when you return.",
   "minimum_chrome_version": "123",
   "permissions": [
@@ -13,8 +13,7 @@
     "storage",
     "scripting",
     "contextMenus",
-    "sidePanel",
-    "tts"
+    "sidePanel"
   ],
   "optional_host_permissions": ["http://*/*", "https://*/*"],
   "background": {
@@ -32,6 +31,9 @@
     }
   },
   "options_page": "src/pages/setup.html",
+  "cross_origin_embedder_policy": { "value": "require-corp" },
+  "cross_origin_opener_policy": { "value": "same-origin" },
+  "content_security_policy": { "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';" },
   "side_panel": { "default_path": "src/voice/panel.html" },
   "web_accessible_resources": [
     {
