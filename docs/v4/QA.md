@@ -2,7 +2,7 @@
 
 One entry per review round: what was looked at, the three biggest weaknesses, what changed.
 
-## Round 1 — first full render (11:2x AM), `/tmp` shots, then `docs/v4/after/`
+## Round 1 — first full render (about 10:20 AM), `/tmp` shots, then `docs/v4/after/`
 Looked at: hero, Interrupted, story (Park), Return demo, features at 1440; hero at 375.
 1. Hero headline clipped its comma: the display size (7.2vw, 104 px max) was wider than the copy column. → display token now `clamp(44px, 6.1vw, 96px)`, title max 11ch, mask has right padding.
 2. Features: a tall gap beside the Pickup-panel screenshot (grid centred on a 1600-tall image). → support grid `0.34fr / 1fr`, aligned to the top.

@@ -113,19 +113,26 @@ function Studio() {
     <>
       <ambientLight intensity={0.3} color={c.lav} />
       <directionalLight position={[-4, 7, 5]} intensity={1.6} color={c.white} />
-      <Environment resolution={256} frames={1}>
+      <Environment resolution={256} frames={1} environmentIntensity={1.25}>
+        {/* Metal shows only what it reflects: a bright studio all round, coloured accents placed. */}
         {/* large soft key, top-left, white */}
-        <Lightformer form="rect" intensity={5.5} color={c.white} position={[-4, 6, 4]} scale={[9, 6, 1]} rotation={[-Math.PI / 3, -Math.PI / 8, 0]} />
+        <Lightformer form="rect" intensity={6} color={c.white} position={[-4, 6, 4]} scale={[10, 7, 1]} rotation={[-Math.PI / 3, -Math.PI / 8, 0]} />
         {/* overhead softbox: the deck reads as silver */}
-        <Lightformer form="rect" intensity={3} color={c.white} position={[0, 7, -2]} scale={[14, 8, 1]} rotation={[Math.PI / 2, 0, 0]} />
-        {/* fill, front-right, lavender, low */}
-        <Lightformer form="rect" intensity={1.6} color={c.lav} position={[6, 2, 6]} scale={[8, 6, 1]} rotation={[0, -Math.PI / 4, 0]} />
+        <Lightformer form="rect" intensity={4} color={c.white} position={[0, 8, 0]} scale={[16, 12, 1]} rotation={[Math.PI / 2, 0, 0]} />
+        {/* tall softbox behind and above the laptop: the deck reflects it at the viewing angle */}
+        <Lightformer form="rect" intensity={4.5} color={c.white} position={[0, 5, -9]} scale={[18, 8, 1]} rotation={[0.35, 0, 0]} />
+        {/* big white card behind the camera: the lid back and front edges catch it */}
+        <Lightformer form="rect" intensity={3} color={c.white} position={[0, 2, 10]} scale={[20, 8, 1]} />
+        {/* white floor bounce under the laptop */}
+        <Lightformer form="rect" intensity={1.6} color={c.white} position={[0, -4, 0]} scale={[16, 16, 1]} rotation={[-Math.PI / 2, 0, 0]} />
+        {/* fill, front-right, lavender */}
+        <Lightformer form="rect" intensity={2.2} color={c.lav} position={[7, 2, 5]} scale={[8, 6, 1]} rotation={[0, -Math.PI / 4, 0]} />
         {/* rim strip, back-right, narrow white: outlines lid and base edges */}
-        <Lightformer form="rect" intensity={7} color={c.white} position={[5, 3, -5]} scale={[1.2, 9, 1]} rotation={[0, -Math.PI * 0.75, 0]} />
+        <Lightformer form="rect" intensity={8} color={c.white} position={[5, 3, -5]} scale={[1.2, 9, 1]} rotation={[0, -Math.PI * 0.75, 0]} />
         {/* mint bounce card, bottom-left */}
-        <Lightformer form="rect" intensity={2.2} color={c.mint} position={[-5, -2, 3]} scale={[7, 4, 1]} rotation={[Math.PI / 3, Math.PI / 4, 0]} />
+        <Lightformer form="rect" intensity={2.4} color={c.mint} position={[-6, -1, 3]} scale={[7, 4, 1]} rotation={[0, Math.PI / 3, 0]} />
         {/* blush accent card, right, low */}
-        <Lightformer form="rect" intensity={1.4} color={c.blush} position={[7, 0.5, 0]} scale={[3, 5, 1]} rotation={[0, -Math.PI / 2, 0]} />
+        <Lightformer form="rect" intensity={1.6} color={c.blush} position={[8, 0.5, 0]} scale={[3, 5, 1]} rotation={[0, -Math.PI / 2, 0]} />
       </Environment>
     </>
   );
@@ -156,7 +163,7 @@ export default function LaptopScene({ mode, reduced, onFail, margin }: {
         onCreated={({ gl, scene }) => {
           if (import.meta.env.DEV) (window as unknown as Record<string, unknown>)[`__scene_${mode}`] = scene;
           gl.toneMapping = THREE.AgXToneMapping;
-          gl.toneMappingExposure = 1.15;
+          gl.toneMappingExposure = 1.2;
           gl.outputColorSpace = THREE.SRGBColorSpace;
           gl.domElement.addEventListener('webglcontextlost', (e) => { e.preventDefault(); onFail(); }, { once: true });
         }}

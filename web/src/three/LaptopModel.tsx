@@ -23,10 +23,10 @@ type Materials = Record<string, THREE.Material>;
 
 function makeMaterials(): Materials {
   const aluminium = new THREE.MeshPhysicalMaterial({
-    color: '#d6d7dc',
+    color: '#e6e7ec',
     metalness: 1,
     roughness: 0.34,
-    envMapIntensity: 1,
+    envMapIntensity: 1.35,
   });
   return {
     M_Aluminium: aluminium,
@@ -41,12 +41,12 @@ function makeMaterials(): Materials {
       clearcoat: 1,
       clearcoatRoughness: 0.04,
       transparent: true,
-      opacity: 0.1,
+      opacity: 0.05,
       depthWrite: false,
     }),
     M_Keys: new THREE.MeshStandardMaterial({ color: '#1e1e22', metalness: 0, roughness: 0.6 }),
     M_Well: new THREE.MeshPhysicalMaterial({ color: '#8c8d93', metalness: 1, roughness: 0.46 }),
-    M_Trackpad: new THREE.MeshPhysicalMaterial({ color: '#cfd0d5', metalness: 1, roughness: 0.22 }),
+    M_Trackpad: new THREE.MeshPhysicalMaterial({ color: '#dcdde2', metalness: 1, roughness: 0.26, envMapIntensity: 1.3 }),
     M_Rubber: new THREE.MeshStandardMaterial({ color: '#26262b', metalness: 0, roughness: 0.85 }),
   };
 }

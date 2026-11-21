@@ -5,7 +5,7 @@ import * as THREE from 'three';
 export type Pose = { x: number; y: number; yaw: number; pitch: number; cam: [number, number, number]; look: [number, number, number] };
 
 /** Hero first, then one pose per story scene (working, interrupted, park, return, resume). */
-export const HERO_POSE: Pose = { x: 0.1, y: 0, yaw: -0.5, pitch: 0.06, cam: [0.3, 2.6, 9.4], look: [0, 0.8, 0] };
+export const HERO_POSE: Pose = { x: 0, y: 0, yaw: -0.52, pitch: 0.05, cam: [0.2, 2.3, 7.6], look: [0, 0.85, -0.2] };
 export const STORY_POSES: Pose[] = [
   { x: 0.05, y: 0, yaw: -0.3, pitch: 0.04, cam: [0.2, 2.5, 9.0], look: [0, 0.85, 0] },     // working
   { x: 0.08, y: -0.05, yaw: -0.42, pitch: 0.06, cam: [0.4, 2.9, 10.2], look: [0, 0.8, 0] }, // interrupted: steps back

@@ -1,16 +1,17 @@
 // Fails the build if a raw hex colour appears anywhere in web/src except styles/tokens.css.
-// Allowed: mask/gradient alpha stops written as "#000" (alpha only, never a visible colour).
+// Allowed: three/LaptopModel.tsx (physical PBR material colours of the aluminium, keys and bezel,
+// not UI palette), and mask/gradient alpha stops written as "#000" (alpha only, never a visible colour).
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../src');
-const allowFile = path.join(root, 'styles', 'tokens.css');
+const allowFiles = new Set([path.join(root, 'styles', 'tokens.css'), path.join(root, 'three', 'LaptopModel.tsx')]);
 const hex = /#[0-9a-fA-F]{3,8}\b/g;
 const bad = [];
 for (const f of fs.readdirSync(root, { recursive: true })) {
   const p = path.join(root, f);
-  if (!/\.(css|ts|tsx)$/.test(p) || p === allowFile) continue;
+  if (!/\.(css|ts|tsx)$/.test(p) || allowFiles.has(p)) continue;
   fs.readFileSync(p, 'utf8').split('\n').forEach((line, i) => {
     for (const m of line.matchAll(hex)) {
       if (m[0] === '#000' && /mask|gradient\(#000/.test(line)) continue; // alpha masks
